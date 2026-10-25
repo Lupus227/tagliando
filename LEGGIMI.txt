@@ -1,0 +1,27 @@
+PWA TAGLIANDO GUIDATO — v0.4
+
+CONTENUTO
+index.html, manifest.webmanifest, sw.js e cartella icons.
+
+COME PUBBLICARE (GitHub Pages)
+1) Crea un repository pubblico su GitHub (attenzione: file pubblici).
+2) Carica il CONTENUTO della cartella PWA_Tagliando_Guidato_v04 nella radice del repository.
+3) Settings → Pages → Deploy from a branch → main → /(root) → Save.
+4) Apri l'indirizzo HTTPS indicato da GitHub Pages, su Safari iPhone.
+5) Safari → Condividi → Aggiungi alla schermata Home → Apri come app.
+
+ALTERNATIVA: caricare i file su un servizio HTTPS per siti statici che supporti service worker.
+
+NOTE
+- Senza pubblicazione su HTTPS, la normale anteprima dei file HTML su iPhone non offre esperienza PWA affidabile.
+- La cache offline è disponibile dopo la prima apertura online e l'installazione del service worker.
+- Le sessioni sono salvate localmente e possono andare perse cancellando i dati del browser. Esporta copie JSON o TXT.
+- Le procedure non sono ancora validate per uso su macchine reali.
+- Il modulo vocale non è ancora implementato.
+- Il file HTML non trasmette informazioni a server; l'hosting può raccogliere normali log tecnici di accesso.
+
+AGGIORNAMENTO v0.4.1
+- Corretto aggiornamento della pagina online: navigazioni network-first, fallback offline.
+- Conservata la chiave di salvataggio locale delle sessioni v0.4.
+- Caricare tutti i file del pacchetto nello stesso repository GitHub Pages.
+- Dopo il caricamento: aprire in Safari connesso a Internet, poi testare offline.
