@@ -25,3 +25,10 @@ AGGIORNAMENTO v0.4.1
 - Conservata la chiave di salvataggio locale delle sessioni v0.4.
 - Caricare tutti i file del pacchetto nello stesso repository GitHub Pages.
 - Dopo il caricamento: aprire in Safari connesso a Internet, poi testare offline.
+
+AGGIORNAMENTO v0.4.2
+- Corretto il pulsante «Segna completata»: dopo la conferma passa automaticamente all'operazione successiva.
+- Dopo l'ottava operazione mostra il riepilogo.
+- Conservata la chiave del salvataggio locale della v0.4/v0.4.1.
+- Cache del service worker aggiornata per distribuire la nuova versione anche agli utenti che hanno installato la PWA.
+- Per installare: sostituire i file nella radice del repository GitHub Pages, poi aprire online l'app su Safari.

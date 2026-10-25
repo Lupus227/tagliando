@@ -1,5 +1,5 @@
 // Navigation: online-first so new releases appear when connected; offline fallback remains available.
-const CACHE = 'tagliando-v041-static-1';
+const CACHE = 'tagliando-v042-static-1';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
