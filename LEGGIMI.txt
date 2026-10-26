@@ -23,3 +23,12 @@ LIMITI
 - La voce NON è ancora implementata.
 - Nessun dato è inviato a un server dall'applicazione.
 - La disponibilità offline dipende dalla prima installazione online e dalla cache del dispositivo.
+
+
+NOVITÀ V0.6.0
+- Modalità banco con testo ingrandito, una istruzione alla volta e pulsanti grandi.
+- Conferma esplicita per segnare un passo come effettivamente eseguito.
+- Nessun riconoscimento vocale attivo: non è un'app hands-free.
+- Conserva la stessa chiave locale delle sessioni v0.5. Prima di aggiornare, esporta un rapporto.
+- La modalità banco è solo una vista: per saltare o segnalare anomalie torna alla vista completa.
+- Se la PWA Home di iPhone mostra ancora la versione vecchia, apri prima il sito in Safari online.
