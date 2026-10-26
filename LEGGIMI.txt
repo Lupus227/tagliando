@@ -53,3 +53,11 @@ NOVITÀ V0.6.3
 - Confermare un passaggio già registrato permette sempre di annullare la conferma (senza avanzare).
 - Stessa struttura dati e stessa chiave localStorage della v0.6.2; backup consigliato prima di caricare il pacchetto.
 - Se l'ultimo passaggio non basta perché ne restano altri non confermati, continuare dal passaggio mancante.
+
+AGGIORNAMENTO V0.6.4
+- Il pulsante «Passaggio eseguito» registra e avanza SEMPRE, anche se un passaggio era già confermato.
+- «Annulla conferma» è un pulsante distinto, mostrato solo dove necessario.
+- Stessa logica tra vista banco e vista completa; nessuna simulazione del click su pulsanti nascosti.
+- Se alcuni passi precedenti sono rimasti da confermare, l'app torna al primo non confermato prima di concludere la lavorazione.
+- Dati e chiave localStorage invariati rispetto alle versioni precedenti.
+- Pubblicare i file dello ZIP nella radice del repository GitHub, conservando le cartelle.
