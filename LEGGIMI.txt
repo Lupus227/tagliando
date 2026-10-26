@@ -32,3 +32,18 @@ NOVITÀ V0.6.0
 - Conserva la stessa chiave locale delle sessioni v0.5. Prima di aggiornare, esporta un rapporto.
 - La modalità banco è solo una vista: per saltare o segnalare anomalie torna alla vista completa.
 - Se la PWA Home di iPhone mostra ancora la versione vecchia, apri prima il sito in Safari online.
+
+Aggiornamento v0.6.1: eliminate le finestre di conferma ridondanti dopo il flag del passaggio e dopo il completamento dell’operazione. Rimangono obbligatorie le conferme dei singoli passaggi, resta il controllo che tutti siano confermati, restano gli avvisi in caso di passaggi non completati. Nessuna modifica ai dati salvati.
+
+NOVITÀ V0.6.2
+- Rimossa la doppia conferma (flag + pulsante).
+- Un tocco su «Passaggio eseguito» registra il passo e avanza.
+- Tornando al passo già confermato, lo stesso pulsante diventa «Annulla conferma».
+- Conservata la chiave localStorage tagliando-pwa-v05-session: le sessioni preesistenti rimangono recuperabili.
+- Aggiornato il nome della cache offline, per evitare il riuso della vecchia versione.
+- Lavorazioni saltate o sospese continuano a essere gestite separatamente.
+
+PUBBLICAZIONE
+- Esporta un backup prima di sostituire i file del repository.
+- Carica il CONTENUTO della cartella nella radice del repository GitHub Pages.
+- Prova https://lupus227.github.io/tagliando/?v=062 da Safari, poi dall’icona Home.
