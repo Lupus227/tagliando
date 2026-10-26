@@ -1,34 +1,25 @@
-PWA TAGLIANDO GUIDATO — v0.4
+ASSISTENTE DI OFFICINA — TAGLIANDO GUIDATO v0.5.0
 
 CONTENUTO
-index.html, manifest.webmanifest, sw.js e cartella icons.
+index.html, app.js, style.css, sw.js, manifest.webmanifest, cartella icons/.
 
-COME PUBBLICARE (GitHub Pages)
-1) Crea un repository pubblico su GitHub (attenzione: file pubblici).
-2) Carica il CONTENUTO della cartella PWA_Tagliando_Guidato_v04 nella radice del repository.
-3) Settings → Pages → Deploy from a branch → main → /(root) → Save.
-4) Apri l'indirizzo HTTPS indicato da GitHub Pages, su Safari iPhone.
-5) Safari → Condividi → Aggiungi alla schermata Home → Apri come app.
+PUBBLICAZIONE GITHUB PAGES
+1) Prima di aggiornare esporta il rapporto dalla v0.4.2, per avere una copia di sicurezza.
+2) Estrai questo ZIP. Carica tutti i file e la cartella icons/ nella RADICE del repository lupus227/tagliando (senza creare una cartella v05). Sostituisci i file con nomi già esistenti.
+3) Attendi la conclusione della distribuzione GitHub Pages e apri https://lupus227.github.io/tagliando/?v=050 da Safari.
+4) Verifica la scritta v0.5.0 e prova le operazioni 1, 3 e 8; successivamente apri dall'icona Home.
+5) In presenza di cache vecchia, apri online in Safari e poi chiudi e riapri l'app Home. Non eliminare dati Safari senza esportare il rapporto.
 
-ALTERNATIVA: caricare i file su un servizio HTTPS per siti statici che supporti service worker.
+SALVATAGGIO E COMPATIBILITÀ
+- Usa ancora localStorage nello stesso origin, ma una chiave separata: tagliando-pwa-v05-session.
+- Al primo avvio importa le registrazioni precedenti dalla chiave tagliando-pwa-v04-session, lasciando INALTERATA quella precedente.
+- Le vecchie conferme dei sei passaggi sottoscocca non possono certificare i nuovi passaggi riscritti: richiedono una nuova conferma.
+- Lo storico degli orari è mantenuto nelle registrazioni importate.
+- Esporta un backup prima di aggiornare o azzerare, soprattutto su iPhone.
 
-NOTE
-- Senza pubblicazione su HTTPS, la normale anteprima dei file HTML su iPhone non offre esperienza PWA affidabile.
-- La cache offline è disponibile dopo la prima apertura online e l'installazione del service worker.
-- Le sessioni sono salvate localmente e possono andare perse cancellando i dati del browser. Esporta copie JSON o TXT.
-- Le procedure non sono ancora validate per uso su macchine reali.
-- Il modulo vocale non è ancora implementato.
-- Il file HTML non trasmette informazioni a server; l'hosting può raccogliere normali log tecnici di accesso.
-
-AGGIORNAMENTO v0.4.1
-- Corretto aggiornamento della pagina online: navigazioni network-first, fallback offline.
-- Conservata la chiave di salvataggio locale delle sessioni v0.4.
-- Caricare tutti i file del pacchetto nello stesso repository GitHub Pages.
-- Dopo il caricamento: aprire in Safari connesso a Internet, poi testare offline.
-
-AGGIORNAMENTO v0.4.2
-- Corretto il pulsante «Segna completata»: dopo la conferma passa automaticamente all'operazione successiva.
-- Dopo l'ottava operazione mostra il riepilogo.
-- Conservata la chiave del salvataggio locale della v0.4/v0.4.1.
-- Cache del service worker aggiornata per distribuire la nuova versione anche agli utenti che hanno installato la PWA.
-- Per installare: sostituire i file nella radice del repository GitHub Pages, poi aprire online l'app su Safari.
+LIMITI
+- Prototipo tecnico: le procedure devono essere verificate per marca/modello prima di essere impartite come istruzioni esecutive certificate.
+- Il sistema non identifica da solo modello, coppie, geometria lama, lubrificanti, candele o requisiti di sicurezza.
+- La voce NON è ancora implementata.
+- Nessun dato è inviato a un server dall'applicazione.
+- La disponibilità offline dipende dalla prima installazione online e dalla cache del dispositivo.
