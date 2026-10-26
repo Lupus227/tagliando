@@ -47,3 +47,9 @@ PUBBLICAZIONE
 - Esporta un backup prima di sostituire i file del repository.
 - Carica il CONTENUTO della cartella nella radice del repository GitHub Pages.
 - Prova https://lupus227.github.io/tagliando/?v=062 da Safari, poi dall’icona Home.
+
+NOVITÀ V0.6.3
+- Corretto il blocco di fine lavorazione in modalità banco: confermando l'ultimo passaggio si registra «Completata» e si avanza alla lavorazione seguente.
+- Confermare un passaggio già registrato permette sempre di annullare la conferma (senza avanzare).
+- Stessa struttura dati e stessa chiave localStorage della v0.6.2; backup consigliato prima di caricare il pacchetto.
+- Se l'ultimo passaggio non basta perché ne restano altri non confermati, continuare dal passaggio mancante.
