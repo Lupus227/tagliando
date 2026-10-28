@@ -1,10 +1,10 @@
-/* v0.8.0 - guida vocale a ciclo controllato; nessuna API esterna a pagamento. */
+/* v0.9.0 - dialogo contestuale a regole; nessuna API AI o servizi a pagamento. */
 (() => {
  'use strict';
  const $=id=>document.getElementById(id);
  const Engine=window.SpeechRecognition||window.webkitSpeechRecognition;
  const synth=('speechSynthesis' in window)?window.speechSynthesis:null;
- let active=false, listening=false, recognition=null, speaking=false;
+ let active=false, listening=false, recognition=null, speaking=false, paused=false;
  let turn=0, retries=0, lastResult=false, lastError='';
  let pendingRestart=null;
  const setStatus=t=>{ $('voiceStatus').textContent=t; };
@@ -14,7 +14,7 @@
  function abortRecognition(){const r=recognition;recognition=null;listening=false;if(r){r.onend=null;r.onerror=null;r.onresult=null;try{r.abort();}catch(_){}} refreshButtons();}
  function stopSpeech(){speaking=false;if(synth)try{synth.cancel();}catch(_){} }
  function stopAll(message='Dialogo interrotto. Puoi ripartire quando vuoi.'){
-   active=false;turn++;clearPending();abortRecognition();stopSpeech();setStatus(message);refreshButtons();
+   active=false;paused=false;turn++;clearPending();abortRecognition();stopSpeech();setStatus(message);refreshButtons();
  }
  function speechText(){
    const op=$('opTitle')?.textContent||'Tagliando';
@@ -32,13 +32,28 @@
    try{synth.speak(u);}catch(_){complete(false);}
  }
  const normalize=s=>s.toLocaleLowerCase('it-IT').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z ]/g,' ').replace(/\s+/g,' ').trim();
- function commandFor(t){const s=normalize(t);
-  if(/^(fatto|eseguito|passaggio eseguito|ho finito|finito|si fatto|ok fatto)$/.test(s))return 'done';
-  if(/^(ripeti|ripeti passaggio|leggi|leggi passaggio|puoi ripetere)$/.test(s))return 'repeat';
-  if(/^(indietro|torna indietro|precedente|passo precedente)$/.test(s))return 'back';
-  if(/^(segnala un problema|segnala problema|problema|anomalia|segnala anomalia)$/.test(s))return 'anomaly';
-  if(/^(ferma|stop|ferma dialogo|interrompi)$/.test(s))return 'stop';
-  return null;
+ function commandFor(t){
+   const s=normalize(t);
+   if(/\b(ferma dialogo|interrompi dialogo|stop dialogo|termina dialogo|fermati|stop)\b/.test(s))return 'stop';
+   if(/\b(segnala un problema|segnala problema|ho un problema|c e un problema|anomalia|segnala anomalia)\b/.test(s))return 'anomaly';
+   if(/\b(aspetta|attendi|un momento|un attimo|metti in pausa|pausa|ferma un attimo)\b/.test(s))return 'pause';
+   if(/\b(riprendiamo|riprendi|continuiamo|possiamo continuare|sono pronto|sono pronta|ricominciamo)\b/.test(s))return 'resume';
+   if(/\b(non ho capito|spiegami meglio|cosa devo fare|che devo fare|puoi spiegare|chiarisci|spiegazione)\b/.test(s))return 'explain';
+   if(/\b(ripeti|ripeti passaggio|leggilo di nuovo|puoi ripetere|rileggi)\b/.test(s))return 'repeat';
+   if(/\b(indietro|torna indietro|precedente|passo precedente)\b/.test(s))return 'back';
+   if(/^(fatto|ho fatto|eseguito|passaggio eseguito|ho finito|finito|si fatto|ok fatto|completato|ho completato|possiamo proseguire|andiamo avanti|passo successivo|procedi|prosegui|tutto fatto)$/.test(s))return 'done';
+   return null;
+ }
+ function explainStep(){
+   const title=$('stepTitle')?.textContent||'questo passaggio';
+   const instruction=$('stepText')?.textContent||'';
+   const caution=$('stepCaution')?.textContent||'';
+   // Mai generare nuove istruzioni: si leggono esclusivamente informazioni già visibili nella guida.
+   return `Siamo al passaggio: ${title}. ${instruction}${caution?' Attenzione: '+caution:''}. Se il testo non chiarisce il tuo dubbio, ferma il lavoro e chiedi a un tecnico.`;
+ }
+ function listenWhilePaused(automatic){
+   setStatus('In pausa. In ascolto per «Riprendiamo»; puoi anche premere «Ferma dialogo».');
+   if(automatic&&active)listen(true);
  }
  function describeNext(prefix=''){
    if(!active)return;
@@ -49,13 +64,40 @@
    const c=commandFor(transcript);retries=0;
    if(!c){
      setStatus('Frase riconosciuta ma non prevista: nessuna azione eseguita.');
-     if(automatic&&active)say('Comando non previsto. Puoi dire fatto, ripeti, indietro oppure segnala un problema.',()=>listen(true));
+     if(automatic&&active){
+       if(paused)listenWhilePaused(true);
+       else say('Non ho una risposta verificata per questa richiesta. Puoi dire spiegami meglio, fatto, ripeti, aspetta oppure segnala un problema.',()=>listen(true));
+     }
      return;
    }
    if(c==='stop'){stopAll();return;}
+   if(c==='pause'){
+     paused=true;
+     if(automatic&&active){
+       setStatus('Dialogo in pausa: puoi dire «Riprendiamo».');
+       say('Va bene, aspetto. Quando sei pronto, pronuncia riprendiamo.',()=>listenWhilePaused(true));
+     }else setStatus('In pausa. Per riprendere, premi «Avvia dialogo».');
+     return;
+   }
+   if(c==='resume'){
+     paused=false;
+     if(automatic&&active)describeNext('Riprendiamo dal passaggio corrente. ');
+     else setStatus('Pronto: premi «Avvia dialogo» per continuare.');
+     return;
+   }
+   if(paused){
+     setStatus('Dialogo in pausa. Pronuncia «Riprendiamo» per continuare.');
+     if(automatic&&active)listenWhilePaused(true);
+     return;
+   }
    if(c==='anomaly'){
      stopAll('Anomalia: dialogo fermato. Compila la segnalazione sullo schermo per registrarla.');
      $('anomalyStart').click();return;
+   }
+   if(c==='explain'){
+     if(automatic&&active)say(explainStep(),()=>listen(true));
+     else {setStatus('Spiegazione del passaggio corrente.');say(explainStep());}
+     return;
    }
    if(c==='repeat'){
      if(automatic&&active)describeNext('Ripeto. ');
@@ -70,14 +112,14 @@
    if(c==='done'){
      const beforeOp=$('opTitle').textContent;
      const beforeStep=$('stepTitle').textContent;
-     $('stepConfirm').click(); // Stesso gestore di v0.6.4, nessuna seconda logica di avanzamento.
+     $('stepConfirm').click();
      const afterOp=$('opTitle').textContent;
      const afterStep=$('stepTitle').textContent;
      if(automatic&&active){
        if(beforeOp===afterOp&&beforeStep===afterStep){
          stopAll('Non è stato rilevato un avanzamento: dialogo fermato per evitare conferme ripetute.');
        }else if(beforeOp===afterOp){describeNext('Passaggio registrato. ');}
-       else if(beforeOp!==afterOp){describeNext('Lavorazione completata. Passiamo alla successiva. ');}
+       else {describeNext('Lavorazione completata. Passiamo alla successiva. ');}
      }else setStatus('Conferma eseguita. Controlla la schermata.');
    }
  }
@@ -88,7 +130,7 @@
    try{
      const r=new Engine();recognition=r;
      r.lang='it-IT';r.interimResults=false;r.continuous=false;r.maxAlternatives=1;
-     r.onstart=()=>{if(cycle!==turn)return;listening=true;setStatus('Ascolto attivo: pronuncia un comando.');refreshButtons();};
+     r.onstart=()=>{if(cycle!==turn)return;listening=true;setStatus(paused?'In pausa: pronuncia «Riprendiamo».':'Ascolto attivo: pronuncia un comando.');refreshButtons();};
      r.onresult=event=>{
        if(cycle!==turn)return;
        lastResult=true;
@@ -106,7 +148,7 @@
        if(lastError==='not-allowed'||lastError==='service-not-allowed'||lastError==='audio-capture'||lastError==='network'){
          stopAll(`Ascolto non disponibile (${lastError}). Dialogo fermato; usa i pulsanti.`);return;
        }
-       if(retries++>=1){stopAll('Non è stata rilevata una risposta. Dialogo in pausa; premi «Avvia dialogo» per riprovare.');return;}
+       if(retries++>=2){stopAll('Non è stata rilevata una risposta. Il microfono è stato fermato; premi «Avvia dialogo» per riprendere.');return;}
        setStatus('Nessun comando rilevato. Riprovo una volta…');
        pendingRestart=setTimeout(()=>{pendingRestart=null;if(active&&cycle===turn)listen(true);},350);
      };
@@ -122,13 +164,13 @@
    $('voiceDialog').addEventListener('click',()=>{
      if(active)return;
      if(!Engine){setStatus('Il riconoscimento vocale non è disponibile su questo browser.');return;}
-     active=true;turn++;retries=0;refreshButtons();setHeard('');describeNext();
+     active=true;paused=false;turn++;retries=0;refreshButtons();setHeard('');describeNext();
    });
    $('voiceListen').addEventListener('click',()=>{if(active)stopAll('Dialogo continuo sospeso; ascolto manuale disponibile.');turn++;stopSpeech();listen(false);});
    $('voiceRead').addEventListener('click',()=>{stopAll('Lettura del passaggio.');say(speechText());});
    $('voiceStop').addEventListener('click',()=>stopAll());
    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&(active||listening||speaking))stopAll('App in background: audio e ascolto fermati per sicurezza.');});
    window.addEventListener('pagehide',()=>{if(active||listening||speaking)stopAll('Dialogo fermato.');});
-   refreshButtons();setStatus(Engine?'Pronto. Tocca «Avvia dialogo» per provare il ciclo.':'Ascolto non disponibile qui; la guida manuale continua a funzionare.');
+   refreshButtons();setStatus(Engine?'Pronto. Tocca «Avvia dialogo» per iniziare. Disponibili pausa e chiarimenti guidati.':'Ascolto non disponibile qui; la guida manuale continua a funzionare.');
  });
 })();

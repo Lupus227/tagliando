@@ -1,18 +1,15 @@
-ASSISTENTE DI OFFICINA — v0.8.0 (dialogo vocale sperimentale)
+ASSISTENTE DI OFFICINA — v0.9.0 (dialogo contestuale sperimentale)
 
 INSTALLAZIONE
-Esporta prima un rapporto della tua sessione dalla versione precedente.
-Estrai il pacchetto e sostituisci i file alla radice del repository GitHub Pages (non caricare la cartella come sottocartella).
-Apri https://lupus227.github.io/tagliando/?v=080 in Safari con Internet attivo.
+Esporta prima il rapporto della sessione, poi sostituisci i file alla radice del repository GitHub Pages. Apri https://lupus227.github.io/tagliando/?v=090 in Safari. Mantieni i file nella radice, senza sottocartella.
 
-TEST
-1. In luogo sicuro, a macchina spenta, premi «Avvia dialogo».
-2. Attendi la lettura del passaggio.
-3. Quando appare «Ascolto attivo», pronuncia «Fatto».
-4. Verifica se il passaggio avanza e quello successivo viene letto.
-5. Prova «Ripeti», «Indietro» e «Ferma dialogo».
-6. Se il riconoscimento non riparte automaticamente, l'app mostra un messaggio e puoi usare «Ascolta un comando».
+COMANDI
+Fatto / Ho finito / Completato: conferma e avanza.
+Ripeti / Non ho capito / Spiegami meglio / Cosa devo fare: ripetizione o spiegazione tratta dal passaggio visibile.
+Aspetta: pausa senza avanzamento; Riprendiamo: ripete il passaggio e riattiva il ciclo.
+Indietro: torna al passaggio precedente.
+Segnala un problema: apre il modulo manuale delle anomalie e interrompe il dialogo.
+Ferma dialogo / Stop: interrompe il dialogo.
 
-LIMITAZIONI
-Non c'è AI conversazionale né ascolto garantito in background. Su Safari iOS il riavvio automatico del microfono può essere bloccato. Non usare durante il funzionamento del motore o della lama.
-I dati del tagliando rimangono nel medesimo archivio locale delle versioni precedenti.
+LIMITI
+La pausa non garantisce un microfono sempre attivo: Safari può interrompere il riconoscimento per inattività, audio o rete. Dopo ripetuti silenzi il dialogo si interrompe esplicitamente. Il chiarimento non genera istruzioni tecniche nuove e non sostituisce il controllo del manuale del costruttore. Non usare con motore o lama in movimento. Nessuna diagnosi automatica o LLM. I dati locali conservano la stessa struttura delle versioni precedenti.
