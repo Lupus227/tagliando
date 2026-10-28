@@ -1,15 +1,17 @@
-ASSISTENTE DI OFFICINA — v0.9.0 (dialogo contestuale sperimentale)
+ASSISTENTE DI OFFICINA — v0.10.0 (domande contestuali controllate)
+
+COSA CAMBIA
+Rispetto alla v0.9, aggiunge comandi vocali informativi: «Quali precauzioni?», «Qual è lo scopo?», «Quale modalità?», «A che punto siamo?», «Aiuto». Le risposte derivano esclusivamente dal testo della procedura e dallo stato attualmente visibili, senza diagnosi, inferenze o nuove istruzioni tecniche. Questi comandi non modificano lo stato del tagliando. Il comando «Fatto» continua ad avanzare.
 
 INSTALLAZIONE
-Esporta prima il rapporto della sessione, poi sostituisci i file alla radice del repository GitHub Pages. Apri https://lupus227.github.io/tagliando/?v=090 in Safari. Mantieni i file nella radice, senza sottocartella.
+Esporta il rapporto attuale. Sostituisci i file alla radice del repository GitHub Pages senza aggiungere sottocartelle. Apri https://lupus227.github.io/tagliando/?v=010 in Safari. La versione Home potrebbe aggiornarsi più tardi; non eliminare app o dati prima di esportare.
 
-COMANDI
-Fatto / Ho finito / Completato: conferma e avanza.
-Ripeti / Non ho capito / Spiegami meglio / Cosa devo fare: ripetizione o spiegazione tratta dal passaggio visibile.
-Aspetta: pausa senza avanzamento; Riprendiamo: ripete il passaggio e riattiva il ciclo.
-Indietro: torna al passaggio precedente.
-Segnala un problema: apre il modulo manuale delle anomalie e interrompe il dialogo.
-Ferma dialogo / Stop: interrompe il dialogo.
+TEST SU IPHONE
+1. Avvia dialogo e pronuncia «Quali precauzioni?»; deve leggere solo la nota ATTENZIONE corrente.
+2. «Qual è lo scopo?»; deve leggere l'obiettivo dell'operazione.
+3. «A che punto siamo?»; deve dire operazione, passaggio e conferme registrate.
+4. «Fatto»; conferma e avanza, leggendo il nuovo passaggio.
+5. Una frase non prevista non deve avanzare né registrare un completamento.
 
 LIMITI
-La pausa non garantisce un microfono sempre attivo: Safari può interrompere il riconoscimento per inattività, audio o rete. Dopo ripetuti silenzi il dialogo si interrompe esplicitamente. Il chiarimento non genera istruzioni tecniche nuove e non sostituisce il controllo del manuale del costruttore. Non usare con motore o lama in movimento. Nessuna diagnosi automatica o LLM. I dati locali conservano la stessa struttura delle versioni precedenti.
+Prototipo a regole: non interpreta liberamente domande, non fornisce diagnosi e non valida l'idoneità della macchina. Le specifiche di serraggio, materiali e procedure di sicurezza vanno verificate sul manuale del modello. Provalo con macchina spenta. Un test su iPhone è necessario prima dell'uso operativo.

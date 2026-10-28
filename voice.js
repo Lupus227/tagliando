@@ -1,4 +1,4 @@
-/* v0.9.0 - dialogo contestuale a regole; nessuna API AI o servizi a pagamento. */
+/* v0.10.0 - risposte contestuali controllate a regole; nessuna API AI o servizi a pagamento. */
 (() => {
  'use strict';
  const $=id=>document.getElementById(id);
@@ -38,6 +38,11 @@
    if(/\b(segnala un problema|segnala problema|ho un problema|c e un problema|anomalia|segnala anomalia)\b/.test(s))return 'anomaly';
    if(/\b(aspetta|attendi|un momento|un attimo|metti in pausa|pausa|ferma un attimo)\b/.test(s))return 'pause';
    if(/\b(riprendiamo|riprendi|continuiamo|possiamo continuare|sono pronto|sono pronta|ricominciamo)\b/.test(s))return 'resume';
+   if(/\b(quali precauzioni|che precauzioni|quali rischi|cosa devo evitare|attenzione a cosa|avvertenze|sicurezza del passaggio)\b/.test(s))return 'caution';
+   if(/\b(qual e lo scopo|a cosa serve|perche questa operazione|perche lo facciamo|qual e l obiettivo|qual e il fine)\b/.test(s))return 'purpose';
+   if(/\b(che modalita|quale modalita|modalita selezionata|che metodo sto usando|quale metodo ho scelto)\b/.test(s))return 'method';
+   if(/\b(a che punto siamo|quanto manca|quanti passaggi mancano|quanti passaggi ho fatto|stato di avanzamento)\b/.test(s))return 'progress';
+   if(/^(aiuto|cosa posso chiederti|quali comandi conosci|che comandi posso dire)$/.test(s))return 'help';
    if(/\b(non ho capito|spiegami meglio|cosa devo fare|che devo fare|puoi spiegare|chiarisci|spiegazione)\b/.test(s))return 'explain';
    if(/\b(ripeti|ripeti passaggio|leggilo di nuovo|puoi ripetere|rileggi)\b/.test(s))return 'repeat';
    if(/\b(indietro|torna indietro|precedente|passo precedente)\b/.test(s))return 'back';
@@ -50,6 +55,29 @@
    const caution=$('stepCaution')?.textContent||'';
    // Mai generare nuove istruzioni: si leggono esclusivamente informazioni già visibili nella guida.
    return `Siamo al passaggio: ${title}. ${instruction}${caution?' Attenzione: '+caution:''}. Se il testo non chiarisce il tuo dubbio, ferma il lavoro e chiedi a un tecnico.`;
+ }
+ function contextualAnswer(command){
+   // Solo testo della guida attualmente visualizzata. Nessun valore tecnico dedotto o inventato.
+   if(command==='caution'){
+     const caution=($('stepCaution')?.textContent||'').replace(/^ATTENZIONE\s*[·:.-]?\s*/i,'').trim();
+     return caution?`Precauzioni per questo passaggio: ${caution}`:'Non ho precauzioni specifiche verificate per questo passaggio. Consulta il manuale prima di procedere.';
+   }
+   if(command==='purpose'){
+     const goal=$('opGoal')?.textContent?.trim();
+     return goal?`Lo scopo della lavorazione è: ${goal}`:'Lo scopo non è disponibile nella procedura attuale.';
+   }
+   if(command==='method'){
+     const select=$('method');const label=select?.selectedOptions?.[0]?.textContent?.trim();
+     return label?`La modalità selezionata è: ${label}.`:'Non è stata individuata una modalità selezionata.';
+   }
+   if(command==='progress'){
+     const step=$('stepCount')?.textContent?.trim()||'';
+     const op=$('counter')?.textContent?.trim()||'';
+     const confirmed=$('stepProgress')?.textContent?.trim()||'';
+     return `${op}. ${step}. ${confirmed}`.trim()||'Non riesco a leggere lo stato di avanzamento.';
+   }
+   if(command==='help')return 'Puoi dire fatto, ripeti, indietro, aspetta, riprendiamo, spiegami meglio, quali precauzioni, qual è lo scopo, quale modalità, a che punto siamo, segnala un problema o ferma dialogo.';
+   return 'Non ho una risposta verificata.';
  }
  function listenWhilePaused(automatic){
    setStatus('In pausa. In ascolto per «Riprendiamo»; puoi anche premere «Ferma dialogo».');
@@ -66,7 +94,7 @@
      setStatus('Frase riconosciuta ma non prevista: nessuna azione eseguita.');
      if(automatic&&active){
        if(paused)listenWhilePaused(true);
-       else say('Non ho una risposta verificata per questa richiesta. Puoi dire spiegami meglio, fatto, ripeti, aspetta oppure segnala un problema.',()=>listen(true));
+       else say('Non ho una risposta verificata per questa richiesta. Puoi dire aiuto per conoscere i comandi, oppure chiedere quali precauzioni o a che punto siamo.',()=>listen(true));
      }
      return;
    }
@@ -93,6 +121,12 @@
    if(c==='anomaly'){
      stopAll('Anomalia: dialogo fermato. Compila la segnalazione sullo schermo per registrarla.');
      $('anomalyStart').click();return;
+   }
+   if(['caution','purpose','method','progress','help'].includes(c)){
+     const response=contextualAnswer(c);
+     if(automatic&&active)say(response,()=>listen(true));
+     else {setStatus('Informazione letta dalla procedura corrente.');say(response);}
+     return;
    }
    if(c==='explain'){
      if(automatic&&active)say(explainStep(),()=>listen(true));
