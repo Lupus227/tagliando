@@ -1,63 +1,11 @@
-ASSISTENTE DI OFFICINA — TAGLIANDO GUIDATO v0.5.0
+ASSISTENTE DI OFFICINA — PWA v0.7.0 (TEST VOCE)
 
-CONTENUTO
-index.html, app.js, style.css, sw.js, manifest.webmanifest, cartella icons/.
+Basata sulla v0.6.4 già collaudata. La v0.7.0 aggiunge un modulo vocale opzionale e isolato, senza modificare le procedure e senza cambiare le chiavi di salvataggio.
 
-PUBBLICAZIONE GITHUB PAGES
-1) Prima di aggiornare esporta il rapporto dalla v0.4.2, per avere una copia di sicurezza.
-2) Estrai questo ZIP. Carica tutti i file e la cartella icons/ nella RADICE del repository lupus227/tagliando (senza creare una cartella v05). Sostituisci i file con nomi già esistenti.
-3) Attendi la conclusione della distribuzione GitHub Pages e apri https://lupus227.github.io/tagliando/?v=050 da Safari.
-4) Verifica la scritta v0.5.0 e prova le operazioni 1, 3 e 8; successivamente apri dall'icona Home.
-5) In presenza di cache vecchia, apri online in Safari e poi chiudi e riapri l'app Home. Non eliminare dati Safari senza esportare il rapporto.
+INSTALLAZIONE: eseguire una copia del rapporto, estrarre questo ZIP e sostituire i file nella radice del repository GitHub Pages. Verificare v0.7.0 in Safari, non dalla sola anteprima.
 
-SALVATAGGIO E COMPATIBILITÀ
-- Usa ancora localStorage nello stesso origin, ma una chiave separata: tagliando-pwa-v05-session.
-- Al primo avvio importa le registrazioni precedenti dalla chiave tagliando-pwa-v04-session, lasciando INALTERATA quella precedente.
-- Le vecchie conferme dei sei passaggi sottoscocca non possono certificare i nuovi passaggi riscritti: richiedono una nuova conferma.
-- Lo storico degli orari è mantenuto nelle registrazioni importate.
-- Esporta un backup prima di aggiornare o azzerare, soprattutto su iPhone.
+TEST: 1) Aprire in Safari su iPhone con Internet attivo. 2) Premere «Leggi passaggio». 3) Premere «Ascolta un comando», concedere il microfono e dire «Ripeti», «Indietro», «Fatto» oppure «Segnala un problema». 4) Verificare che «Fatto» registri ed avanzi e che i dati precedenti restino. 5) Riprovare dall'icona Home per verificare la compatibilità della modalità standalone.
 
-LIMITI
-- Prototipo tecnico: le procedure devono essere verificate per marca/modello prima di essere impartite come istruzioni esecutive certificate.
-- Il sistema non identifica da solo modello, coppie, geometria lama, lubrificanti, candele o requisiti di sicurezza.
-- La voce NON è ancora implementata.
-- Nessun dato è inviato a un server dall'applicazione.
-- La disponibilità offline dipende dalla prima installazione online e dalla cache del dispositivo.
+LIMITI IMPORTANTI: Safari iOS offre supporto parziale al riconoscimento Web Speech API; in modalità app installata può non essere disponibile. Il riconoscimento può utilizzare servizi di rete. Il prototipo non consente una conversazione continua a mani libere e NON esegue diagnosi. «Segnala un problema» apre il campo di input ma non registra automaticamente l'anomalia. I messaggi vocali non sostituiscono i controlli di sicurezza.
 
-
-NOVITÀ V0.6.0
-- Modalità banco con testo ingrandito, una istruzione alla volta e pulsanti grandi.
-- Conferma esplicita per segnare un passo come effettivamente eseguito.
-- Nessun riconoscimento vocale attivo: non è un'app hands-free.
-- Conserva la stessa chiave locale delle sessioni v0.5. Prima di aggiornare, esporta un rapporto.
-- La modalità banco è solo una vista: per saltare o segnalare anomalie torna alla vista completa.
-- Se la PWA Home di iPhone mostra ancora la versione vecchia, apri prima il sito in Safari online.
-
-Aggiornamento v0.6.1: eliminate le finestre di conferma ridondanti dopo il flag del passaggio e dopo il completamento dell’operazione. Rimangono obbligatorie le conferme dei singoli passaggi, resta il controllo che tutti siano confermati, restano gli avvisi in caso di passaggi non completati. Nessuna modifica ai dati salvati.
-
-NOVITÀ V0.6.2
-- Rimossa la doppia conferma (flag + pulsante).
-- Un tocco su «Passaggio eseguito» registra il passo e avanza.
-- Tornando al passo già confermato, lo stesso pulsante diventa «Annulla conferma».
-- Conservata la chiave localStorage tagliando-pwa-v05-session: le sessioni preesistenti rimangono recuperabili.
-- Aggiornato il nome della cache offline, per evitare il riuso della vecchia versione.
-- Lavorazioni saltate o sospese continuano a essere gestite separatamente.
-
-PUBBLICAZIONE
-- Esporta un backup prima di sostituire i file del repository.
-- Carica il CONTENUTO della cartella nella radice del repository GitHub Pages.
-- Prova https://lupus227.github.io/tagliando/?v=062 da Safari, poi dall’icona Home.
-
-NOVITÀ V0.6.3
-- Corretto il blocco di fine lavorazione in modalità banco: confermando l'ultimo passaggio si registra «Completata» e si avanza alla lavorazione seguente.
-- Confermare un passaggio già registrato permette sempre di annullare la conferma (senza avanzare).
-- Stessa struttura dati e stessa chiave localStorage della v0.6.2; backup consigliato prima di caricare il pacchetto.
-- Se l'ultimo passaggio non basta perché ne restano altri non confermati, continuare dal passaggio mancante.
-
-AGGIORNAMENTO V0.6.4
-- Il pulsante «Passaggio eseguito» registra e avanza SEMPRE, anche se un passaggio era già confermato.
-- «Annulla conferma» è un pulsante distinto, mostrato solo dove necessario.
-- Stessa logica tra vista banco e vista completa; nessuna simulazione del click su pulsanti nascosti.
-- Se alcuni passi precedenti sono rimasti da confermare, l'app torna al primo non confermato prima di concludere la lavorazione.
-- Dati e chiave localStorage invariati rispetto alle versioni precedenti.
-- Pubblicare i file dello ZIP nella radice del repository GitHub, conservando le cartelle.
+Se la voce non funziona, la navigazione manuale resta utilizzabile. Non eliminare la PWA esistente o i suoi dati senza esportare il rapporto.

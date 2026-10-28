@@ -23,3 +23,6 @@ body.bench-mode .bench-controls{display:grid}
 
 #benchUndo{width:100%;margin:8px 0 12px;background:#f4f6fa;min-height:48px}
 #stepUndo{background:#f4f6fa}
+
+/* Voce sperimentale: funzionalità accessoria, senza interferenze con il tagliando */
+.voice-actions{display:grid;gap:9px}.voice-actions button{min-height:49px}.voice-status{border-left:3px solid #155e72;padding:8px 10px;background:#eaf4f6;font-weight:600;line-height:1.4}.voice-panel strong{font-weight:700}
