@@ -1,11 +1,18 @@
-ASSISTENTE DI OFFICINA — PWA v0.7.0 (TEST VOCE)
+ASSISTENTE DI OFFICINA — v0.8.0 (dialogo vocale sperimentale)
 
-Basata sulla v0.6.4 già collaudata. La v0.7.0 aggiunge un modulo vocale opzionale e isolato, senza modificare le procedure e senza cambiare le chiavi di salvataggio.
+INSTALLAZIONE
+Esporta prima un rapporto della tua sessione dalla versione precedente.
+Estrai il pacchetto e sostituisci i file alla radice del repository GitHub Pages (non caricare la cartella come sottocartella).
+Apri https://lupus227.github.io/tagliando/?v=080 in Safari con Internet attivo.
 
-INSTALLAZIONE: eseguire una copia del rapporto, estrarre questo ZIP e sostituire i file nella radice del repository GitHub Pages. Verificare v0.7.0 in Safari, non dalla sola anteprima.
+TEST
+1. In luogo sicuro, a macchina spenta, premi «Avvia dialogo».
+2. Attendi la lettura del passaggio.
+3. Quando appare «Ascolto attivo», pronuncia «Fatto».
+4. Verifica se il passaggio avanza e quello successivo viene letto.
+5. Prova «Ripeti», «Indietro» e «Ferma dialogo».
+6. Se il riconoscimento non riparte automaticamente, l'app mostra un messaggio e puoi usare «Ascolta un comando».
 
-TEST: 1) Aprire in Safari su iPhone con Internet attivo. 2) Premere «Leggi passaggio». 3) Premere «Ascolta un comando», concedere il microfono e dire «Ripeti», «Indietro», «Fatto» oppure «Segnala un problema». 4) Verificare che «Fatto» registri ed avanzi e che i dati precedenti restino. 5) Riprovare dall'icona Home per verificare la compatibilità della modalità standalone.
-
-LIMITI IMPORTANTI: Safari iOS offre supporto parziale al riconoscimento Web Speech API; in modalità app installata può non essere disponibile. Il riconoscimento può utilizzare servizi di rete. Il prototipo non consente una conversazione continua a mani libere e NON esegue diagnosi. «Segnala un problema» apre il campo di input ma non registra automaticamente l'anomalia. I messaggi vocali non sostituiscono i controlli di sicurezza.
-
-Se la voce non funziona, la navigazione manuale resta utilizzabile. Non eliminare la PWA esistente o i suoi dati senza esportare il rapporto.
+LIMITAZIONI
+Non c'è AI conversazionale né ascolto garantito in background. Su Safari iOS il riavvio automatico del microfono può essere bloccato. Non usare durante il funzionamento del motore o della lama.
+I dati del tagliando rimangono nel medesimo archivio locale delle versioni precedenti.

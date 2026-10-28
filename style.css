@@ -26,3 +26,14 @@ body.bench-mode .bench-controls{display:grid}
 
 /* Voce sperimentale: funzionalità accessoria, senza interferenze con il tagliando */
 .voice-actions{display:grid;gap:9px}.voice-actions button{min-height:49px}.voice-status{border-left:3px solid #155e72;padding:8px 10px;background:#eaf4f6;font-weight:600;line-height:1.4}.voice-panel strong{font-weight:700}
+
+/* v0.8: pannello voce sempre visibile anche in modalità banco */
+.voice-panel{border:2px solid #b6d9e0;background:#f4fbfc}
+.voice-actions{display:flex;flex-wrap:wrap;gap:8px}
+.voice-actions button{flex:1 1 155px}
+.voice-status{font-weight:700;border-radius:10px;padding:12px;background:#e5f0f5}
+body.bench-mode #voicePanel{display:block;position:sticky;bottom:0;z-index:5;padding:12px;margin:12px 0;background:#f4fbfc;max-height:42vh;overflow:auto;box-shadow:0 -5px 18px #183c4a24}
+body.bench-mode #voicePanel h2{font-size:16px;margin-bottom:5px}
+body.bench-mode #voicePanel .muted{display:none}
+body.bench-mode #voicePanel .voice-actions button{min-height:52px}
+@media(max-width:600px){.voice-actions button{flex:1 1 44%}}
