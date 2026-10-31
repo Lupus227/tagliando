@@ -1,4 +1,4 @@
-/* v0.11.0 - risposte contestuali controllate a regole; nessuna API AI o servizi a pagamento. */
+/* v0.12.0 - dialogo contestuale e controllo di frasi ambigue, senza API AI. */
 (() => {
  'use strict';
  const $=id=>document.getElementById(id);
@@ -32,6 +32,17 @@
    try{synth.speak(u);}catch(_){complete(false);}
  }
  const normalize=s=>s.toLocaleLowerCase('it-IT').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z ]/g,' ').replace(/\s+/g,' ').trim();
+ // Le frasi composte non devono mai trasformarsi in un completamento accidentale.
+ // Si richiede esplicitamente all'utente di segnalare l'anomalia o di ripetere il comando.
+ function ambiguousIntent(t){
+   const s=normalize(t);
+   const completion=/\b(fatto|finito|completato|eseguito|procedi|prosegui|avanti)\b/.test(s);
+   const difficulty=/\b(ma|pero|problema|anomalia|rotto|rotta|crepa|crepata|guasto|non riesco|non funziona|bloccato|bloccata|dubbio)\b/.test(s);
+   if(/\b(non ho finito|non e finito|non e fatto|non ho completato|non e completato|non ancora finito)\b/.test(s))return 'not-done';
+   if(completion&&difficulty)return 'mixed';
+   return null;
+ }
+
  function commandFor(t){
    const s=normalize(t);
    if(/\b(ferma dialogo|interrompi dialogo|stop dialogo|termina dialogo|fermati|stop)\b/.test(s))return 'stop';
@@ -89,7 +100,25 @@
    say(speechText(),()=>listen(true));
  }
  function handle(transcript,automatic){
-   const c=commandFor(transcript);retries=0;
+   const uncertain=ambiguousIntent(transcript);
+   retries=0;
+   if(uncertain){
+     const current=($('counter')?.textContent||'').match(/Operazione\s+(\d+)/i);
+     const risk=window.TagliandoContextHelp?.resolve(transcript,{operation:current?Number(current[1]):0,step:$('stepTitle')?.textContent||'',method:$('method')?.value||''});
+     if(risk?.kind==='stop'){
+       stopAll('Possibile anomalia critica: interrompi il lavoro. Il passaggio non è stato confermato.');
+       $('anomalyStart').click();
+       say(risk.message);
+       return;
+     }
+     const msg=uncertain==='not-done'
+       ?'Ricevuto, il passaggio resta da completare. Dimmi fatto soltanto quando hai concluso; puoi anche dire aspetta o segnala un problema.'
+       :'La tua frase contiene sia un possibile completamento sia una difficoltà. Non registro il passaggio come eseguito. Se hai rilevato un problema, dì segnala un problema; altrimenti ripeti fatto solo dopo aver completato il lavoro.';
+     setStatus('Conferma non registrata: frase ambigua o lavoro non completato.');
+     if(automatic&&active)say(msg,()=>listen(true));else say(msg);
+     return;
+   }
+   const c=commandFor(transcript);
    if(!c){
      const current=($('counter')?.textContent||'').match(/Operazione\s+(\d+)/i);
      const contextual=window.TagliandoContextHelp?.resolve(transcript,{operation:current?Number(current[1]):0,step:$('stepTitle')?.textContent||'',method:$('method')?.value||''});
@@ -106,7 +135,7 @@
      setStatus('Frase riconosciuta ma non prevista: nessuna azione eseguita.');
      if(automatic&&active){
        if(paused)listenWhilePaused(true);
-       else say('Non ho una risposta verificata per questa richiesta. Puoi dire aiuto per conoscere i comandi, oppure chiedere quali precauzioni o a che punto siamo.',()=>listen(true));
+       else say('Non ho una risposta verificata per questa richiesta. Il passaggio non è stato modificato. Puoi dire ripeti, quali precauzioni oppure segnala un problema per interrompere e annotare la difficoltà.',()=>listen(true));
      }
      return;
    }
