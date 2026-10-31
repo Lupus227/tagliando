@@ -1,4 +1,4 @@
-/* v0.10.0 - risposte contestuali controllate a regole; nessuna API AI o servizi a pagamento. */
+/* v0.11.0 - risposte contestuali controllate a regole; nessuna API AI o servizi a pagamento. */
 (() => {
  'use strict';
  const $=id=>document.getElementById(id);
@@ -91,6 +91,18 @@
  function handle(transcript,automatic){
    const c=commandFor(transcript);retries=0;
    if(!c){
+     const current=($('counter')?.textContent||'').match(/Operazione\s+(\d+)/i);
+     const contextual=window.TagliandoContextHelp?.resolve(transcript,{operation:current?Number(current[1]):0,step:$('stepTitle')?.textContent||'',method:$('method')?.value||''});
+     if(contextual){
+       setStatus(contextual.kind==='stop'?'Possibile condizione critica: dialogo interrotto.':contextual.kind==='unknown'?'Richiesta fuori dalla base verificata.':'Chiarimento contestuale disponibile.');
+       if(contextual.kind==='stop'){
+         stopAll('Possibile anomalia critica: interrompi il lavoro.');
+         $('anomalyStart').click();
+         say(contextual.message);
+       }else if(automatic&&active){say(contextual.message,()=>listen(true));}
+       else say(contextual.message);
+       return;
+     }
      setStatus('Frase riconosciuta ma non prevista: nessuna azione eseguita.');
      if(automatic&&active){
        if(paused)listenWhilePaused(true);

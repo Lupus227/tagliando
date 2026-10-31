@@ -1,17 +1,10 @@
-ASSISTENTE DI OFFICINA — v0.10.0 (domande contestuali controllate)
+Assistente di officina v0.11.0 — SUPPORTO TECNICO CONTESTUALE (sperimentale)
 
-COSA CAMBIA
-Rispetto alla v0.9, aggiunge comandi vocali informativi: «Quali precauzioni?», «Qual è lo scopo?», «Quale modalità?», «A che punto siamo?», «Aiuto». Le risposte derivano esclusivamente dal testo della procedura e dallo stato attualmente visibili, senza diagnosi, inferenze o nuove istruzioni tecniche. Questi comandi non modificano lo stato del tagliando. Il comando «Fatto» continua ad avanzare.
+Carica il contenuto di questa cartella nella radice del repository GitHub Pages.
+Esporta un rapporto prima di aggiornare. Non cancellare la PWA installata o i dati di Safari.
 
-INSTALLAZIONE
-Esporta il rapporto attuale. Sostituisci i file alla radice del repository GitHub Pages senza aggiungere sottocartelle. Apri https://lupus227.github.io/tagliando/?v=010 in Safari. La versione Home potrebbe aggiornarsi più tardi; non eliminare app o dati prima di esportare.
+Novità: support.js gestisce un piccolo insieme di chiarimenti predefiniti legati alla lavorazione corrente. Le anomalie critiche riconosciute interrompono il dialogo e aprono il campo di segnalazione (non salvato automaticamente).
+Il motore vocale della v0.10 rimane invariato per comandi, pausa e avanzamento.
+Non è una diagnosi, non è un modello AI generativo. Le procedure richiedono revisione tecnica prima dell’uso reale.
 
-TEST SU IPHONE
-1. Avvia dialogo e pronuncia «Quali precauzioni?»; deve leggere solo la nota ATTENZIONE corrente.
-2. «Qual è lo scopo?»; deve leggere l'obiettivo dell'operazione.
-3. «A che punto siamo?»; deve dire operazione, passaggio e conferme registrate.
-4. «Fatto»; conferma e avanza, leggendo il nuovo passaggio.
-5. Una frase non prevista non deve avanzare né registrare un completamento.
-
-LIMITI
-Prototipo a regole: non interpreta liberamente domande, non fornisce diagnosi e non valida l'idoneità della macchina. Le specifiche di serraggio, materiali e procedure di sicurezza vanno verificate sul manuale del modello. Provalo con macchina spenta. Un test su iPhone è necessario prima dell'uso operativo.
+Testare su iPhone: chiarimento coperchio filtro, lama crepata, quantità olio, frase non riconosciuta, fatto, pausa, salvataggio.
