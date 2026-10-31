@@ -1,4 +1,4 @@
-/* v0.12.0 - dialogo contestuale e controllo di frasi ambigue, senza API AI. */
+/* v0.12.1 - segnalazioni completamente vocali; nessuna diagnosi AI. */
 (() => {
  'use strict';
  const $=id=>document.getElementById(id);
@@ -7,14 +7,16 @@
  let active=false, listening=false, recognition=null, speaking=false, paused=false;
  let turn=0, retries=0, lastResult=false, lastError='';
  let pendingRestart=null;
+ let anomalyFlow=null; // {stage,description,critical,warning,operation}
  const setStatus=t=>{ $('voiceStatus').textContent=t; };
  const setHeard=t=>{ $('voiceHeard').textContent=t; };
+ const setDraft=t=>{ const el=$('voiceAnomalyDraft');if(!el)return;el.textContent=t||'';el.hidden=!t; };
  function refreshButtons(){ $('voiceDialog').textContent=active?'Dialogo attivo':'🎙 Avvia dialogo';$('voiceDialog').disabled=active; $('voiceListen').disabled=listening; }
  function clearPending(){ if(pendingRestart!==null){clearTimeout(pendingRestart);pendingRestart=null;} }
  function abortRecognition(){const r=recognition;recognition=null;listening=false;if(r){r.onend=null;r.onerror=null;r.onresult=null;try{r.abort();}catch(_){}} refreshButtons();}
  function stopSpeech(){speaking=false;if(synth)try{synth.cancel();}catch(_){} }
  function stopAll(message='Dialogo interrotto. Puoi ripartire quando vuoi.'){
-   active=false;paused=false;turn++;clearPending();abortRecognition();stopSpeech();setStatus(message);refreshButtons();
+   active=false;paused=false;anomalyFlow=null;setDraft('');turn++;clearPending();abortRecognition();stopSpeech();setStatus(message);refreshButtons();
  }
  function speechText(){
    const op=$('opTitle')?.textContent||'Tagliando';
@@ -87,8 +89,126 @@
      const confirmed=$('stepProgress')?.textContent?.trim()||'';
      return `${op}. ${step}. ${confirmed}`.trim()||'Non riesco a leggere lo stato di avanzamento.';
    }
-   if(command==='help')return 'Puoi dire fatto, ripeti, indietro, aspetta, riprendiamo, spiegami meglio, quali precauzioni, qual è lo scopo, quale modalità, a che punto siamo, segnala un problema o ferma dialogo.';
+   if(command==='help')return 'Puoi dire fatto, ripeti, indietro, aspetta, riprendiamo, spiegami meglio, quali precauzioni, qual è lo scopo, quale modalità, a che punto siamo, segnala un problema o ferma dialogo. Se segnali un problema, puoi descriverlo, confermarlo e registrarlo interamente a voce.';
    return 'Non ho una risposta verificata.';
+ }
+ // Si usa sempre il ciclo parlato anche quando l'utente ha iniziato da "Ascolta un comando".
+ function keepVoiceOpen(){
+   if(!active){active=true;paused=false;turn++;retries=0;refreshButtons();}
+ }
+ function cleanReport(text){
+   let s=String(text||'').trim();
+   s=s.replace(/^(?:(?:ho\s+)?(?:finito|fatto|completato)|passaggio\s+eseguito)\s*[,!.;:]?\s*(?:ma|per[oò])\s+/i,'');
+   s=s.replace(/^(?:segnala(?:mi)?\s+(?:un\s+)?(?:problema|anomalia)|ho\s+(?:un\s+)?problema|c[’']?è\s+(?:un\s+)?problema)\s*[,.:;-]?\s*/i,'');
+   return s.trim().replace(/[.!?]+$/,'').trim();
+ }
+ function meaningfulReport(text){
+   const s=normalize(text);
+   if(s.length<7)return false;
+   if(/^(problema|un problema|anomalia|ho un problema|c e un problema|segnala un problema|un anomalia|una anomalia|ma ho un problema)$/.test(s))return false;
+   return true;
+ }
+ function currentOperation(){
+   const text=$('counter')?.textContent||'';
+   const match=text.match(/Operazione\s+(\d+)/i);
+   return match?Number(match[1]):0;
+ }
+ function riskFor(description){
+   return window.TagliandoContextHelp?.resolve(description,{
+     operation:currentOperation(),step:$('stepTitle')?.textContent||'',method:$('method')?.value||''
+   });
+ }
+ function anomalyAsk(text){
+   keepVoiceOpen();
+   setStatus('Segnalazione vocale in corso: ascolto e conferma senza toccare lo schermo.');
+   say(text,()=>{if(active)listen(true);});
+ }
+ function startAnomalyFlow(transcript,{critical=false,warning=''}={}){
+   const op=currentOperation();
+   let description=cleanReport(transcript);
+   if(!meaningfulReport(description))description='';
+   const danger=description?riskFor(description):null;
+   const isCritical=Boolean(critical||danger?.kind==='stop');
+   const advisory=isCritical?(warning||danger?.message||'Interrompi il lavoro.'):'';
+   anomalyFlow={stage:description?'confirm':'describe',description,critical:isCritical,warning:advisory,operation:op};
+   setDraft(description?`Segnalazione da confermare: ${description}`:'Segnalazione vocale: in attesa della descrizione.');
+   if(description){
+     anomalyAsk(`${advisory?advisory+' ':''}Ho rilevato questa anomalia: ${description}. Vuoi registrarla e sospendere la lavorazione? Dì registra, modifica oppure annulla segnalazione.`);
+   }else{
+     anomalyAsk(`${advisory?advisory+' ':''}Descrivi l'anomalia che hai riscontrato. Ti ascolto.`);
+   }
+ }
+ function cancelAnomalyFlow(){
+   const critical=Boolean(anomalyFlow?.critical);
+   anomalyFlow=null;setDraft('');
+   if(critical){
+     setStatus('Segnalazione annullata. Possibile pericolo: lavorazione non confermata.');
+     say('Segnalazione non registrata. Per sicurezza, non proseguire con questa lavorazione prima di una verifica.',()=>stopAll('Dialogo interrotto per precauzione. La lavorazione non è stata confermata.'));
+   }else{
+     setStatus('Segnalazione annullata. Nessuna operazione modificata.');
+     say('Segnalazione annullata. Riprendiamo dal passaggio corrente.',()=>describeNext());
+   }
+ }
+ function finishVoiceAnomaly(){
+   const flow=anomalyFlow;
+   if(!flow)return;
+   const api=window.TagliandoApp?.recordVoiceAnomaly;
+   if(typeof api!=='function'){
+     say('Non posso registrare la segnalazione in questo momento. Il lavoro rimane sospeso. Usa il registro manuale.',()=>stopAll('Registrazione non disponibile. Nessuna conferma eseguita.'));
+     return;
+   }
+   if(flow.operation!==currentOperation()){
+     say('Lavorazione cambiata durante la segnalazione. Nessuna anomalia registrata.',()=>stopAll('Segnalazione non registrata: operazione cambiata.'));
+     return;
+   }
+   const result=api(flow.description);
+   if(!result?.ok){
+     anomalyFlow.stage='describe';anomalyFlow.description='';setDraft('Segnalazione non salvata: ripeti la descrizione.');
+     anomalyAsk('La descrizione non è sufficiente. Descrivi nuovamente il problema.');
+     return;
+   }
+   anomalyFlow=null;setDraft('');
+   setStatus(`Anomalia registrata per l'operazione ${result.operation}. Lavorazione sospesa; dialogo fermato.`);
+   say(`Anomalia registrata. La lavorazione ${result.operation} è sospesa e il passaggio non viene confermato. Il dialogo è terminato.`,()=>stopAll(`Segnalazione salvata · operazione ${result.operation} sospesa.`));
+ }
+ function handleAnomalyResponse(transcript){
+   if(!anomalyFlow)return;
+   const s=normalize(transcript);
+   // Le parole di conferma sono valide esclusivamente nello stato di conferma,
+   // mai come comando «Fatto» durante la normale procedura.
+   if(/^(ferma dialogo|interrompi dialogo|stop dialogo|fermati|stop)$/.test(s)){
+     stopAll('Dialogo interrotto. Segnalazione non registrata.');return;
+   }
+   if(/^(annulla|annulla segnalazione|non registrare|lascia perdere|no annulla)$/.test(s)){
+     cancelAnomalyFlow();return;
+   }
+   if(anomalyFlow.stage==='describe'){
+     if(/^(ripeti|non ho capito|cosa devo dire)$/.test(s)){
+       anomalyAsk('Descrivi liberamente il problema riscontrato, ad esempio: la lama è crepata.');return;
+     }
+     const desc=cleanReport(transcript);
+     if(!meaningfulReport(desc)){
+       anomalyAsk('Non ho capito la descrizione. Dimmi quale componente presenta il problema e che cosa hai osservato.');return;
+     }
+     const risk=riskFor(desc);
+     anomalyFlow.description=desc;
+     if(risk?.kind==='stop'){anomalyFlow.critical=true;anomalyFlow.warning=risk.message;}
+     anomalyFlow.stage='confirm';
+     setDraft(`Segnalazione da confermare: ${desc}`);
+     anomalyAsk(`${risk?.kind==='stop'?risk.message+' ':''}Ho capito: ${desc}. Vuoi registrare questa anomalia? Dì registra, modifica oppure annulla segnalazione.`);
+     return;
+   }
+   if(anomalyFlow.stage==='confirm'){
+     if(/^(si|confermo|registra|registra anomalia|registra segnalazione|salva|salva segnalazione|va bene|esatto)$/.test(s)){
+       finishVoiceAnomaly();return;
+     }
+     if(/^(modifica|correggi|riformula|ripeti descrizione|voglio modificare)$/.test(s)){
+       anomalyFlow.stage='describe';anomalyFlow.description='';
+       setDraft('Segnalazione vocale: descrizione da modificare.');
+       anomalyAsk('Descrivi nuovamente l’anomalia, ti ascolto.');return;
+     }
+     anomalyAsk('Per evitare registrazioni errate, rispondi: registra, modifica oppure annulla segnalazione.');
+   }
  }
  function listenWhilePaused(automatic){
    setStatus('In pausa. In ascolto per «Riprendiamo»; puoi anche premere «Ferma dialogo».');
@@ -100,15 +220,17 @@
    say(speechText(),()=>listen(true));
  }
  function handle(transcript,automatic){
-   const uncertain=ambiguousIntent(transcript);
    retries=0;
+   if(anomalyFlow){handleAnomalyResponse(transcript);return;}
+   const uncertain=ambiguousIntent(transcript);
    if(uncertain){
-     const current=($('counter')?.textContent||'').match(/Operazione\s+(\d+)/i);
-     const risk=window.TagliandoContextHelp?.resolve(transcript,{operation:current?Number(current[1]):0,step:$('stepTitle')?.textContent||'',method:$('method')?.value||''});
+     const risk=riskFor(transcript);
      if(risk?.kind==='stop'){
-       stopAll('Possibile anomalia critica: interrompi il lavoro. Il passaggio non è stato confermato.');
-       $('anomalyStart').click();
-       say(risk.message);
+       startAnomalyFlow(transcript,{critical:true,warning:risk.message});
+       return;
+     }
+     if(uncertain==='mixed'){
+       startAnomalyFlow(transcript);
        return;
      }
      const msg=uncertain==='not-done'
@@ -120,14 +242,11 @@
    }
    const c=commandFor(transcript);
    if(!c){
-     const current=($('counter')?.textContent||'').match(/Operazione\s+(\d+)/i);
-     const contextual=window.TagliandoContextHelp?.resolve(transcript,{operation:current?Number(current[1]):0,step:$('stepTitle')?.textContent||'',method:$('method')?.value||''});
+     const contextual=riskFor(transcript);
      if(contextual){
        setStatus(contextual.kind==='stop'?'Possibile condizione critica: dialogo interrotto.':contextual.kind==='unknown'?'Richiesta fuori dalla base verificata.':'Chiarimento contestuale disponibile.');
        if(contextual.kind==='stop'){
-         stopAll('Possibile anomalia critica: interrompi il lavoro.');
-         $('anomalyStart').click();
-         say(contextual.message);
+         startAnomalyFlow(transcript,{critical:true,warning:contextual.message});
        }else if(automatic&&active){say(contextual.message,()=>listen(true));}
        else say(contextual.message);
        return;
@@ -154,14 +273,14 @@
      else setStatus('Pronto: premi «Avvia dialogo» per continuare.');
      return;
    }
+   if(c==='anomaly'){
+     startAnomalyFlow(transcript);
+     return;
+   }
    if(paused){
      setStatus('Dialogo in pausa. Pronuncia «Riprendiamo» per continuare.');
      if(automatic&&active)listenWhilePaused(true);
      return;
-   }
-   if(c==='anomaly'){
-     stopAll('Anomalia: dialogo fermato. Compila la segnalazione sullo schermo per registrarla.');
-     $('anomalyStart').click();return;
    }
    if(['caution','purpose','method','progress','help'].includes(c)){
      const response=contextualAnswer(c);
@@ -246,6 +365,6 @@
    $('voiceStop').addEventListener('click',()=>stopAll());
    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&(active||listening||speaking))stopAll('App in background: audio e ascolto fermati per sicurezza.');});
    window.addEventListener('pagehide',()=>{if(active||listening||speaking)stopAll('Dialogo fermato.');});
-   refreshButtons();setStatus(Engine?'Pronto. Tocca «Avvia dialogo» per iniziare. Disponibili pausa e chiarimenti guidati.':'Ascolto non disponibile qui; la guida manuale continua a funzionare.');
+   refreshButtons();setStatus(Engine?'Pronto. Tocca «Avvia dialogo» per iniziare. Disponibili pausa, chiarimenti e segnalazione vocale completa.':'Ascolto non disponibile qui; la guida manuale continua a funzionare.');
  });
 })();

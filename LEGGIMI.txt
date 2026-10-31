@@ -1,5 +1,15 @@
-Assistente di officina v0.12.0 - test sperimentale su iPhone.
-Novità: frasi ambigue e completamenti negati non modificano il passaggio; richieste non riconosciute propongono alternative sicure.
-Il dialogo vocale e le procedure restano quelli della v0.11.
-Prima di caricare su GitHub Pages esportare il rapporto della sessione. Caricare il contenuto del pacchetto nella root del repository, non una sottocartella.
-Test senza macchina in funzione; non costituisce validazione della sicurezza tecnica delle procedure.
+ASSISTENTE DI OFFICINA — PWA v0.12.1 (segnalazioni vocali)
+
+Carica il CONTENUTO di questa cartella alla radice del repository GitHub Pages.
+Prima di aggiornare esporta una copia del rapporto. Non cancellare l’app dall’iPhone.
+
+NUOVO: durante il dialogo pronuncia «Segnala un problema», descrivi l’anomalia, poi
+pronuncia «Registra» oppure «Modifica» o «Annulla segnalazione».
+Se dici «Fatto, ma la lama è crepata», il passaggio NON viene confermato.
+L’assistente legge l’avviso di sicurezza, ripete la segnalazione e chiede
+conferma vocale prima del salvataggio. La lavorazione resta sospesa.
+
+Prototipo sperimentale: il microfono può fermarsi con lo schermo bloccato.
+Prova a macchina spenta, non durante l’affilatura o con lame in movimento.
+I dati rimangono nel dispositivo; non sono trasmessi dall’app a un server proprietario.
+Il motore di riconoscimento del browser potrebbe elaborare l’audio online.

@@ -87,6 +87,22 @@ function render(){const idx=state.current,r=state.records[idx],op=OP[idx],steps=
 function move(idx){state.records[state.current].note=$('note').value;state.current=idx;render();save();}
 function complete(){const idx=state.current,r=state.records[idx],steps=stepsFor(idx);if(!steps.every(s=>r.confirmed[s[0]])){alert('Per segnare completata la lavorazione, conferma tutti i suoi passaggi oppure scegli «Salta operazione».');return;}setStatus('done');}
 function setStatus(status){const idx=state.current,r=state.records[idx];r.status=status;r.note=$('note').value;r.updatedAt=new Date().toISOString();log(status,idx);const advance=idx<OP.length-1;state.current=advance?idx+1:idx;render();save();if(advance){$('counter').scrollIntoView({behavior:'smooth',block:'start'});}else{$('summary').scrollIntoView({behavior:'smooth',block:'center'});}}
+// API controllata usata dal dialogo vocale: registra e sospende SENZA avanzare
+// automaticamente alla lavorazione successiva. Nessuna conferma di passaggio implicita.
+function recordVoiceAnomaly(description){
+ const text=String(description||'').trim().slice(0,450);
+ if(text.length<5) return {ok:false,reason:'Descrizione troppo breve.'};
+ const idx=state.current,r=state.records[idx];
+ const timestamp=new Date().toISOString();
+ r.anomaly=r.anomaly?`${r.anomaly}\n[${timestamp} · segnalazione vocale] ${text}`:text;
+ r.status='stopped';
+ r.updatedAt=timestamp;
+ r.note=$('note').value;
+ log('stopped',idx);
+ render();save();
+ return {ok:true,operation:idx+1,title:OP[idx].title,description:text};
+}
+window.TagliandoApp={recordVoiceAnomaly};
 function exportSnapshot(){state.records[state.current].note=$('note').value;return {schemaVersion:'0.5',exportedAt:new Date().toISOString(),machine:{model:$('brand').value,engine:$('engine').value},module:'manutenzione_preventiva',notice:'Lavorazioni dichiarate dall’operatore. Nessuna certificazione tecnica o diagnosi automatica.',operations:OP.map((o,i)=>({id:o.id,title:o.title,status:state.records[i].status,notes:state.records[i].note,anomaly:state.records[i].anomaly,method:state.records[i].method,updatedAt:state.records[i].updatedAt,steps:stepsFor(i).map(s=>({title:s[0],confirmed:Boolean(state.records[i].confirmed[s[0]])}))})),events:state.events};}
 function download(name,content,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const anchor=document.createElement('a');anchor.href=url;anchor.download=name;anchor.click();setTimeout(()=>URL.revokeObjectURL(url),2000);}
 let benchMode=false;
