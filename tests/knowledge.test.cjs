@@ -56,7 +56,7 @@ test('filetto candela danneggiato: STOP', () => {
 test('quantità olio: nessun valore non verificato', () => {
   const r = K.answer('Quanto olio devo mettere?', {operationId:7});
   assert.equal(r.kind, 'model');
-  assert.deepEqual(r.sources, []);
+  assert.equal(r.sources.length, 0);
 });
 test('coppia di serraggio: nessun valore non verificato', () => {
   assert.equal(K.answer('Qual è la coppia di serraggio?', {operationId:2}).kind, 'model');
