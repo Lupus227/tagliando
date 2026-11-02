@@ -245,3 +245,66 @@ test('Access diagnostic method is read-only and rejects POST',async()=>{
   }),env);
   assert.equal(result.status,405);
 });
+
+
+test('native ctx.access authenticates diagnostic without forwarded JWT',async()=>{
+  const {worker}=await getModules();
+  const request=new Request(base+'/api/auth-check');
+  const ctx={access:{aud:audience}};
+  const response=await worker.fetch(request,{...env,SERVICE_MODE:'disabled'},ctx);
+  assert.equal(response.status,200);
+  const body=await response.json();
+  assert.equal(body.accessVerified,true);
+  assert.equal(body.aiEnabled,false);
+  assert.equal(body.modelRequests,0);
+  assert.equal(body.sessionChanged,false);
+  assert.equal(JSON.stringify(body).includes(audience),false);
+});
+
+test('native ctx.access denies wrong AUD even if JWT was otherwise signed',async()=>{
+  const {worker}=await getModules(),{token,jwk}=await getToken();
+  await withMockJwks(jwk,async getCalls=>{
+    const response=await worker.fetch(new Request(base+'/api/auth-check',{
+      headers:{'Cf-Access-Jwt-Assertion':token}
+    }),env,{access:{aud:'not-our-access-app'}});
+    assert.equal(response.status,401);
+    assert.equal((await response.json()).code,'ACCESS_VERIFICATION_FAILED');
+    assert.equal(getCalls(),0,'must not fall back on wrong native AUD');
+  });
+});
+
+test('native ctx.access cannot authenticate missing or undefined Access context',async()=>{
+  const {worker}=await getModules();
+  const response=await worker.fetch(new Request(base+'/api/auth-check'),env,{});
+  assert.equal(response.status,401);
+  assert.equal((await response.json()).code,'ACCESS_VERIFICATION_FAILED');
+});
+
+test('guarded API accepts native Access identity only with a unique rate-limit subject',async()=>{
+  const {worker}=await getModules();
+  let actualKey=null;
+  const response=await worker.fetch(req('La lama è crepata'),{
+    ...env,API_LIMITER:{limit:async ({key})=>{actualKey=key;return {success:true};}}
+  },{access:{aud:audience,getIdentity:async()=>({user_uuid:'verified-user-001'})}});
+  assert.equal(response.status,200);
+  assert.equal(actualKey,'assist:verified-user-001');
+  assert.equal((await response.json()).decision,'SAFETY_STOP');
+});
+
+test('guarded API fails closed if native Access context has no unique user ID',async()=>{
+  const {worker}=await getModules();
+  const response=await worker.fetch(req('La lama è crepata'),env,{
+    access:{aud:audience,getIdentity:async()=>({email:'not-a-trusted-unique-id@example.test'})}
+  });
+  assert.equal(response.status,401);
+  assert.equal((await response.json()).code,'UNAUTHORIZED');
+});
+
+test('disabled AI API remains disabled with valid native Access context',async()=>{
+  const {worker}=await getModules();
+  const response=await worker.fetch(req('La lama è crepata'),{
+    ...env,SERVICE_MODE:'disabled'
+  },{access:{aud:audience,getIdentity:async()=>({user_uuid:'user-001'})}});
+  assert.equal(response.status,503);
+  assert.equal((await response.json()).code,'SERVICE_DISABLED');
+});
