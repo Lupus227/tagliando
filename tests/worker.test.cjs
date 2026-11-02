@@ -185,3 +185,22 @@ function loadConfig() {
   const fs = require('node:fs'), path = require('node:path');
   return fs.readFileSync(path.join(__dirname,'../worker/wrangler.jsonc'),'utf8');
 }
+
+
+test('default Cloudflare deploy at repo root discovers the exact protected Worker config',()=>{
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const root = JSON.parse(fs.readFileSync(path.join(__dirname,'../wrangler.jsonc'),'utf8'));
+  const nested = JSON.parse(loadConfig());
+  assert.equal(root.main,'./worker/src/index.mjs');
+  assert.equal(nested.main,'./src/index.mjs');
+  assert.equal(root.name,'tagliando-ai-staging');
+  assert.equal(root.vars.SERVICE_MODE,'disabled');
+  assert.equal(root.workers_dev,true);
+  assert.equal(root.preview_urls,false);
+  assert.equal(root.vars.ACCESS_TEAM_DOMAIN,'');
+  assert.equal(root.vars.ACCESS_AUD,'');
+  const rootComparable = {...root,main:nested.main};
+  assert.deepEqual(rootComparable,nested,'root and nested configs must stay equivalent');
+  assert.ok(fs.existsSync(path.join(__dirname,'../worker/src/index.mjs')));
+});
