@@ -59,3 +59,32 @@ export async function verifyAccessJwt(token, env, fetcher = fetch) {
   if (!ok) throw new Error('invalid_signature');
   return {sub:payload.sub, aud};
 }
+
+/*
+ * For requests directly authenticated by Cloudflare Access, ctx.access is a
+ * trusted runtime assertion supplied by Cloudflare, not a client HTTP header.
+ * Validate its application audience to avoid accepting another Access app.
+ * Explicitly fail closed on an AUD mismatch: NEVER fall back to JWT then.
+ *
+ * The cryptographic JWT verifier is retained for environments where a genuine
+ * signed Cf-Access-Jwt-Assertion is forwarded but ctx.access is unavailable.
+ * No unsigned cookie / email / header is accepted as proof of identity.
+ */
+export async function verifyWorkerAccess(request, env, ctx, requireSubject = false) {
+  if (ctx?.access) {
+    if (!validAud(env.ACCESS_AUD) || ctx.access.aud !== env.ACCESS_AUD)
+      throw new Error('access_audience_mismatch');
+    if (!requireSubject) return {sub:null, aud:env.ACCESS_AUD};
+
+    if (typeof ctx.access.getIdentity !== 'function')
+      throw new Error('access_identity_unavailable');
+    const identity = await ctx.access.getIdentity();
+    // Cloudflare returns a per-user UUID; service tokens have a separate ID.
+    // Refuse a shared/anonymous rate-limit key when neither is available.
+    const sub = identity?.user_uuid || identity?.service_token_id;
+    if (typeof sub !== 'string' || !sub.trim() || sub.length > 256)
+      throw new Error('access_subject_unavailable');
+    return {sub, aud:env.ACCESS_AUD};
+  }
+  return verifyAccessJwt(request.headers.get('cf-access-jwt-assertion'),env);
+}
