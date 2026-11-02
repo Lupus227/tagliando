@@ -1,0 +1,26 @@
+name: Fase 14 - test base tecnica
+
+on:
+  push:
+    branches:
+      - dev/fase14-ai
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  knowledge-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout (sola lettura)
+        uses: actions/checkout@v4
+      - name: Configura Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Esegui test di regressione
+        run: node --test tests/*.test.cjs
