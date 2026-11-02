@@ -9,7 +9,8 @@ Non inserire chiavi Cloudflare, GitHub o LLM nel repository pubblico.
 - src/index.mjs: endpoint GET /health, POST /api/assist; richieste max 2048 byte e domande max 500 caratteri.
 - src/access.mjs: verifica JWT Access RS256 firmato, issuer, audience e scadenza attraverso JWKS.
 - src/policy.mjs: stop cautelativi, richieste fuori ambito e dati modello-specifici.
-- wrangler.jsonc: SERVICE_MODE=disabled, workers_dev=true (URL workers.dev protetto da Access), preview_urls=false.
+- ../wrangler.jsonc: configurazione di deployment alla radice (Cloudflare Build command predefinito).
+- wrangler.jsonc: configurazione equivalente per gli sviluppatori che lavorano da /worker.
 - tests/worker.test.cjs: test con chiavi RSA generate localmente solo per collaudo.
 
 ## Protezioni
@@ -37,7 +38,9 @@ Non inserire chiavi Cloudflare, GitHub o LLM nel repository pubblico.
 ## Test
 Con Node.js 22+: node --test tests/*.test.cjs
 Con Wrangler installato: npx wrangler dev --config worker/wrangler.jsonc
-Non eseguire ancora wrangler deploy. Nessun Worker Cloudflare è stato configurato.
+Il Worker Hello World esiste su Cloudflare ed è protetto con Cloudflare Access.
+L'integrazione Git è collegata, ma le build risultano disabilitate.
+NON eseguire ancora wrangler deploy né attivare le build fino al controllo dei prerequisiti.
 
 ## Privacy
 Le domande non sono conservate dal codice della fase. Cloudflare può comunque raccogliere
@@ -47,3 +50,12 @@ metadati di traffico; per il servizio pubblico servirà una politica sulla priva
 Non fare merge nel ramo main. La PWA già pubblicata e la sessione iPhone restano immutate.
 
 NOTA: il valore workers_dev=true mantiene l'URL workers.dev esistente. Prima di ogni deployment verificare che la protezione Access 'All traffic' rimanga applicata a questo Worker. Il repository non contiene account_id o credenziali.
+
+### Cloudflare Workers Builds — interfaccia novembre 2026
+La schermata Production di Settings > Builds non mostra necessariamente Deploy command.
+Il comando predefinito registrato durante Connect è npx wrangler deploy.
+Con Root directory = '.', Wrangler ora trova la configurazione ../wrangler.jsonc
+posta alla radice del repository (da qui raggiunta come wrangler.jsonc).
+Le due configurazioni devono restare equivalenti; il test CI ne verifica la coerenza.
+Non utilizzare il Preview command per un deployment di produzione.
+Non attivare build automatiche fino al collaudo e consenso esplicito.
