@@ -1,70 +1,88 @@
-# Fase 14.2 — Base di conoscenza locale (sperimentale)
+# Fase 14.3 — Recupero contestuale (offline, sperimentale)
 
-## Obiettivo e stato
-Ramo di lavoro: dev/fase14-ai. Ramo pubblico di produzione: main, non modificato.
-La PWA stabile di riferimento è la v0.12.1. Questo ramo NON viene automaticamente
-pubblicato su GitHub Pages. La fase 14.2 non collega ancora alcun modello AI esterno.
+## Stato dei rami
+- Stabile: main (PWA v0.12.1), NON modificato.
+- Sperimentale: dev/fase14-ai. Nessun merge, nessuna pubblicazione GitHub Pages.
+- Budget usato per codice e API esterne: 0 €. Nessuna chiave o credenziale richiesta.
 
-## Architettura
-- app.js: unica fonte delle 8 procedure OP (NON modificata).
-- knowledge.js: proietta OP nello schema tagliando.knowledge.v1 e cerca riferimenti testuali.
-- knowledge-ui.js: pannello testuale read-only, utilizzabile dopo caricamento di app.js.
-- support.js: controlli contestuali già in uso per la voce (NON modificato).
-- voice.js: flusso vocale v0.12.1 (NON modificato).
-- sw.js: precache sperimentale dei moduli presenti nel repository.
+## Architettura attuale
+- app.js: fonte unica delle 8 procedure preventive (53 passaggi).
+- knowledge.js: derivazione in memoria di procedure, ID, metodi, precauzioni,
+  provenienza e review DA_VALIDARE. Non modifica la sessione.
+- retrieval.js: individua la lavorazione, applica le barriere lessicali,
+  filtra i passaggi per modalità, ordina per pertinenza e prepara al massimo
+  3 riferimenti, entro un budget di dimensione prefissato.
+- knowledge-ui.js: pannello testuale offline con domanda, risposta locale,
+  anteprima dei riferimenti e esportazione JSON. NON invia dati a server.
+- support.js / voice.js: dialogo e controlli della v0.12.1, NON modificati.
+- index.html: carica knowledge.js -> retrieval.js -> knowledge-ui.js.
+- sw.js: cache separata per il ramo sperimentale, versione tagliando-v0143-dev.
 
-Non sono previste chiamate di rete, chiavi API, login, database remoti né scritture
-di dati di sessione da parte dei nuovi moduli. Non viene registrato il testo delle
-domande nella sessione. Non esiste ancora una AI generativa nel prodotto.
+## Contratto dati di retrieval
+API browser: window.TagliandoRetrieval.buildPreview(question, context).
+Schema: tagliando.retrieval.v1. Campi principali:
+- decision: PREVIEW_ONLY, SAFETY_STOP, MODEL_REQUIRED, OUT_OF_SCOPE,
+  COMMAND, CLARIFY, NO_MATCH, REJECT, UNAVAILABLE.
+- reason: spiegazione della decisione.
+- references[]: id stabile, titolo operazione, passaggio, istruzione,
+  avvertenza, metadati di provenienza e stato di revisione.
+- aiReady: sempre false.
+- externalTransmissionAllowed: sempre false.
+- stateChanged: sempre false.
 
-## Formato della conoscenza
-Schema: tagliando.knowledge.v1.
-Ogni procedura ha ID RASA-OP-NN, obiettivo, descrizione, metodi,
-passaggi, riferimenti alla posizione originale nel sorgente e metadati review.
-Ogni passaggio ha ID RASA-OP-NN-PNN, istruzioni, precauzioni,
-metodi validi e revisione DA_VALIDARE.
-L'esportazione JSON è una BOZZA per revisione tecnica; non certifica i contenuti.
-I dati sono generati al caricamento da OP e non sono una copia da mantenere a mano.
+**AVVERTENZA**: aiReady=false e externalTransmissionAllowed=false sono
+vincoli di progetto della versione attuale, non una difesa anti-manomissione:
+il codice JavaScript sul client può essere modificato da chi lo esegue.
+Prima di abilitare AI online, un backend affidabile deve ricostruire riferimenti
+da una fonte tecnica revisionata e imporre i controlli SERVER-SIDE.
 
-## Regole di sicurezza
-1. Il modulo è esclusivamente consultivo: non conferma, non sospende e non avanza.
-2. Le segnalazioni vocali e il loro salvataggio rimangono gestiti da voice.js e app.js.
-3. Lama lesionata, arresto motore non funzionante, perdita carburante e danno
-   alla filettatura candela causano risposta STOP quando riconosciuti.
-4. Coppie, capacità, codici ricambio e specifiche di modello non vengono dedotti.
-5. Se non esiste un passaggio pertinente, il modulo risponde che non sa.
-6. La ricerca non può utilizzare un passaggio esclusivo per un metodo non selezionato.
-7. Tutte le istruzioni restano DA_VALIDARE fino alla revisione manuale dell'esperto.
-8. Le regole del modulo sono aggiuntive, non sostitutive dei sistemi di sicurezza già presenti.
-   Il riconoscimento basato su espressioni regolari NON è una garanzia di copertura completa.
+## Decisioni di safety / pertinenza
+1. I testi indicativi non sono prescrizioni operative validate.
+2. Riconoscimento STOP per alcune formulazioni di lama lesionata, arresto
+   motore difettoso, perdita carburante e filetto candela danneggiato.
+   Le espressioni regolari NON coprono tutte le possibili anomalie;
+   nessuna garanzia di sicurezza si basa solo su questa classificazione.
+3. Dati come coppie, capacità d'olio/carburante, riferimenti ricambio e
+   altre specifiche di modello sono bloccati senza fonte costruttore verificata.
+4. Comandi di avanzamento/conferma e registrazione anomalie non passano all'AI.
+5. Riparazioni fuori dalle otto lavorazioni e quesiti su altri veicoli sono
+   esclusi dall'attuale base tecnica.
+6. Un metodo non attivo non autorizza l'inclusione dei suoi passaggi esclusivi.
+7. Input vuoto o >500 caratteri viene rifiutato; nessun upload o log domande.
+8. In caso di più componenti o di basso supporto documentale: chiarire o
+   dichiarare che non si dispone di dati pertinenti.
+9. L'anteprima è testuale e non esegue mutazioni della sessione del tagliando.
 
-## Test
-Per eseguire la suite da una copia locale del repository, occorre Node.js:
-    node --test tests/knowledge.test.cjs
-La suite utilizza le OTTO procedure REALI di app.js, non dati simulati.
-Prima dell'inserimento sono stati svolti controlli logici in un ambiente JS
-sul modulo, poi verificati gli 8 record e i 53 passaggi dal codice GitHub.
+## Test automatici
+Suite in tests/knowledge.test.cjs e tests/retrieval.test.cjs.
+Esecuzione Node.js v22:
+    node --test tests/*.test.cjs
 
-## Anomalia preesistente da correggere prima della distribuzione
-Il manifest fa riferimento a icons/icon-192.png e icons/icon-512.png,
-e index.html a icons/apple-touch-icon.png. Questi file NON risultano presenti
-nel repository attuale (verifica alla data del 1 novembre 2026).
-Nella cache del ramo di sviluppo i percorsi mancanti sono stati rimossi
-dall'elenco obbligatorio, perché cache.addAll fallirebbe con risposte 404.
-I riferimenti del manifest e dell'HTML restano ancora da sistemare e
-l'installabilità come PWA deve essere collaudata nuovamente.
+Workflow GitHub Actions sul ramo sperimentale:
+    .github/workflows/fase14-tests.yml
+È limitato a lettura repository e non usa segreti, API esterne o deploy.
+Verificare l'esito dei run prima di dichiarare CI superata.
+Sono stati eseguiti anche controlli diretti del motore JS con le 8 procedure
+reali: 23 casi, tutti superati durante lo sviluppo della Fase 14.3.
+NON sono ancora stati eseguiti test reali browser e collaudi iPhone del ramo.
 
-## Criteri per la fase successiva
-- Eseguire test Node in ambiente locale/CI e controllare la console browser.
-- Verificare che la sessione v0.12.1 non subisca regressioni.
-- Aggiungere una strategia di indicizzazione e selezione dei riferimenti
-  da trasmettere all'AI, mantenendo esclusi i contenuti non pertinenti.
-- Predisporre Cloudflare Worker con chiavi solo server-side,
-  autenticazione/controllo accessi, rate limiting, allowlist CORS,
-  validazione input/output e timeout. Mai inserire chiavi nella PWA pubblica.
-- Nessuna pubblicazione su main senza collaudo e autorizzazione dell'utente.
+## Anomalia preesistente non ancora risolta
+manifest.webmanifest e index.html contengono riferimenti a icone in /icons/
+non presenti nel repository pubblico al momento del controllo. I riferimenti
+mancanti sono stati esclusi dalla cache obbligatoria del solo ramo di sviluppo
+per evitare che blocchino cache.addAll. I collegamenti del manifest e dell'HTML
+vanno sistemati e verificati prima del rilascio.
+
+## Prossima fase 14.4 — Cloudflare Worker
+1. Backend con endpoint autenticato e limitato per sessione/utente.
+2. Conservazione delle chiavi API SOLO in Workers Secrets.
+3. Controllo server-side di input, fonte canonica, identificativi, modalità
+   e stato di revisione; non fidarsi dei metadati inviati dalla PWA.
+4. Budget/rate limits, timeout e controllo anti-abuso; minimizzazione dati.
+5. Output rigidamente strutturato, fonti tracciate, nessuna azione operativa
+   direttamente impartita da un modello generativo.
+6. Non collegare servizi AI finché le precauzioni sopra non sono verificate.
 
 ## Rollback
-Il ramo main non è stato toccato. Il rollback consiste nel non effettuare
-il merge del ramo sperimentale. Non cancellare lo storage dell'iPhone
-né le sessioni conservate localmente.
+Non fare merge in main. I moduli 14.2-14.3 sono solo nel ramo dev/fase14-ai.
+Non eliminare la PWA iPhone e non cancellare storage o sessioni.
