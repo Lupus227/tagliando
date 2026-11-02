@@ -172,3 +172,16 @@ test('model-dependent values are blocked server-side',async()=>{
     assert.equal((await r.json()).decision,'MODEL_REQUIRED');
   });
 });
+
+test('deploy configuration preserves Access-protected hostname but disables the API',()=>{
+  const config = JSON.parse(loadConfig());
+  assert.equal(config.name, 'tagliando-ai-staging');
+  assert.equal(config.workers_dev, true);
+  assert.equal(config.preview_urls, false);
+  assert.equal(config.vars.SERVICE_MODE, 'disabled');
+  assert.equal(config.main, './src/index.mjs');
+});
+function loadConfig() {
+  const fs = require('node:fs'), path = require('node:path');
+  return fs.readFileSync(path.join(__dirname,'../worker/wrangler.jsonc'),'utf8');
+}
