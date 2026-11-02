@@ -6,7 +6,7 @@
 (() => {
   'use strict';
   const SCHEMA = 'tagliando.knowledge.v1';
-  const VERSION = '14.2.0';
+  const VERSION = '14.3.0';
   const STATUS = 'DA_VALIDARE';
   const CAUTION = 'Indicazione sperimentale da verificare sul manuale del modello effettivo.';
   const text = v => String(v == null ? '' : v).trim();
@@ -87,7 +87,7 @@
      message: 'Possibile lama danneggiata: non affilarla né rimontarla. Sospendi l’intervento e registra una segnalazione di sicurezza.'},
     {re: /\b(motore|leva|freno|comando)\b.*\b(non si spegne|non spegne|non si ferma|resta acceso|rimane acceso)\b|\b(non si spegne|non spegne|non si ferma|resta acceso|rimane acceso)\b.*\b(motore|leva|freno|comando)\b/,
      message: 'Possibile guasto al comando di arresto: non usare la macchina. Sospendi la lavorazione e registra l’anomalia.'},
-    {re: /\b(perdita|perde|fuoriesce|odore forte)\b.*\b(benzina|carburante)\b|\b(benzina|carburante)\b.*\b(perdita|perde|fuoriesce|odore forte)\b/,
+    {re: /\b(perdita|perde|perdo|fuoriesce|gocciola|cola|sgocciola|puzza|odore forte|odore di)\b.*\b(benzina|carburante)\b|\b(benzina|carburante)\b.*\b(perdita|perde|perdo|fuoriesce|gocciola|cola|sgocciola|puzza|odore forte|odore di)\b/,
      message: 'Possibile perdita di carburante: ferma l’intervento, evita fonti di innesco e non avviare la macchina.'},
     {re: /\b(filetto|filettatura|sede candela)\b.*\b(spanat\w*|rovinat\w*|danneggiat\w*)\b|\b(spanat\w*|rovinat\w*|danneggiat\w*)\b.*\b(filetto|filettatura|sede candela)\b/,
      message: 'Possibile filettatura della candela danneggiata: non forzare il montaggio. Sospendi per verifica tecnica.'}
