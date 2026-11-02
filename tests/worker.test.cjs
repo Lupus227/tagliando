@@ -14,7 +14,7 @@ const getModules = async () => ({
   worker:(await import('../worker/src/index.mjs')).default,
   verifier:(await import('../worker/src/access.mjs')).verifyAccessJwt
 });
-const to64 = item => Buffer.from(typeof item === 'string' ? item : JSON.stringify(item)).toString('base64url');
+const to64 = item => (Buffer.isBuffer(item) ? item : Buffer.from(typeof item === 'string' ? item : JSON.stringify(item))).toString('base64url');
 async function getToken(options = {}) {
   const kp = await crypto.subtle.generateKey({
     name:'RSASSA-PKCS1-v1_5',modulusLength:2048,publicExponent:new Uint8Array([1,0,1]),hash:'SHA-256'
