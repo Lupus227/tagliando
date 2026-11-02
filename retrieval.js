@@ -15,7 +15,13 @@
     .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ')
     .replace(/\s+/g, ' ').trim();
   const stopwords = new Set('e ed o ma di del della delle degli dei da al allo alla alle il lo la i gli le un una uno in nel nell per con che cosa come quale quali quali sono ho hai avete posso devo fare faccio quale quando dove questo questa quella vorrei mi me si non su sul sulla ecco mio mia meglio spiegami dimmi serve vorrei voglio'.split(' '));
-  const tokens = s => [...new Set(normalize(s).split(' ').filter(w => w.length >= 3 && !stopwords.has(w)))];
+  const stem = w => {
+    for (const prefix of ['affil','lav','sostitu','serr','mont','asciug','pul','lubrific','filtr','equilibr','sgrass','rimont']) {
+      if (w.startsWith(prefix)) return prefix;
+    }
+    return w;
+  };
+  const tokens = s => [...new Set(normalize(s).split(' ').filter(w => w.length >= 3 && !stopwords.has(w)).map(stem))];
 
   // Lexical gates are deliberately conservative; they are NOT a certified safety detector.
   const anchors = [
@@ -30,7 +36,7 @@
   ];
   const outside = /\b(automobile|automobili|auto|cambio auto|cambio dell auto|frizione|centralina|motocicletta|moto|camion)\b/;
   const repair = /\b(ripara\w*|riparazione|revisiona\w*|tarare|taratura|modificare|truccare|rimuovere la sicurezza)\b/;
-  const specific = /\b(quanto|quanti|quanta|quale|quali|dimmi)\b.{0,55}\b(nm|newton|coppia|serrare|stringere|gradi|angolo|ml|litri|olio|viscosita|candela|ricambio|filtro|lama|capacita|tipo|sigla|codice)\b|\b(quale olio|che olio|che candela|che filtro|coppia di serraggio|distanza elettrodi|capacita olio|gradazione|valore in nm|specifiche motore|codice ricambio|numero di giri|diametro esatto)\b/;
+  const specific = /\b(quanto|quanti|quanta|quale|quali|dimmi)\b.{0,55}\b(nm|newton|coppia|serrare|stringere|gradi|angolo|ml|litri|olio|benzina|carburante|viscosita|candela|ricambio|filtro|lama|capacita|tipo|sigla|codice)\b|\b(quale olio|che olio|quale benzina|quanto carburante|quanta benzina|che candela|che filtro|coppia di serraggio|distanza elettrodi|capacita olio|gradazione|valore in nm|specifiche motore|codice ricambio|numero di giri|diametro esatto)\b/;
   const commands = /^(fatto|ho finito|avanti|indietro|salta|conferma|registra|ferma|riprendiamo|annulla|pausa|stop)\b/;
   const generic = /\b(precauzioni|sicurezza|rischi|avvertenze|scopo|obiettivo|spiega\w*|spiegami|ripeti|chiarisci|passaggio corrente|cosa devo fare)\b/;
 
