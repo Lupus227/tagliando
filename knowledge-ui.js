@@ -1,26 +1,30 @@
-/* Fase 14.2 — Interfaccia sperimentale in sola lettura.
+/* Fase 14.3 — Interfaccia sperimentale in sola lettura.
  * Non usa microfono, non invia richieste e non modifica lo stato della PWA.
  */
 (() => {
   'use strict';
   const engine = window.TagliandoKnowledge;
+  const retrieval = window.TagliandoRetrieval;
   const anchor = document.getElementById('voicePanel');
-  if (!engine || !anchor || document.getElementById('knowledgePanel')) return;
+  if (!engine || !retrieval || !anchor || document.getElementById('knowledgePanel')) return;
 
   const panel = document.createElement('section');
   panel.className = 'panel';
   panel.id = 'knowledgePanel';
   panel.setAttribute('aria-label', 'Base di conoscenza sperimentale');
   panel.innerHTML = [
-    '<h2>Base tecnica — Fase 14.2 (sperimentale)</h2>',
+    '<h2>Base tecnica — Fase 14.3 (sperimentale)</h2>',
     '<p class="muted small">Consultazione locale delle otto procedure. Nessuna AI generativa collegata, nessuna modifica al tagliando.</p>',
     '<p class="note">TUTTI I CONTENUTI SONO DA VALIDARE. Attieniti al manuale del costruttore; non usare questo pannello come autorizzazione operativa.</p>',
     '<label for="knowledgeQuestion">Domanda tecnica</label>',
     '<textarea id="knowledgeQuestion" rows="2" maxlength="500" placeholder="Es. Quali precauzioni? Quale passaggio riguarda il filtro?"></textarea>',
     '<div class="actions"><button id="knowledgeAsk" type="button" class="primary">Consulta la base</button>',
-    '<button id="knowledgeExport" type="button">Esporta archivio JSON</button></div>',
+    '<button id="knowledgeExport" type="button">Esporta archivio JSON</button>',
+    '<button id="knowledgePreviewBtn" type="button">Anteprima riferimenti per AI</button></div>',
     '<p id="knowledgeAnswer" role="status" aria-live="polite" style="white-space:pre-wrap"></p>',
-    '<p id="knowledgeSources" class="muted small"></p>'
+    '<p id="knowledgeSources" class="muted small"></p>',
+    '<p class="muted small">Anteprima locale: i riferimenti non vengono trasmessi a nessun servizio AI. Tutti i contenuti rimangono DA_VALIDARE.</p>',
+    '<p id="knowledgePreview" class="note" role="status" aria-live="polite" style="white-space:pre-wrap;overflow-wrap:anywhere"></p>'
   ].join('');
   anchor.insertAdjacentElement('afterend', panel);
   const $ = id => document.getElementById(id);
@@ -46,6 +50,20 @@
       $('knowledgeSources').textContent = 'La sessione di manutenzione non è stata modificata.';
     }
   }
+  $('knowledgePreviewBtn').addEventListener('click', () => {
+    try {
+      const result = retrieval.buildPreview($('knowledgeQuestion').value, context());
+      const header = 'Esito: ' + result.decision + '\n' + result.reason +
+        '\nInvio a servizi esterni: DISABILITATO' +
+        '\nModifica sessione: NO';
+      const refs = result.references.map(r => '\n\n' + r.id + ' · ' + r.operation + ' — ' +
+        r.step + ' (' + r.reviewStatus + ')\n' + r.instruction +
+        '\nAttenzione: ' + r.warning).join('');
+      $('knowledgePreview').textContent = header + refs;
+    } catch (_) {
+      $('knowledgePreview').textContent = 'Anteprima non disponibile: nessuna richiesta inviata.';
+    }
+  });
   $('knowledgeAsk').addEventListener('click', ask);
   $('knowledgeQuestion').addEventListener('keydown', event => {
     if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) ask();
