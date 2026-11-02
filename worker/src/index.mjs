@@ -3,7 +3,7 @@
  * Anche se distribuito per errore, SERVICE_MODE=disabled blocca /api/assist.
  * Richieste abilitate SOLO dopo Access + rate limit + revisione configurazione.
  */
-import {verifyAccessJwt} from './access.mjs';
+import {verifyWorkerAccess} from './access.mjs';
 import {evaluateSafety} from './policy.mjs';
 
 const MAX_BODY_BYTES = 2048;
@@ -65,7 +65,7 @@ async function readLimitedJson(request) {
   }
 }
 const worker = {
-  async fetch(request, env = {}) {
+  async fetch(request, env = {}, ctx = {}) {
     const url = new URL(request.url);
     if (url.pathname === '/health' && request.method === 'GET') {
       return respond(200, {ok:true,service:'tagliando-ai-gateway',
@@ -77,7 +77,7 @@ const worker = {
     if (url.pathname === '/api/auth-check') {
       if (request.method !== 'GET') return error(405,'METHOD_NOT_ALLOWED');
       try {
-        await verifyAccessJwt(request.headers.get('cf-access-jwt-assertion'), env);
+        await verifyWorkerAccess(request, env, ctx);
       } catch (_) {
         return error(401,'ACCESS_VERIFICATION_FAILED');
       }
@@ -101,10 +101,9 @@ const worker = {
       return new Response(null, {status:204,headers});
     }
     if (env.SERVICE_MODE !== 'guarded') return error(503,'SERVICE_DISABLED',origin);
-    const token = request.headers.get('cf-access-jwt-assertion');
     let actor;
     try {
-      actor = await verifyAccessJwt(token, env);
+      actor = await verifyWorkerAccess(request, env, ctx, true);
     } catch (_) {
       return error(401,'UNAUTHORIZED',origin);
     }
