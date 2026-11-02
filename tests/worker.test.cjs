@@ -198,8 +198,9 @@ test('default Cloudflare deploy at repo root discovers the exact protected Worke
   assert.equal(root.vars.SERVICE_MODE,'disabled');
   assert.equal(root.workers_dev,true);
   assert.equal(root.preview_urls,false);
-  assert.equal(root.vars.ACCESS_TEAM_DOMAIN,'');
-  assert.equal(root.vars.ACCESS_AUD,'');
+  assert.match(root.vars.ACCESS_TEAM_DOMAIN,/^[a-z0-9-]+\.cloudflareaccess\.com$/);
+  assert.match(root.vars.ACCESS_AUD,/^[a-f0-9]{64}$/);
+  assert.equal(root.vars.SERVICE_MODE,'disabled');
   const rootComparable = {...root,main:nested.main};
   assert.deepEqual(rootComparable,nested,'root and nested configs must stay equivalent');
   assert.ok(fs.existsSync(path.join(__dirname,'../worker/src/index.mjs')));
