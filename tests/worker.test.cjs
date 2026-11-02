@@ -205,3 +205,43 @@ test('default Cloudflare deploy at repo root discovers the exact protected Worke
   assert.deepEqual(rootComparable,nested,'root and nested configs must stay equivalent');
   assert.ok(fs.existsSync(path.join(__dirname,'../worker/src/index.mjs')));
 });
+
+
+test('Access diagnostic endpoint never enables AI even after verifying a signed JWT',async()=>{
+  const {worker}=await getModules(),{token,jwk}=await getToken();
+  await withMockJwks(jwk,async()=>{
+    const response=await worker.fetch(new Request(base+'/api/auth-check',{
+      method:'GET',headers:{'Cf-Access-Jwt-Assertion':token}
+    }),{...env,SERVICE_MODE:'disabled'});
+    assert.equal(response.status,200);
+    assert.equal(response.headers.get('cache-control'),'no-store, max-age=0');
+    const body=await response.json();
+    assert.equal(body.ok,true);
+    assert.equal(body.accessVerified,true);
+    assert.equal(body.aiEnabled,false);
+    assert.equal(body.modelRequests,0);
+    assert.equal(body.sessionChanged,false);
+    assert.equal(JSON.stringify(body).includes('user-test-only'),false);
+    assert.equal(JSON.stringify(body).includes(token),false);
+  });
+});
+test('Access diagnostic rejects missing and corrupted tokens without returning identity',async()=>{
+  const {worker}=await getModules(),{token,jwk}=await getToken();
+  await withMockJwks(jwk,async()=>{
+    const noToken=await worker.fetch(new Request(base+'/api/auth-check'),env);
+    assert.equal(noToken.status,401);
+    assert.equal((await noToken.json()).code,'ACCESS_VERIFICATION_FAILED');
+    const forged=await worker.fetch(new Request(base+'/api/auth-check',{
+      headers:{'Cf-Access-Jwt-Assertion':token.slice(0,-3)+'abc'}
+    }),env);
+    assert.equal(forged.status,401);
+    assert.equal((await forged.json()).code,'ACCESS_VERIFICATION_FAILED');
+  });
+});
+test('Access diagnostic method is read-only and rejects POST',async()=>{
+  const {worker}=await getModules();
+  const result=await worker.fetch(new Request(base+'/api/auth-check',{
+    method:'POST',body:'ignored'
+  }),env);
+  assert.equal(result.status,405);
+});
