@@ -69,10 +69,11 @@ Questo aggiornamento documentale genera un commit sul ramo sperimentale per atti
 Verificare il risultato nella scheda Deployments > View build history del Worker.
 
 ### Collaudo autenticazione (Fase 14.5, successiva alla build Access)
-- GET /api/auth-check: verifica all'interno del Worker firma RS256, issuer, AUD e scadenza del JWT Cloudflare Access.
-- Senza token valido, ritorna HTTP 401 con codice ACCESS_VERIFICATION_FAILED; non espone soggetto né token.
+- GET /api/auth-check: usa prima l'identità autenticata nativamente da Cloudflare (`ctx.access`) con confronto rigoroso dell'AUD atteso. Solo quando `ctx.access` è assente accetta un JWT firmato e ne verifica RS256, issuer, AUD e scadenza.
+- Senza contesto Access autenticato né JWT valido, ritorna HTTP 401 con codice ACCESS_VERIFICATION_FAILED; non espone soggetto né token. Un AUD nativo errato NON può essere aggirato tramite JWT fallback.
 - Con token valido, ritorna HTTP 200 e JSON {ok:true,accessVerified:true,aiEnabled:false,modelRequests:0,sessionChanged:false}.
 - Non occorre abilitare SERVICE_MODE: rimane disabled e /api/assist resta disabilitato.
 - Per il collaudo manuale, autenticarsi nel browser sul dominio Worker e aprire /api/auth-check.
 - Se compare HTTP 401 dietro Access dopo login, raccogliere soltanto codice di errore e log generico, mai incollare cookie o JWT in chat.
+- In modalita guarded, il rate limiter usa `user_uuid` (o service_token_id) ottenuto dal contesto Cloudflare; se manca un identificativo affidabile, la richiesta viene rifiutata.
 - Riprova anche l'indirizzo in incognito: prima dell'autenticazione deve comparire il login Cloudflare.
