@@ -67,3 +67,12 @@ Deploy command: npx wrangler deploy --config worker/wrangler.jsonc.
 L'API /api/assist resta spenta tramite SERVICE_MODE=disabled. L'endpoint /health non utilizza AI.
 Questo aggiornamento documentale genera un commit sul ramo sperimentale per attivare una build.
 Verificare il risultato nella scheda Deployments > View build history del Worker.
+
+### Collaudo autenticazione (Fase 14.5, successiva alla build Access)
+- GET /api/auth-check: verifica all'interno del Worker firma RS256, issuer, AUD e scadenza del JWT Cloudflare Access.
+- Senza token valido, ritorna HTTP 401 con codice ACCESS_VERIFICATION_FAILED; non espone soggetto né token.
+- Con token valido, ritorna HTTP 200 e JSON {ok:true,accessVerified:true,aiEnabled:false,modelRequests:0,sessionChanged:false}.
+- Non occorre abilitare SERVICE_MODE: rimane disabled e /api/assist resta disabilitato.
+- Per il collaudo manuale, autenticarsi nel browser sul dominio Worker e aprire /api/auth-check.
+- Se compare HTTP 401 dietro Access dopo login, raccogliere soltanto codice di errore e log generico, mai incollare cookie o JWT in chat.
+- Riprova anche l'indirizzo in incognito: prima dell'autenticazione deve comparire il login Cloudflare.
