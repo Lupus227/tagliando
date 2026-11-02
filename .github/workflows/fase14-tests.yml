@@ -24,3 +24,5 @@ jobs:
           node-version: '22'
       - name: Esegui test di regressione
         run: node --test tests/*.test.cjs
+      - name: Compila Worker con Wrangler senza pubblicarlo
+        run: npx --yes wrangler@4 deploy --dry-run --outdir /tmp/tagliando-worker-verify
