@@ -58,4 +58,12 @@ Con Root directory = '.', Wrangler ora trova la configurazione ../wrangler.jsonc
 posta alla radice del repository (da qui raggiunta come wrangler.jsonc).
 Le due configurazioni devono restare equivalenti; il test CI ne verifica la coerenza.
 Non utilizzare il Preview command per un deployment di produzione.
-Non attivare build automatiche fino al collaudo e consenso esplicito.
+Build di produzione abilitate dall'utente per il primo collaudo protetto; esaminare sempre il risultato in Cloudflare prima del test /health.
+
+### Primo deployment controllato — 2026-11-02
+Cloudflare Access All traffic è stato verificato tramite accesso in navigazione incognito.
+Production branch Cloudflare: dev/fase14-ai, Root directory: / (repository root).
+Deploy command: npx wrangler deploy --config worker/wrangler.jsonc.
+L'API /api/assist resta spenta tramite SERVICE_MODE=disabled. L'endpoint /health non utilizza AI.
+Questo aggiornamento documentale genera un commit sul ramo sperimentale per attivare una build.
+Verificare il risultato nella scheda Deployments > View build history del Worker.
