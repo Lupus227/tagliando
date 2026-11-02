@@ -71,6 +71,19 @@ const worker = {
       return respond(200, {ok:true,service:'tagliando-ai-gateway',
         stage:'14.4',aiEnabled:false,modelRequests:0});
     }
+    // Diagnostic endpoint: verifies the signed Access assertion inside the Worker.
+    // Does not disclose tokens, identities, email or Access configuration.
+    // Intentionally independent from SERVICE_MODE so AI stays disabled.
+    if (url.pathname === '/api/auth-check') {
+      if (request.method !== 'GET') return error(405,'METHOD_NOT_ALLOWED');
+      try {
+        await verifyAccessJwt(request.headers.get('cf-access-jwt-assertion'), env);
+      } catch (_) {
+        return error(401,'ACCESS_VERIFICATION_FAILED');
+      }
+      return respond(200, {ok:true, accessVerified:true,
+        aiEnabled:false, modelRequests:0, sessionChanged:false});
+    }
     if (url.pathname !== '/api/assist') return error(404,'NOT_FOUND');
     if (!['POST','OPTIONS'].includes(request.method)) return error(405,'METHOD_NOT_ALLOWED');
 
