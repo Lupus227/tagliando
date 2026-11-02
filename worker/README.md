@@ -9,7 +9,7 @@ Non inserire chiavi Cloudflare, GitHub o LLM nel repository pubblico.
 - src/index.mjs: endpoint GET /health, POST /api/assist; richieste max 2048 byte e domande max 500 caratteri.
 - src/access.mjs: verifica JWT Access RS256 firmato, issuer, audience e scadenza attraverso JWKS.
 - src/policy.mjs: stop cautelativi, richieste fuori ambito e dati modello-specifici.
-- wrangler.jsonc: SERVICE_MODE=disabled, workers_dev=false, preview_urls=false.
+- wrangler.jsonc: SERVICE_MODE=disabled, workers_dev=true (URL workers.dev protetto da Access), preview_urls=false.
 - tests/worker.test.cjs: test con chiavi RSA generate localmente solo per collaudo.
 
 ## Protezioni
@@ -45,3 +45,5 @@ metadati di traffico; per il servizio pubblico servirà una politica sulla priva
 
 ## Rollback
 Non fare merge nel ramo main. La PWA già pubblicata e la sessione iPhone restano immutate.
+
+NOTA: il valore workers_dev=true mantiene l'URL workers.dev esistente. Prima di ogni deployment verificare che la protezione Access 'All traffic' rimanga applicata a questo Worker. Il repository non contiene account_id o credenziali.
