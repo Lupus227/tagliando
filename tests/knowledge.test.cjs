@@ -82,7 +82,11 @@ test('moduli caricati dopo app e inclusi nella cache sperimentale', () => {
   const html = source('index.html');
   const sw = source('sw.js');
   assert.match(html, /<script src="\.\/app\.js" defer>/);
-  assert.match(html, /<script src="\.\/knowledge\.js" defer><\/script><script src="\.\/knowledge-ui\.js" defer>/);
-  assert.match(sw, /tagliando-v0142-dev/);
-  assert.match(sw, /'\.\/knowledge\.js','\.\/knowledge-ui\.js'/);
+  assert.match(html, /<script src="\.\/knowledge\.js" defer><\/script><script src="\.\/retrieval\.js" defer><\/script><script src="\.\/knowledge-ui\.js" defer>/);
+  assert.match(sw, /tagliando-v0143-dev/);
+  assert.match(sw, /'\.\/knowledge\.js','\.\/retrieval\.js','\.\/knowledge-ui\.js'/);
+});
+
+test('perdo benzina: fermo cautelativo', () => {
+  assert.equal(K.answer('Perdo benzina dal carburatore', {operationId:8}).kind, 'stop');
 });
