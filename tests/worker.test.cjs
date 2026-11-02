@@ -15,10 +15,12 @@ const getModules = async () => ({
   verifier:(await import('../worker/src/access.mjs')).verifyAccessJwt
 });
 const to64 = item => (Buffer.isBuffer(item) ? item : Buffer.from(typeof item === 'string' ? item : JSON.stringify(item))).toString('base64url');
+let signingKeysPromise;
 async function getToken(options = {}) {
-  const kp = await crypto.subtle.generateKey({
+  signingKeysPromise ??= crypto.subtle.generateKey({
     name:'RSASSA-PKCS1-v1_5',modulusLength:2048,publicExponent:new Uint8Array([1,0,1]),hash:'SHA-256'
   },true,['sign','verify']);
+  const kp = await signingKeysPromise;
   const jwk = await crypto.subtle.exportKey('jwk',kp.publicKey);
   jwk.kid = 'test-key-rsa-0001';
   jwk.alg = 'RS256';
