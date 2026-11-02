@@ -86,3 +86,18 @@ vanno sistemati e verificati prima del rilascio.
 ## Rollback
 Non fare merge in main. I moduli 14.2-14.3 sono solo nel ramo dev/fase14-ai.
 Non eliminare la PWA iPhone e non cancellare storage o sessioni.
+
+## Fase 14.4 — Backend Cloudflare preparato (senza deploy)
+Codice: worker/src/index.mjs, worker/src/access.mjs, worker/src/policy.mjs.
+Configurazione: worker/wrangler.jsonc; guida: worker/README.md.
+Il gateway in staging accetta solo input vincolati e classifica richieste con
+controlli deterministici: nessun modello AI, nessun invio a provider LLM,
+nessun dato motore-specifico suggerito senza fonte verificata.
+Il servizio è DISABILITATO per impostazione iniziale e non ha URL pubblico.
+Protezione prevista: Cloudflare Access con verifica JWT RSA in Worker, CORS
+per il solo dominio GitHub Pages e Rate Limiting binding per identità.
+IMPORTANTE: rate limit locale e regex non garantiscono sicurezza assoluta;
+per AI a consumo serviranno quote di spesa globali, autenticazione testata
+su iPhone e base di conoscenza canonica validata sul server.
+Suite automatica estesa con tests/worker.test.cjs e GitHub Actions.
+Non è ancora prevista alcuna configurazione dell'account Cloudflare dell'utente.
