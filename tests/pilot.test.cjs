@@ -91,3 +91,33 @@ test('pilot connector is manual, session-read-only, and uses same-origin only',a
   assert.doesNotMatch(connector,/https?:\/\//);
   assert.doesNotMatch(connector,/SpeechRecognition|speechSynthesis/);
 });
+
+
+test('real Worker routes pilot only after verified native Cloudflare Access',async()=>{
+  const worker=(await import('../worker/src/index.mjs')).default;
+  const audience='a'.repeat(64);
+  const ctx={access:{aud:audience}};
+  const validEnv={...env,ACCESS_AUD:audience};
+  const r=await worker.fetch(request('/pilot/'),validEnv,ctx);
+  assert.equal(r.status,200);
+  assert.match(await r.text(),/COPIA ISOLATA/);
+  assert.equal((await worker.fetch(request('/pilot/'),validEnv,{})).status,401);
+  assert.equal((await worker.fetch(request('/pilot/'),{...validEnv,SERVICE_MODE:'disabled'},ctx)).status,503);
+  assert.equal((await worker.fetch(request('/pilot/'),validEnv,{access:{aud:'wrong'}})).status,401);
+});
+
+test('real Worker keeps existing /health, /api/assist safety gate unchanged',async()=>{
+  const worker=(await import('../worker/src/index.mjs')).default;
+  const health=await worker.fetch(request('/health'),{});
+  assert.equal(health.status,200);
+  assert.equal((await health.json()).aiEnabled,false);
+  const post=new Request(origin+'/api/assist',{
+    method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},
+    body:JSON.stringify({question:'La lama è crepata'})
+  });
+  const response=await worker.fetch(post,{...env,SERVICE_MODE:'disabled'},{
+    access:{aud:'a'.repeat(64)}
+  });
+  assert.equal(response.status,503);
+  assert.equal((await response.json()).code,'SERVICE_DISABLED');
+});
