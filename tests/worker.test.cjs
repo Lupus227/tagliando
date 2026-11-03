@@ -308,3 +308,95 @@ test('disabled AI API remains disabled with valid native Access context',async()
   assert.equal(response.status,503);
   assert.equal((await response.json()).code,'SERVICE_DISABLED');
 });
+
+
+// Fase 14.6 same-origin console: actual POST /api/assist semantics without model calls.
+const stagingOrigin='https://tagliando-ai-staging.maico-gua.workers.dev';
+const stagingEnv={...env,SELF_TEST_ORIGIN:stagingOrigin};
+const nativeCtx={access:{aud:audience,getIdentity:async()=>({user_uuid:'staging-user-001'})}};
+function stagingPost(question,requestOrigin=stagingOrigin){
+  return new Request(stagingOrigin+'/api/assist',{
+    method:'POST',headers:{Origin:requestOrigin,'Content-Type':'application/json'},
+    body:JSON.stringify({question,operationId:1})
+  });
+}
+
+test('staging /test is only served in guarded mode and with verified Access',async()=>{
+  const {worker}=await getModules();
+  const req=new Request(stagingOrigin+'/test');
+  const disabled=await worker.fetch(req,{...stagingEnv,SERVICE_MODE:'disabled'},nativeCtx);
+  assert.equal(disabled.status,503);
+  assert.equal((await disabled.json()).code,'SERVICE_DISABLED');
+  const noAccess=await worker.fetch(req,stagingEnv,{});
+  assert.equal(noAccess.status,401);
+  const good=await worker.fetch(req,stagingEnv,nativeCtx);
+  assert.equal(good.status,200);
+  assert.match(good.headers.get('content-type'),/text\/html/);
+  assert.match(good.headers.get('content-security-policy'),/connect-src 'self'/);
+  assert.match(await good.text(),/Fase 14\.6/);
+  const js=await worker.fetch(new Request(stagingOrigin+'/test/runner.js'),stagingEnv,nativeCtx);
+  assert.equal(js.status,200);
+  assert.match(js.headers.get('content-type'),/application\/javascript/);
+  assert.match(await js.text(),/credentials:'same-origin'/);
+});
+
+test('staging /test rejects mismatching configured origin and Access audience',async()=>{
+  const {worker}=await getModules();
+  const req=new Request(stagingOrigin+'/test');
+  assert.equal((await worker.fetch(req,{...stagingEnv,SELF_TEST_ORIGIN:'https://evil.example'},nativeCtx)).status,403);
+  assert.equal((await worker.fetch(req,stagingEnv,{access:{aud:'wrong'}})).status,401);
+});
+
+test('guarded staging POST accepts only exact same-origin browser request with native Access',async()=>{
+  const {worker}=await getModules();
+  const res=await worker.fetch(stagingPost('La lama è crepata'),stagingEnv,nativeCtx);
+  assert.equal(res.status,200);
+  const body=await res.json();
+  assert.equal(body.decision,'SAFETY_STOP');
+  assert.equal(body.aiEnabled,false);
+  assert.equal(body.canGenerate,false);
+  assert.equal(body.sessionChanged,false);
+  assert.deepEqual(body.references,[]);
+});
+
+test('staging console exercises fixed safety decisions, never AI',async()=>{
+  const {worker}=await getModules();
+  for(const [q,decision,status] of [
+    ['La lama è crepata','SAFETY_STOP',200],
+    ['Quanto olio devo mettere?','MODEL_REQUIRED',200],
+    ['Come si ripara il cambio di un automobile?','OUT_OF_SCOPE',200],
+    ['Come pulisco il sottoscocca?','PENDING_VALIDATION',503]
+  ]){
+    const r=await worker.fetch(stagingPost(q),stagingEnv,nativeCtx);
+    assert.equal(r.status,status,q);
+    const body=await r.json();
+    assert.equal(body.decision,decision,q);
+    assert.equal(body.aiEnabled,false);
+    assert.equal(body.canGenerate,false);
+    assert.equal(body.sessionChanged,false);
+  }
+});
+
+test('staging POST denies injected browser Origin, missing origin and unauthenticated requests',async()=>{
+  const {worker}=await getModules();
+  const bad=await worker.fetch(stagingPost('La lama è crepata','https://attacker.example'),stagingEnv,nativeCtx);
+  assert.equal(bad.status,403);
+  const withoutOrigin=new Request(stagingOrigin+'/api/assist',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({question:'La lama è crepata'})
+  });
+  assert.equal((await worker.fetch(withoutOrigin,stagingEnv,nativeCtx)).status,403);
+  const withoutAccess=await worker.fetch(stagingPost('La lama è crepata'),stagingEnv,{});
+  assert.equal(withoutAccess.status,401);
+  const wrongAud=await worker.fetch(stagingPost('La lama è crepata'),stagingEnv,{access:{aud:'another'}});
+  assert.equal(wrongAud.status,401);
+});
+
+test('staging POST enforces rate-limit denial and does not invoke AI',async()=>{
+  const {worker}=await getModules();
+  const resp=await worker.fetch(stagingPost('La lama è crepata'),{
+    ...stagingEnv,API_LIMITER:{limit:async()=>({success:false})}
+  },nativeCtx);
+  assert.equal(resp.status,429);
+  assert.equal((await resp.json()).code,'RATE_LIMITED');
+});
