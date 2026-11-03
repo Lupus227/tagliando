@@ -5,6 +5,7 @@
  */
 import {verifyWorkerAccess} from './access.mjs';
 import {evaluateSafety} from './policy.mjs';
+import {testPage, testRunner} from './test-page.mjs';
 
 const MAX_BODY_BYTES = 2048;
 const MAX_QUESTION_CHARS = 500;
@@ -84,14 +85,39 @@ const worker = {
       return respond(200, {ok:true, accessVerified:true,
         aiEnabled:false, modelRequests:0, sessionChanged:false});
     }
+    // Same-origin staging console, never reachable without signed Access identity.
+    // Not an API bypass: it can only call the ordinary guarded /api/assist route.
+    if (url.pathname === '/test' || url.pathname === '/test/runner.js') {
+      if (request.method !== 'GET') return error(405,'METHOD_NOT_ALLOWED');
+      if (env.SERVICE_MODE !== 'guarded') return error(503,'SERVICE_DISABLED');
+      if (env.SELF_TEST_ORIGIN !== url.origin ||
+          env.SELF_TEST_ORIGIN !== 'https://tagliando-ai-staging.maico-gua.workers.dev')
+        return error(403,'TEST_ORIGIN_DENIED');
+      try { await verifyWorkerAccess(request,env,ctx); }
+      catch (_) { return error(401,'UNAUTHORIZED'); }
+      const js=url.pathname === '/test/runner.js';
+      return new Response(js ? testRunner : testPage, {
+        status:200,
+        headers:{...baseHeaders,
+          'Content-Type':js?'application/javascript; charset=utf-8':'text/html; charset=utf-8',
+          'X-Frame-Options':'DENY',
+          'Content-Security-Policy':"default-src 'none'; script-src 'self'; connect-src 'self'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+        }
+      });
+    }
     if (url.pathname !== '/api/assist') return error(404,'NOT_FOUND');
     if (!['POST','OPTIONS'].includes(request.method)) return error(405,'METHOD_NOT_ALLOWED');
 
     // Origin is NOT authentication. It only reduces cross-site browser exposure.
     const origin = request.headers.get('origin');
-    const allowed = typeof env.ALLOWED_ORIGIN === 'string' &&
-      env.ALLOWED_ORIGIN === 'https://lupus227.github.io';
-    if (!allowed || origin !== env.ALLOWED_ORIGIN)
+    const configuredApp = env.ALLOWED_ORIGIN === 'https://lupus227.github.io';
+    const appOrigin = configuredApp && origin === env.ALLOWED_ORIGIN;
+    // The Access-protected test console may submit same-origin POST requests.
+    // Never accept a self-test origin derived from arbitrary Host/Origin headers.
+    const selfTestOrigin = env.SERVICE_MODE === 'guarded' &&
+      env.SELF_TEST_ORIGIN === 'https://tagliando-ai-staging.maico-gua.workers.dev' &&
+      env.SELF_TEST_ORIGIN === url.origin && origin === url.origin;
+    if (!configuredApp || !(appOrigin || selfTestOrigin))
       return error(403,'ORIGIN_DENIED');
     if (request.method === 'OPTIONS') {
       const headers = {...baseHeaders,'Access-Control-Allow-Origin':origin,
