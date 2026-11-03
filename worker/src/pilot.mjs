@@ -62,7 +62,7 @@ export async function servePilot(request, env, ctx, verifyAccess){
   const source=html?previewHTML():name==='pilot-connector.js'?pilotConnector:pilotAssets[name];
   if(typeof source!=='string')
     return Response.json({ok:false,code:'ASSET_NOT_FOUND',aiEnabled:false},{status:503,headers:cacheHeaders});
-  const headers={...cacheHeaders,'Content-Type':mime[name], 'X-Pilot-Source-Commit':pilotSourceCommit};
+  const headers={...cacheHeaders,'Content-Type':mime[name], 'X-Pilot-Source-Revision':pilotSourceCommit};
   if(html)headers['Content-Security-Policy']=pilotPolicy;
   return new Response(source,{status:200,headers});
 }

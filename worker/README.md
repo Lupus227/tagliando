@@ -114,3 +114,17 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Per rollback: riportare SERVICE_MODE=disabled oppure rimuovere il mount /pilot/
   nel ramo dev; non intervenire su main.
 - Esito Browser Cloudflare e prova iPhone: DA COLLAUDARE.
+
+### Fase 14.8 — Chiusura microfono Safari, collaudo
+- Problema segnalato: «Ferma dialogo» arrestava la sintesi ma non dava conferma
+  di rilascio del riconoscimento audio su iPhone Safari.
+- Correzione isolata in voice.js del ramo dev: invalidazione ciclo e risultati
+  precedenti, abort(), attesa di onend, tentativo stop() dopo 1,2 s se necessario.
+- Non si permette un nuovo ascolto mentre l'istanza è in chiusura.
+- Se Safari non emette onend entro 4 s, la UI suggerisce di chiudere la scheda;
+  la possibilità di riavvio resta bloccata per sicurezza.
+- La scritta «Riconoscimento vocale terminato» segnala l'evento onend della
+  Web Speech API, non certifica la disattivazione dell'indicatore privacy iOS.
+- Snapshot /pilot/ aggiornato esclusivamente per voice.js. Le altre
+  procedure, il motore backend e la PWA pubblica non cambiano.
+- Interazione reale iPhone dopo deployment: DA VERIFICARE.

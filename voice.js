@@ -7,16 +7,57 @@
  let active=false, listening=false, recognition=null, speaking=false, paused=false;
  let turn=0, retries=0, lastResult=false, lastError='';
  let pendingRestart=null;
+ // Safari può consegnare onend dopo abort(): non consentire nuove
+ // sessioni di ascolto prima della conferma di terminazione.
+ let closingRecognition=null, closeRetryTimer=null, closeFailureTimer=null;
  let anomalyFlow=null; // {stage,description,critical,warning,operation}
  const setStatus=t=>{ $('voiceStatus').textContent=t; };
  const setHeard=t=>{ $('voiceHeard').textContent=t; };
  const setDraft=t=>{ const el=$('voiceAnomalyDraft');if(!el)return;el.textContent=t||'';el.hidden=!t; };
- function refreshButtons(){ $('voiceDialog').textContent=active?'Dialogo attivo':'🎙 Avvia dialogo';$('voiceDialog').disabled=active; $('voiceListen').disabled=listening; }
+ function refreshButtons(){ $('voiceDialog').textContent=active?'Dialogo attivo':'🎙 Avvia dialogo';$('voiceDialog').disabled=active||Boolean(closingRecognition); $('voiceListen').disabled=listening||Boolean(closingRecognition); }
  function clearPending(){ if(pendingRestart!==null){clearTimeout(pendingRestart);pendingRestart=null;} }
- function abortRecognition(){const r=recognition;recognition=null;listening=false;if(r){r.onend=null;r.onerror=null;r.onresult=null;try{r.abort();}catch(_){}} refreshButtons();}
+ function clearClosingTimers(){
+   if(closeRetryTimer!==null){clearTimeout(closeRetryTimer);closeRetryTimer=null;}
+   if(closeFailureTimer!==null){clearTimeout(closeFailureTimer);closeFailureTimer=null;}
+ }
+ function abortRecognition(stopMessage=null){
+   const r=recognition;recognition=null;listening=false;
+   if(!r){refreshButtons();return false;}
+   // Ignora sempre i risultati e gli eventi ritardati dell'istanza annullata.
+   r.onstart=null;r.onresult=null;r.onerror=null;
+   if(stopMessage!==null){
+     closingRecognition=r;
+     r.onend=()=>{
+       if(closingRecognition!==r)return;
+       closingRecognition=null;clearClosingTimers();
+       setStatus(stopMessage+' Riconoscimento vocale terminato.');
+       refreshButtons();
+     };
+     // Alcune versioni di Safari non rilasciano subito il riconoscimento
+     // dopo abort(). Prova stop() solo come recupero, senza riavviare.
+     closeRetryTimer=setTimeout(()=>{
+       closeRetryTimer=null;
+       if(closingRecognition===r)try{r.stop();}catch(_){}
+     },1200);
+     closeFailureTimer=setTimeout(()=>{
+       closeFailureTimer=null;
+       if(closingRecognition===r)
+         setStatus('Safari non ha confermato la chiusura del riconoscimento. Chiudi questa scheda per interrompere l’accesso al microfono; non riavviare il dialogo qui.');
+     },4000);
+   }else r.onend=null;
+   try{r.abort();}catch(_){try{r.stop();}catch(_){}}
+   refreshButtons();
+   return true;
+ }
  function stopSpeech(){speaking=false;if(synth)try{synth.cancel();}catch(_){} }
  function stopAll(message='Dialogo interrotto. Puoi ripartire quando vuoi.'){
-   active=false;paused=false;anomalyFlow=null;setDraft('');turn++;clearPending();abortRecognition();stopSpeech();setStatus(message);refreshButtons();
+   active=false;paused=false;anomalyFlow=null;setDraft('');turn++;clearPending();
+   const hadRecognition=Boolean(recognition||closingRecognition);
+   if(hadRecognition)setStatus('Chiusura del riconoscimento vocale in corso…');
+   abortRecognition(message);
+   stopSpeech();
+   if(!hadRecognition)setStatus(message);
+   refreshButtons();
  }
  function speechText(){
    const op=$('opTitle')?.textContent||'Tagliando';
@@ -318,7 +359,7 @@
    }
  }
  function listen(automatic){
-   if(listening||speaking)return;
+   if(listening||speaking||recognition||closingRecognition)return;
    if(!Engine){stopAll('Riconoscimento non disponibile su questo browser. Usa i comandi sullo schermo.');return;}
    const cycle=turn;lastResult=false;lastError='';
    try{
@@ -356,12 +397,12 @@
  }
  document.addEventListener('DOMContentLoaded',()=>{
    $('voiceDialog').addEventListener('click',()=>{
-     if(active)return;
+     if(active||closingRecognition)return;
      if(!Engine){setStatus('Il riconoscimento vocale non è disponibile su questo browser.');return;}
      active=true;paused=false;turn++;retries=0;refreshButtons();setHeard('');describeNext();
    });
-   $('voiceListen').addEventListener('click',()=>{if(active)stopAll('Dialogo continuo sospeso; ascolto manuale disponibile.');turn++;stopSpeech();listen(false);});
-   $('voiceRead').addEventListener('click',()=>{stopAll('Lettura del passaggio.');say(speechText());});
+   $('voiceListen').addEventListener('click',()=>{if(active){stopAll('Dialogo continuo sospeso. Per un comando manuale premi di nuovo «Ascolta un comando» dopo la chiusura.');return;}if(closingRecognition)return;turn++;stopSpeech();listen(false);});
+   $('voiceRead').addEventListener('click',()=>{if(closingRecognition)return;const wasListening=Boolean(recognition);stopAll('Ascolto interrotto per lettura manuale.');if(!wasListening)say(speechText());else setStatus('Chiusura microfono in corso. Premi nuovamente «Leggi passaggio» dopo la chiusura.');});
    $('voiceStop').addEventListener('click',()=>stopAll());
    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&(active||listening||speaking))stopAll('App in background: audio e ascolto fermati per sicurezza.');});
    window.addEventListener('pagehide',()=>{if(active||listening||speaking)stopAll('Dialogo fermato.');});
