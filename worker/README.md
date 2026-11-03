@@ -88,3 +88,29 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Nessuna API AI, chiave LLM, salvataggio richiesta o mutazione di sessione.
 - Test su PWA GitHub Pages rinviato: Cloudflare Access può bloccare i preflight OPTIONS e i cookie di terze parti; non aprire bypass a cuor leggero.
 - Se si sospende il collaudo, ripristinare SERVICE_MODE=disabled in entrambi i file Wrangler.
+
+
+### Fase 14.7 — Copia PWA protetta per il primo test end-to-end
+- Endpoint: GET /pilot/ (solo Worker staging con Cloudflare Access attivo).
+- Copia immutabile di 8 file PWA dal ramo dev, fotografati al commit e21c22e;
+  i test confrontano **byte per byte** lo snapshot con i file sorgente del repository.
+- Non richiede modifiche a main, all'interfaccia della PWA pubblica, a voice.js,
+  support.js o ai comandi di avanzamento/conferma delle operazioni.
+- Sul Worker la copia è su un ORIGIN diverso da GitHub Pages: non condivide
+  localStorage o Service Worker con la PWA pubblica.
+- Per evitare cache non valide e confusione con la versione pubblica, il pilot
+  applica Cache-Control: no-store e CSP con worker-src 'none'; non installare il
+  pilot come app né usarlo per svolgere manutenzione reale.
+- Un pannello aggiuntivo consente quattro DOMANDE FISSE, inviate manualmente
+  con POST /api/assist alla STESSA origine, senza inviare dati macchina,
+  note, identificativi della sessione o registrazioni vocali.
+- Ogni risposta è mostrata con textContent; non modifica passi,
+  registri, anomalie, metodi o stato vocale.
+- Nessun collegamento cross-origin è stato abilitato dalla PWA pubblica;
+  la documentazione Cloudflare conferma la criticità del preflight OPTIONS con
+  Access e dei cookie di terze parti, soprattutto su Safari.
+- /pilot/ funziona solo se SERVICE_MODE=guarded, SELF_TEST_ORIGIN combacia con
+  il dominio workers.dev previsto e il token/access context supera la verifica.
+- Per rollback: riportare SERVICE_MODE=disabled oppure rimuovere il mount /pilot/
+  nel ramo dev; non intervenire su main.
+- Esito Browser Cloudflare e prova iPhone: DA COLLAUDARE.
