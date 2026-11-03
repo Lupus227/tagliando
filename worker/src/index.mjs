@@ -6,6 +6,7 @@
 import {verifyWorkerAccess} from './access.mjs';
 import {evaluateSafety} from './policy.mjs';
 import {testPage, testRunner} from './test-page.mjs';
+import {servePilot} from './pilot.mjs';
 
 const MAX_BODY_BYTES = 2048;
 const MAX_QUESTION_CHARS = 500;
@@ -85,6 +86,11 @@ const worker = {
       return respond(200, {ok:true, accessVerified:true,
         aiEnabled:false, modelRequests:0, sessionChanged:false});
     }
+    // Fase 14.7 — PWA snapshot isolated behind Access on the same origin.
+    // No changes to the public PWA, existing API, or voice command handlers.
+    if (url.pathname === '/pilot' || url.pathname.startsWith('/pilot/'))
+      return servePilot(request, env, ctx, verifyWorkerAccess);
+
     // Same-origin staging console, never reachable without signed Access identity.
     // Not an API bypass: it can only call the ordinary guarded /api/assist route.
     if (url.pathname === '/test' || url.pathname === '/test/runner.js') {
