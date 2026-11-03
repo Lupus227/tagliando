@@ -2,7 +2,7 @@
  * Fase 14.7 — Solo pannello PWA di collaudo. Nessuna modifica allo stato locale,
  * al dialogo vocale, al registro o ai passaggi. Nessuna attivazione automatica.
  */
-export const pilotConnector = String.raw\`(function () {
+export const pilotConnector = String.raw`(function () {
   'use strict';
   const questions = Object.freeze([
     {label:'Lama crepata — STOP',question:'La lama è crepata',code:'SAFETY_STOP',http:200},
@@ -89,4 +89,4 @@ export const pilotConnector = String.raw\`(function () {
   if(document.readyState==='loading')
     document.addEventListener('DOMContentLoaded',attach,{once:true});
   else attach();
-})();\`;
+})();`;
