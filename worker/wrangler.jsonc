@@ -9,7 +9,8 @@
     "SERVICE_MODE": "disabled",
     "ALLOWED_ORIGIN": "https://lupus227.github.io",
     "ACCESS_TEAM_DOMAIN": "mute-poetry-bc89.cloudflareaccess.com",
-    "ACCESS_AUD": "da3e295e300402c580d7282cece8300a1346ac0fcd32e34983dbb0dc2aca57c5"
+    "ACCESS_AUD": "da3e295e300402c580d7282cece8300a1346ac0fcd32e34983dbb0dc2aca57c5",
+    "SELF_TEST_ORIGIN": "https://tagliando-ai-staging.maico-gua.workers.dev"
   },
   "ratelimits": [
     {
