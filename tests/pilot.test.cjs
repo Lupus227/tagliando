@@ -111,11 +111,15 @@ test('real Worker keeps existing /health, /api/assist safety gate unchanged',asy
   const health=await worker.fetch(request('/health'),{});
   assert.equal(health.status,200);
   assert.equal((await health.json()).aiEnabled,false);
+  // In disabled mode the staging self-test Origin is intentionally blocked
+  // before SERVICE_MODE is inspected. Use the explicitly permitted PWA Origin
+  // to verify the independent 503 fail-closed SERVICE_MODE gate.
+  const publicOrigin='https://lupus227.github.io';
   const post=new Request(origin+'/api/assist',{
-    method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},
+    method:'POST',headers:{Origin:publicOrigin,'Content-Type':'application/json'},
     body:JSON.stringify({question:'La lama è crepata'})
   });
-  const response=await worker.fetch(post,{...env,SERVICE_MODE:'disabled'},{
+  const response=await worker.fetch(post,{...env,ALLOWED_ORIGIN:publicOrigin,SERVICE_MODE:'disabled'},{
     access:{aud:'a'.repeat(64)}
   });
   assert.equal(response.status,503);
