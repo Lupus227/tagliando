@@ -178,7 +178,7 @@ test('deploy configuration preserves Access-protected hostname but disables the 
   assert.equal(config.name, 'tagliando-ai-staging');
   assert.equal(config.workers_dev, true);
   assert.equal(config.preview_urls, false);
-  assert.equal(config.vars.SERVICE_MODE, 'disabled');
+  assert.equal(config.vars.SERVICE_MODE, 'guarded');
   assert.equal(config.main, './src/index.mjs');
 });
 function loadConfig() {
@@ -195,12 +195,12 @@ test('default Cloudflare deploy at repo root discovers the exact protected Worke
   assert.equal(root.main,'./worker/src/index.mjs');
   assert.equal(nested.main,'./src/index.mjs');
   assert.equal(root.name,'tagliando-ai-staging');
-  assert.equal(root.vars.SERVICE_MODE,'disabled');
+  assert.equal(root.vars.SERVICE_MODE,'guarded');
   assert.equal(root.workers_dev,true);
   assert.equal(root.preview_urls,false);
   assert.match(root.vars.ACCESS_TEAM_DOMAIN,/^[a-z0-9-]+\.cloudflareaccess\.com$/);
   assert.match(root.vars.ACCESS_AUD,/^[a-f0-9]{64}$/);
-  assert.equal(root.vars.SERVICE_MODE,'disabled');
+  assert.equal(root.vars.SERVICE_MODE,'guarded');
   const rootComparable = {...root,main:nested.main};
   assert.deepEqual(rootComparable,nested,'root and nested configs must stay equivalent');
   assert.ok(fs.existsSync(path.join(__dirname,'../worker/src/index.mjs')));

@@ -1,7 +1,7 @@
 # Cloudflare Worker — Fase 14.4 (staging, senza AI)
 
 ## Stato
-Il backend è presente soltanto nel ramo dev/fase14-ai, non è stato distribuito.
+Il backend staging è pubblicato su Cloudflare dal ramo dev/fase14-ai. Il ramo main non è stato modificato.
 Nessun provider LLM è integrato. La PWA v0.12.1 resta su main.
 Non inserire chiavi Cloudflare, GitHub o LLM nel repository pubblico.
 
@@ -15,21 +15,21 @@ Non inserire chiavi Cloudflare, GitHub o LLM nel repository pubblico.
 
 ## Protezioni
 - La comunicazione a servizi AI esterni NON è implementata.
-- Cloudflare Access deve essere attivato per proteggere l'intero Worker prima di pubblicare un indirizzo.
+- Cloudflare Access protegge tutte le richieste al Worker staging; la protezione deve essere mantenuta.
 - L'endpoint assist richiede CORS ristretto, Access JWT valido e RATE LIMITER. CORS da solo NON autentica.
 - Rate limiter di esempio: 10 richieste/minuto per utente e per località Cloudflare; non è un tetto di spesa globale.
 - Se fonte tecnica non revisionata: PENDING_VALIDATION / HTTP 503, non istruzioni AI.
 - La classificazione per parole chiave non è una diagnosi completa né una validazione di sicurezza.
 - Il Worker non cambia stato dei passaggi, non archivia richieste e non genera ticket.
 - Non fidarsi di fonti inviate dal browser: prima di AI servirà una base canonica revisionata sul server.
-- La configurazione iniziale blocca tutte le chiamate /api/assist.
+- SERVICE_MODE=guarded permette soltanto chiamate Access-autenticate, verificate con AUD, limitate e prive di AI.
 
-## Prima di un futuro collaudo Cloudflare
+## Requisiti per il collaudo protetto
 1. Attivare Zero Trust/Access nell'account e limitare l'accesso al solo collaudatore.
 2. Proteggere il Worker tramite la pagina Access del Worker (tutti gli URL, senza bypass pubblico).
 3. Impostare ACCESS_TEAM_DOMAIN e ACCESS_AUD in base all'app Access creata; non sono password.
 4. Verificare che namespace_id del rate limiter non sia già utilizzato.
-5. Soltanto dopo verifiche, configurare una route protetta e impostare SERVICE_MODE=guarded.
+5. Confermato: la route staging è protetta e SERVICE_MODE=guarded è abilitato per il solo collaudo.
 6. Provare autenticazione, CORS e funzionamento su iPhone Safari: cookie cross-site e preflight
    potrebbero impedire chiamate dalla PWA GitHub Pages.
 7. Mai caricare una chiave LLM su GitHub. Per il futuro usare Workers Secrets.
@@ -38,9 +38,9 @@ Non inserire chiavi Cloudflare, GitHub o LLM nel repository pubblico.
 ## Test
 Con Node.js 22+: node --test tests/*.test.cjs
 Con Wrangler installato: npx wrangler dev --config worker/wrangler.jsonc
-Il Worker Hello World esiste su Cloudflare ed è protetto con Cloudflare Access.
-L'integrazione Git è collegata, ma le build risultano disabilitate.
-NON eseguire ancora wrangler deploy né attivare le build fino al controllo dei prerequisiti.
+Il Worker applicativo è distribuito su Cloudflare ed è protetto con Cloudflare Access.
+L'integrazione Git è collegata e le build automatiche sono abilitate sul ramo dev/fase14-ai.
+Usare le build Git Cloudflare; non eseguire deploy manuali né modificare il ramo main.
 
 ## Privacy
 Le domande non sono conservate dal codice della fase. Cloudflare può comunque raccogliere
@@ -64,7 +64,7 @@ Build di produzione abilitate dall'utente per il primo collaudo protetto; esamin
 Cloudflare Access All traffic è stato verificato tramite accesso in navigazione incognito.
 Production branch Cloudflare: dev/fase14-ai, Root directory: / (repository root).
 Deploy command: npx wrangler deploy --config worker/wrangler.jsonc.
-L'API /api/assist resta spenta tramite SERVICE_MODE=disabled. L'endpoint /health non utilizza AI.
+L'API /api/assist è disponibile esclusivamente in modalità guarded, senza modelli AI. L'endpoint /health non utilizza AI.
 Questo aggiornamento documentale genera un commit sul ramo sperimentale per attivare una build.
 Verificare il risultato nella scheda Deployments > View build history del Worker.
 
@@ -72,8 +72,19 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - GET /api/auth-check: usa prima l'identità autenticata nativamente da Cloudflare (`ctx.access`) con confronto rigoroso dell'AUD atteso. Solo quando `ctx.access` è assente accetta un JWT firmato e ne verifica RS256, issuer, AUD e scadenza.
 - Senza contesto Access autenticato né JWT valido, ritorna HTTP 401 con codice ACCESS_VERIFICATION_FAILED; non espone soggetto né token. Un AUD nativo errato NON può essere aggirato tramite JWT fallback.
 - Con token valido, ritorna HTTP 200 e JSON {ok:true,accessVerified:true,aiEnabled:false,modelRequests:0,sessionChanged:false}.
-- Non occorre abilitare SERVICE_MODE: rimane disabled e /api/assist resta disabilitato.
+- Nella fase 14.5 SERVICE_MODE era disabled; nella fase 14.6 è guarded, ma nessuna chiamata AI è implementata.
 - Per il collaudo manuale, autenticarsi nel browser sul dominio Worker e aprire /api/auth-check.
 - Se compare HTTP 401 dietro Access dopo login, raccogliere soltanto codice di errore e log generico, mai incollare cookie o JWT in chat.
 - In modalita guarded, il rate limiter usa `user_uuid` (o service_token_id) ottenuto dal contesto Cloudflare; se manca un identificativo affidabile, la richiesta viene rifiutata.
 - Riprova anche l'indirizzo in incognito: prima dell'autenticazione deve comparire il login Cloudflare.
+
+### Fase 14.6 — Collaudo API reale tramite console protetta
+- Origin della console: https://tagliando-ai-staging.maico-gua.workers.dev (SELF_TEST_ORIGIN immutabile).
+- GET /test: pagina HTML Access-autenticata, fruibile soltanto con SERVICE_MODE=guarded.
+- GET /test/runner.js: script di test same-origin, con CSP restrictiva e senza lettura di cookie o token.
+- POST /api/assist: resta il solo percorso applicativo; accetta Origin GitHub Pages oppure esclusivamente l'Origin della console sullo stesso Worker di staging.
+- Ogni POST richiede identità Access valida, AUD corretto, limitazione per utente e body JSON valido.
+- Scenari: SAFETY_STOP (200), MODEL_REQUIRED (200), OUT_OF_SCOPE (200), PENDING_VALIDATION (503).
+- Nessuna API AI, chiave LLM, salvataggio richiesta o mutazione di sessione.
+- Test su PWA GitHub Pages rinviato: Cloudflare Access può bloccare i preflight OPTIONS e i cookie di terze parti; non aprire bypass a cuor leggero.
+- Se si sospende il collaudo, ripristinare SERVICE_MODE=disabled in entrambi i file Wrangler.
