@@ -26,10 +26,10 @@ test('every technical step and procedure is pending review; no approvals inferre
   assert.ok(ps.every(op=>op.review.status==='DA_VALIDARE' && op.review.reviewer===null));
   assert.ok(ps.flatMap(op=>op.steps).every(s=>s.review.status==='DA_VALIDARE' && s.review.reviewer===null));
   const summary=m.canonicalKnowledgeStatus();
-  assert.equal(summary.pendingSteps,51);
-  assert.equal(summary.validatedSteps,2);
-  assert.equal(summary.conditionalValidatedSteps,2);
-  assert.equal(summary.latestReviewedStepId,'RASA-OP-01-P02');
+  assert.equal(summary.pendingSteps,50);
+  assert.equal(summary.validatedSteps,3);
+  assert.equal(summary.conditionalValidatedSteps,3);
+  assert.equal(summary.latestReviewedStepId,'RASA-OP-01-P03');
   assert.equal(summary.readyForTechnicalAnswers,false);
   assert.equal(summary.canGenerate,false);
   assert.equal(summary.aiEnabled,false);
@@ -68,10 +68,10 @@ test('status endpoint is Access-protected, read only, and includes no technical 
   assert.equal(json.ok,true);
   assert.equal(json.procedureCount,8);
   assert.equal(json.stepCount,53);
-  assert.equal(json.pendingSteps,51);
-  assert.equal(json.validatedSteps,2);
-  assert.equal(json.conditionalValidatedSteps,2);
-  assert.equal(json.latestReviewedStepId,'RASA-OP-01-P02');
+  assert.equal(json.pendingSteps,50);
+  assert.equal(json.validatedSteps,3);
+  assert.equal(json.conditionalValidatedSteps,3);
+  assert.equal(json.latestReviewedStepId,'RASA-OP-01-P03');
   assert.equal(json.aiEnabled,false);
   assert.equal(json.canGenerate,false);
   assert.equal(json.sessionChanged,false);
@@ -105,7 +105,7 @@ test('the existing /api/assist still refuses a regular technical how-to until re
 
 test('15.1 review ledger contains the exact expert-approved preparation text and stop condition',async()=>{
   const [m,reviews]=await Promise.all([getServer(),import('../worker/src/review-ledger.mjs')]);
-  assert.equal(reviews.REVIEW_LEDGER.length,2);
+  assert.equal(reviews.REVIEW_LEDGER.length,3);
   assert.equal(reviews.auditReviewLedger(m.CANONICAL_KNOWLEDGE).ok,true);
   const r=reviews.REVIEW_LEDGER[0];
   assert.equal(r.stepId,'RASA-OP-01-P01');
@@ -127,7 +127,7 @@ test('15.1–15.2 ledger is immutable and rejects extra approvals, false univers
   assert.equal(Object.isFrozen(reviews.REVIEW_LEDGER[0].content),true);
   assert.throws(()=>{reviews.REVIEW_LEDGER[0].status='APPROVATO_UNIVERSALE';},TypeError);
   for(const mutate of [
-    rs=>rs.push({...rs[0],stepId:'RASA-OP-01-P03'}),
+    rs=>rs.push({...rs[0],stepId:'RASA-OP-01-P04'}),
     rs=>rs[0].stepId='RASA-OP-01-P02',
     rs=>rs[0].status='APPROVATO_UNIVERSALE',
     rs=>rs[0].content.instruction='Senza precauzioni',
@@ -146,7 +146,7 @@ test('15.1 technical approval is never auto-exposed to client through knowledge 
   const r=await worker.fetch(new Request('https://staging.invalid/api/knowledge-status'),env,{access:{aud}});
   assert.equal(r.status,200);
   const s=await r.json();
-  assert.equal(s.validatedSteps,2);
+  assert.equal(s.validatedSteps,3);
   assert.equal(s.readyForTechnicalAnswers,false);
   assert.equal(s.canGenerate,false);
   const payload=JSON.stringify(s);
@@ -157,7 +157,7 @@ test('15.2 approved conditional inclination is recorded verbatim and no AI use i
  const {REVIEW_LEDGER:ledger,auditReviewLedger:audit}=await import('../worker/src/review-ledger.mjs');
  const {CANONICAL_KNOWLEDGE:kb}=await getServer();
  assert.equal(audit(kb).ok,true);
- assert.deepEqual(ledger.map(r=>r.stepId),['RASA-OP-01-P01','RASA-OP-01-P02']);
+ assert.deepEqual(ledger.map(r=>r.stepId),['RASA-OP-01-P01','RASA-OP-01-P02','RASA-OP-01-P03']);
  const r=ledger[1];
  assert.equal(r.revision,'F15.2-R1');
  assert.equal(r.approval.decision,'APPROVATO_DOPO_REVISIONE_CONCORDATA');
@@ -182,15 +182,49 @@ test('15.2 fail-closed tamper prevention: no universal 45-degree permission or p
    rs=>{rs[1].content.stopCondition='Nessuna precauzione';},
    rs=>{rs[1].aiUseAllowed=true;},
    rs=>{rs[1].stepId='RASA-OP-03-P01';},
-   rs=>{rs.push({...rs[1],stepId:'RASA-OP-01-P03'});}
+   rs=>{rs.push({...rs[1],stepId:'RASA-OP-01-P04'});}
  ]){
    const modified=JSON.parse(JSON.stringify(ledger));
    alter(modified);
    assert.equal(audit(kb,modified).ok,false);
  }
  const status=(await getServer()).canonicalKnowledgeStatus();
- assert.equal(status.pendingSteps,51);
- assert.equal(status.validatedSteps,2);
+ assert.equal(status.pendingSteps,50);
+ assert.equal(status.validatedSteps,3);
  assert.equal(status.readyForTechnicalAnswers,false);
  assert.equal(status.aiEnabled,false);
+});
+
+test('15.3 approved steel spatula method excludes rejected guidance',async()=>{
+ const m=await getServer(),{REVIEW_LEDGER,auditReviewLedger}=await import('../worker/src/review-ledger.mjs');
+ assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE).ok,true);
+ const r=REVIEW_LEDGER[2];assert.equal(r.stepId,'RASA-OP-01-P03');
+ assert.equal(r.revision,'F15.3-R1');assert.equal(r.status,'VALIDATO_CONDIZIONATO');
+ assert.match(r.content.instruction,/spatola in acciaio rigida, con bordo non affilato/);
+ assert.match(r.content.instruction,/pressione necessaria/);
+ assert.equal(r.content.precautions.length,2);
+ assert.deepEqual(r.content.precautions,[
+ 'Non utilizzare la lama come punto di leva o di appoggio per la spatola.',
+ 'Evita il contatto accidentale con i taglienti.']);
+ assert.equal(r.content.stopCondition,"Interrompi l'operazione se riscontri danni strutturali, componenti compromessi o instabilità della macchina.");
+ assert.doesNotMatch(JSON.stringify(r.content),/deposito non può essere rimosso/);
+ assert.equal(r.aiUseAllowed,false);
+});
+test('15.3 ledger rejects tampering and keeps AI disabled',async()=>{
+ const m=await getServer(),{REVIEW_LEDGER,auditReviewLedger}=await import('../worker/src/review-ledger.mjs');
+ for(const mutate of [
+ x=>x[2].content.precautions=[],
+ x=>x[2].content.instruction='Solo spazzola',
+ x=>x[2].applicability.requiresStableSupport=false,
+ x=>x[2].aiUseAllowed=true,
+ x=>x[2].stepId='RASA-OP-01-P04',
+ x=>x.push({...x[2],stepId:'RASA-OP-01-P04'})
+ ]){
+ const candidate=JSON.parse(JSON.stringify(REVIEW_LEDGER));mutate(candidate);
+ assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,candidate).ok,false);
+ }
+ const state=m.canonicalKnowledgeStatus();
+ assert.equal(state.version,'15.3.0');assert.equal(state.validatedSteps,3);
+ assert.equal(state.pendingSteps,50);assert.equal(state.aiEnabled,false);
+ assert.equal(state.readyForTechnicalAnswers,false);
 });

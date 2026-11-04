@@ -1325,14 +1325,14 @@ export function canonicalKnowledgeStatus(){
   const reviewed=REVIEW_LEDGER.length;
   return Object.freeze({
     schema:CANONICAL_KNOWLEDGE.schema,
-    version:'15.2.0',
+    version:'15.3.0',
     sourceAppVersion:CANONICAL_KNOWLEDGE.sourceAppVersion,
     procedureCount:EXPECTED_PROCEDURES,
     stepCount:EXPECTED_STEPS,
     pendingSteps:EXPECTED_STEPS-reviewed,
     validatedSteps:reviewed,
     conditionalValidatedSteps:reviewed,
-    reviewScope:'sicurezza_generale_preparazione_e_accesso_condizionato',
+    reviewScope:'sicurezza_generale_preparazione_accesso_e_rimozione_condizionata',
     latestReviewedStepId:REVIEW_LEDGER.at(-1)?.stepId||null,
     readyForTechnicalAnswers:false,
     aiEnabled:false,

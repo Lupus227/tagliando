@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.2 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.3 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 e RASA-OP-01-P02, entrambe con applicabilità condizionata.
+ * RASA-OP-01-P01, RASA-OP-01-P02 e RASA-OP-01-P03, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -93,6 +93,43 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-01-P03",
+    "revision": "F15.3-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "rimozione_meccanica_incrostazioni_sottoscocca",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_CON_ELIMINAZIONE_PRECISATA",
+      "approvedOn": "2026-11-04",
+      "evidence": "approvazione_esplicita_nella_conversazione_fase_15_3"
+    },
+    "content": {
+      "title": "Rimozione delle incrostazioni",
+      "instruction": "Con il rasaerba messo in sicurezza e stabilmente sostenuto, individua gli accumuli di erba, terra e residui vegetali presenti nel sottoscocca.\n\nUtilizza una spatola in acciaio rigida, con bordo non affilato, scegliendo la larghezza più adatta alla zona da pulire.\n\nRimuovi meccanicamente le incrostazioni dalle pareti interne della scocca e dai condotti di espulsione dell'erba, esercitando la pressione necessaria a distaccare i depositi induriti.\n\nPresta attenzione a non danneggiare il rivestimento protettivo, le parti in plastica, i fissaggi e gli eventuali componenti presenti nel sottoscocca.",
+      "precautions": [
+        "Non utilizzare la lama come punto di leva o di appoggio per la spatola.",
+        "Evita il contatto accidentale con i taglienti."
+      ],
+      "stopCondition": "Interrompi l'operazione se riscontri danni strutturali, componenti compromessi o instabilità della macchina."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "requiresCompletedSafetyPreparation": true,
+      "requiresStableSupport": true,
+      "requiresSafeAccess": true,
+      "requiresSuitableTool": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "Metodo d'officina con spatola rigida in acciaio non affilata. Precauzione aggiuntiva rimossa secondo correzione dell'esperto.",
+        "approvedOn": "2026-11-04"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -110,7 +147,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==2)
+  if(!Array.isArray(candidate) || candidate.length!==3)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -155,7 +192,26 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes('perdite di olio o carburante') &&
        entry.evidence.length===1 &&
        entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02))
+    const approvedP03=entry.stepId==='RASA-OP-01-P03' &&
+       entry.revision==='F15.3-R1' &&
+       entry.scope==='rimozione_meccanica_incrostazioni_sottoscocca' &&
+       entry.approval?.decision==='APPROVATO_CON_ELIMINAZIONE_PRECISATA' &&
+       entry.approval?.evidence==='approvazione_esplicita_nella_conversazione_fase_15_3' &&
+       entry.applicability?.requiresCompletedSafetyPreparation===true &&
+       entry.applicability?.requiresStableSupport===true &&
+       entry.applicability?.requiresSafeAccess===true &&
+       entry.applicability?.requiresSuitableTool===true &&
+       entry.content.instruction.includes('spatola in acciaio rigida, con bordo non affilato') &&
+       entry.content.instruction.includes('pressione necessaria') &&
+       Array.isArray(entry.content.precautions) &&
+       entry.content.precautions.length===2 &&
+       entry.content.precautions[0]==='Non utilizzare la lama come punto di leva o di appoggio per la spatola.' &&
+       entry.content.precautions[1]==='Evita il contatto accidentale con i taglienti.' &&
+       entry.content.stopCondition.includes('danni strutturali') &&
+       !entry.content.stopCondition.includes('metodo alternativo') &&
+       entry.evidence.length===1 &&
+       entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});

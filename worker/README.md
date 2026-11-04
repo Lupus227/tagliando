@@ -189,3 +189,13 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
   validare. Catalogo sorgente 53/53 DA_VALIDARE mantenuto intatto.
 - Nessuna API di istruzioni, AI, modifica a main, voice.js o pilot.
 - Deployment Git e lettura /api/knowledge-status devono essere collaudati.
+
+### Fase 15.3 — Rimozione delle incrostazioni (F15.3-R1)
+- Testo di officina confermato: spatola in acciaio rigida, bordo non affilato,
+  varie misure; pressione adeguata a distaccare croste vegetali e terra.
+- Conservate precauzioni sul tagliente, appoggio sulla lama, danni strutturali
+  e stabilita della macchina.
+- Rimossa su esplicita richiesta dell'esperto l'istruzione aggiuntiva che
+  proponeva un metodo alternativo in caso di incrostazioni non rimovibili.
+- Revisione condizionata: 3/53 approvate, 50 in attesa. AI ancora disabilitata.
+- Nessuna modifica a main, PWA pubblica, voice.js o catalogo fonte.
