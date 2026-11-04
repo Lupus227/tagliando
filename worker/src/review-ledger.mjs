@@ -94,8 +94,6 @@ const RAW_REVISIONS = [
     ],
     "aiUseAllowed": false
   }
-]ed": false
-  }
 ];
 
 function deepFreeze(value){
