@@ -174,3 +174,18 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
   status Access e mancata esposizione del testo.
 - Confermare Deployments e /api/knowledge-status nel collaudo live prima
   di dichiarare distribuita la fase 15.1.
+
+### Fase 15.2 — Accesso al sottoscocca (F15.2-R1)
+- Testo finale approvato dall'esperto in chat il 2026-11-04.
+- 45 gradi: riferimento pratico indicativo e NON soglia universale o certificata.
+  Inclinazione progressiva solo con orientamento compatibile e sostegno stabile.
+- Candela anteriore: possibile inclinazione posteriore della macchina mantenendo
+  la candela in alto; controllare carburatore, filtro, condizioni del motore.
+- Posizione verticale: ammessa soltanto su modelli predisposti e nel rispetto
+  delle istruzioni specifiche del costruttore.
+- STOP: perdite di olio/carburante, instabilita, incompatibilita della configurazione.
+  L'assenza di perdite visibili non dimostra di per se la sicurezza.
+- Registro server aggiornato a 2 revisioni CONDIZIONATE su 53; 51 ancora da
+  validare. Catalogo sorgente 53/53 DA_VALIDARE mantenuto intatto.
+- Nessuna API di istruzioni, AI, modifica a main, voice.js o pilot.
+- Deployment Git e lettura /api/knowledge-status devono essere collaudati.

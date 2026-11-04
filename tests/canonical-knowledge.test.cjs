@@ -26,10 +26,10 @@ test('every technical step and procedure is pending review; no approvals inferre
   assert.ok(ps.every(op=>op.review.status==='DA_VALIDARE' && op.review.reviewer===null));
   assert.ok(ps.flatMap(op=>op.steps).every(s=>s.review.status==='DA_VALIDARE' && s.review.reviewer===null));
   const summary=m.canonicalKnowledgeStatus();
-  assert.equal(summary.pendingSteps,52);
-  assert.equal(summary.validatedSteps,1);
-  assert.equal(summary.conditionalValidatedSteps,1);
-  assert.equal(summary.latestReviewedStepId,'RASA-OP-01-P01');
+  assert.equal(summary.pendingSteps,51);
+  assert.equal(summary.validatedSteps,2);
+  assert.equal(summary.conditionalValidatedSteps,2);
+  assert.equal(summary.latestReviewedStepId,'RASA-OP-01-P02');
   assert.equal(summary.readyForTechnicalAnswers,false);
   assert.equal(summary.canGenerate,false);
   assert.equal(summary.aiEnabled,false);
@@ -68,10 +68,10 @@ test('status endpoint is Access-protected, read only, and includes no technical 
   assert.equal(json.ok,true);
   assert.equal(json.procedureCount,8);
   assert.equal(json.stepCount,53);
-  assert.equal(json.pendingSteps,52);
-  assert.equal(json.validatedSteps,1);
-  assert.equal(json.conditionalValidatedSteps,1);
-  assert.equal(json.latestReviewedStepId,'RASA-OP-01-P01');
+  assert.equal(json.pendingSteps,51);
+  assert.equal(json.validatedSteps,2);
+  assert.equal(json.conditionalValidatedSteps,2);
+  assert.equal(json.latestReviewedStepId,'RASA-OP-01-P02');
   assert.equal(json.aiEnabled,false);
   assert.equal(json.canGenerate,false);
   assert.equal(json.sessionChanged,false);
@@ -105,7 +105,7 @@ test('the existing /api/assist still refuses a regular technical how-to until re
 
 test('15.1 review ledger contains the exact expert-approved preparation text and stop condition',async()=>{
   const [m,reviews]=await Promise.all([getServer(),import('../worker/src/review-ledger.mjs')]);
-  assert.equal(reviews.REVIEW_LEDGER.length,1);
+  assert.equal(reviews.REVIEW_LEDGER.length,2);
   assert.equal(reviews.auditReviewLedger(m.CANONICAL_KNOWLEDGE).ok,true);
   const r=reviews.REVIEW_LEDGER[0];
   assert.equal(r.stepId,'RASA-OP-01-P01');
@@ -122,12 +122,12 @@ test('15.1 review ledger contains the exact expert-approved preparation text and
   assert.equal(r.evidence.length,3);
   assert.ok(r.evidence.every(x=>x.url.startsWith('https://')));
 });
-test('15.1 ledger is immutable and rejects extra approvals, false universal scope, and altered content',async()=>{
+test('15.1–15.2 ledger is immutable and rejects extra approvals, false universal scope, and altered content',async()=>{
   const [m,reviews]=await Promise.all([getServer(),import('../worker/src/review-ledger.mjs')]);
   assert.equal(Object.isFrozen(reviews.REVIEW_LEDGER[0].content),true);
   assert.throws(()=>{reviews.REVIEW_LEDGER[0].status='APPROVATO_UNIVERSALE';},TypeError);
   for(const mutate of [
-    rs=>rs.push({...rs[0],stepId:'RASA-OP-01-P02'}),
+    rs=>rs.push({...rs[0],stepId:'RASA-OP-01-P03'}),
     rs=>rs[0].stepId='RASA-OP-01-P02',
     rs=>rs[0].status='APPROVATO_UNIVERSALE',
     rs=>rs[0].content.instruction='Senza precauzioni',
@@ -146,9 +146,51 @@ test('15.1 technical approval is never auto-exposed to client through knowledge 
   const r=await worker.fetch(new Request('https://staging.invalid/api/knowledge-status'),env,{access:{aud}});
   assert.equal(r.status,200);
   const s=await r.json();
-  assert.equal(s.validatedSteps,1);
+  assert.equal(s.validatedSteps,2);
   assert.equal(s.readyForTechnicalAnswers,false);
   assert.equal(s.canGenerate,false);
   const payload=JSON.stringify(s);
   assert.doesNotMatch(payload,/pipetta|candela|sottoscocca|contenitore|guanti/);
+});
+
+test('15.2 approved conditional inclination is recorded verbatim and no AI use is allowed',async()=>{
+ const {REVIEW_LEDGER:ledger,auditReviewLedger:audit}=await import('../worker/src/review-ledger.mjs');
+ const {CANONICAL_KNOWLEDGE:kb}=await getServer();
+ assert.equal(audit(kb).ok,true);
+ assert.deepEqual(ledger.map(r=>r.stepId),['RASA-OP-01-P01','RASA-OP-01-P02']);
+ const r=ledger[1];
+ assert.equal(r.revision,'F15.2-R1');
+ assert.equal(r.approval.decision,'APPROVATO_DOPO_REVISIONE_CONCORDATA');
+ assert.match(r.content.instruction,/candela anteriore/);
+ assert.match(r.content.instruction,/circa 45°/);
+ assert.match(r.content.instruction,/posizionamento verticale/);
+ assert.match(r.content.instruction,/filtro dell'aria/);
+ assert.match(r.content.stopCondition,/perdite di olio o carburante/);
+ assert.equal(r.applicability.angle45IsReferenceOnly,true);
+ assert.equal(r.applicability.angle45IsCertifiedLimit,false);
+ assert.equal(r.applicability.universalAuthorization,false);
+ assert.equal(r.aiUseAllowed,false);
+ assert.equal(ledger[0].revision,'F15.1-R1');
+});
+test('15.2 fail-closed tamper prevention: no universal 45-degree permission or premature model use',async()=>{
+ const {REVIEW_LEDGER:ledger,auditReviewLedger:audit}=await import('../worker/src/review-ledger.mjs');
+ const {CANONICAL_KNOWLEDGE:kb}=await getServer();
+ for(const alter of [
+   rs=>{rs[1].applicability.angle45IsCertifiedLimit=true;},
+   rs=>{rs[1].applicability.universalAuthorization=true;},
+   rs=>{rs[1].applicability.requiresCompatibleOrientation=false;},
+   rs=>{rs[1].content.stopCondition='Nessuna precauzione';},
+   rs=>{rs[1].aiUseAllowed=true;},
+   rs=>{rs[1].stepId='RASA-OP-03-P01';},
+   rs=>{rs.push({...rs[1],stepId:'RASA-OP-01-P03'});}
+ ]){
+   const modified=JSON.parse(JSON.stringify(ledger));
+   alter(modified);
+   assert.equal(audit(kb,modified).ok,false);
+ }
+ const status=(await getServer()).canonicalKnowledgeStatus();
+ assert.equal(status.pendingSteps,51);
+ assert.equal(status.validatedSteps,2);
+ assert.equal(status.readyForTechnicalAnswers,false);
+ assert.equal(status.aiEnabled,false);
 });
