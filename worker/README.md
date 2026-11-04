@@ -128,3 +128,26 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Snapshot /pilot/ aggiornato esclusivamente per voice.js. Le altre
   procedure, il motore backend e la PWA pubblica non cambiano.
 - Interazione reale iPhone dopo deployment: DA VERIFICARE.
+
+### Fase 14.9 — Archivio canonico lato server (revisione NON ancora effettuata)
+- Il Worker contiene ora worker/src/canonical-knowledge.mjs: copia completa e
+  immutabile del catalogo 8 procedure / 53 passaggi, ricavata da app.js/OP e
+  verificata campo per campo contro knowledge.js tramite test automatici.
+- Stato di TUTTI i passaggi: DA_VALIDARE. Stato di ogni procedura: DA_VALIDARE.
+  Quindi 0/53 istruzioni tecniche sono approvate per risposte online.
+- Il catalogo comprende ID stabili, passaggi, precauzioni, varianti di metodo,
+  contesto, provenienza testuale e campi di revisione.
+- L'API /api/assist continua a fornire soltanto risposte deterministiche
+  cautelative, comandi non operativi e PENDING_VALIDATION; NON espone il catalogo.
+- Il Worker interrompe le risposte se il catalogo è incoerente con lo snapshot.
+- GET /api/knowledge-status: richiede Cloudflare Access e SERVICE_MODE=guarded;
+  restituisce esclusivamente schema, versione e numeri di revisione, non istruzioni.
+- Non è possibile approvare un passaggio modificando un parametro della PWA:
+  la revisione richiederà una modifica tracciata lato backend, una fonte tecnica
+  adeguata e una nuova verifica dei rischi.
+- Non sono stati aggiunti modelli AI, connessioni esterne, storage, segreti o
+  nuove funzioni alla PWA pubblica/voice.js/pilot.js.
+- Accettazione fase 14.9: CI + deployment Cloudflare + controllo protetto
+  /api/knowledge-status con 8/53/0 approvazioni.
+- Passo successivo: revisione tecnica guidata delle singole procedure,
+  dando priorità a prerequisiti di sicurezza e dati modello-specifici.

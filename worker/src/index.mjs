@@ -7,6 +7,7 @@ import {verifyWorkerAccess} from './access.mjs';
 import {evaluateSafety} from './policy.mjs';
 import {testPage, testRunner} from './test-page.mjs';
 import {servePilot} from './pilot.mjs';
+import {auditCanonicalKnowledge,canonicalKnowledgeStatus} from './canonical-knowledge.mjs';
 
 const MAX_BODY_BYTES = 2048;
 const MAX_QUESTION_CHARS = 500;
@@ -86,6 +87,15 @@ const worker = {
       return respond(200, {ok:true, accessVerified:true,
         aiEnabled:false, modelRequests:0, sessionChanged:false});
     }
+    // Fase 14.9 — Metadati di sola lettura. Non espone procedure né istruzioni.
+    if (url.pathname === '/api/knowledge-status') {
+      if (request.method !== 'GET') return error(405,'METHOD_NOT_ALLOWED');
+      if (env.SERVICE_MODE !== 'guarded') return error(503,'SERVICE_DISABLED');
+      try { await verifyWorkerAccess(request,env,ctx); }
+      catch (_) { return error(401,'UNAUTHORIZED'); }
+      try { return respond(200,{ok:true,...canonicalKnowledgeStatus()}); }
+      catch (_) { return error(503,'KNOWLEDGE_INVALID'); }
+    }
     // Fase 14.7 — PWA snapshot isolated behind Access on the same origin.
     // No changes to the public PWA, existing API, or voice command handlers.
     if (url.pathname === '/pilot' || url.pathname.startsWith('/pilot/'))
@@ -150,6 +160,8 @@ const worker = {
 
     const body = await readLimitedJson(request);
     if (body.error) return error(body.error === 'BODY_TOO_LARGE' ? 413 : 400,body.error,origin);
+    // Un catalogo non coerente blocca tutte le risposte prima della policy.
+    if (!auditCanonicalKnowledge().ok) return error(503,'KNOWLEDGE_INVALID',origin);
     const result = evaluateSafety(body.data.question);
     const status = result.decision === 'PENDING_VALIDATION' ? 503 : 200;
     return respond(status,{ok:status === 200,decision:result.decision,
