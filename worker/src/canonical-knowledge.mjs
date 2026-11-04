@@ -4,11 +4,14 @@
  *
  * IMPORTANTISSIMO:
  * - La presenza di un'istruzione nell'archivio NON equivale a validazione.
- * - Tutti i 53 passaggi sono DA_VALIDARE; nessun modello può utilizzarli.
+ * - Copia originale: 53/53 DA_VALIDARE. Revisioni condizionate separate nel registro.
+ * - Nessun modello può utilizzare istruzioni, neppure quelle revisionate.
  * - Non accettare contenuti, riferimenti o stati di revisione dal client.
  * - Prima di promuovere una revisione serve una procedura di approvazione
  *   tecnica documentata e una modifica esplicita delle barriere server.
  */
+import {REVIEW_LEDGER,auditReviewLedger} from './review-ledger.mjs';
+
 const RAW_CATALOG = {
   "schema": "tagliando.knowledge.v1",
   "version": "14.3.0",
@@ -1258,8 +1261,8 @@ function deepFreeze(value){
 export const CANONICAL_KNOWLEDGE=deepFreeze(RAW_CATALOG);
 const snapshot=JSON.stringify(CANONICAL_KNOWLEDGE);
 
-// Questa prima revisione NON contiene contenuti tecnici approvati.
-// Qualsiasi modifica, anche a un testo, invalida il controllo sullo snapshot.
+// Il catalogo di origine resta immutato: l'eventuale validazione si trova
+// esclusivamente nel registro tracciato delle revisioni.
 export function auditCanonicalKnowledge(candidate=CANONICAL_KNOWLEDGE){
   const errors=[];
   if(!candidate || typeof candidate!=='object' || Array.isArray(candidate))
@@ -1317,19 +1320,25 @@ function reviewPending(r){
 export function canonicalKnowledgeStatus(){
   const integrity=auditCanonicalKnowledge();
   if(!integrity.ok)throw new Error('CANONICAL_KNOWLEDGE_INVALID');
+  const reviews=auditReviewLedger(CANONICAL_KNOWLEDGE);
+  if(!reviews.ok)throw new Error('TECHNICAL_REVIEW_INVALID');
+  const reviewed=REVIEW_LEDGER.length;
   return Object.freeze({
     schema:CANONICAL_KNOWLEDGE.schema,
-    version:'14.9.0',
+    version:'15.1.0',
     sourceAppVersion:CANONICAL_KNOWLEDGE.sourceAppVersion,
     procedureCount:EXPECTED_PROCEDURES,
     stepCount:EXPECTED_STEPS,
-    pendingSteps:EXPECTED_STEPS,
-    validatedSteps:0,
+    pendingSteps:EXPECTED_STEPS-reviewed,
+    validatedSteps:reviewed,
+    conditionalValidatedSteps:reviewed,
+    reviewScope:'sicurezza_generale_preparazione',
+    latestReviewedStepId:REVIEW_LEDGER.at(-1)?.stepId||null,
     readyForTechnicalAnswers:false,
     aiEnabled:false,
     canGenerate:false,
     sessionChanged:false
   });
 }
-// Nessuna routine di retrieval di istruzioni è esposta dal Worker in 14.9.
+// Nessuna routine di retrieval di istruzioni è esposta dal Worker in 15.1.
 // Per abilitare in futuro una risposta tecnica occorrerà un gate dedicato.

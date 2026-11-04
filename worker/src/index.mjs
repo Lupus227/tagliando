@@ -8,6 +8,8 @@ import {evaluateSafety} from './policy.mjs';
 import {testPage, testRunner} from './test-page.mjs';
 import {servePilot} from './pilot.mjs';
 import {auditCanonicalKnowledge,canonicalKnowledgeStatus} from './canonical-knowledge.mjs';
+import {auditReviewLedger} from './review-ledger.mjs';
+import {CANONICAL_KNOWLEDGE} from './canonical-knowledge.mjs';
 
 const MAX_BODY_BYTES = 2048;
 const MAX_QUESTION_CHARS = 500;
@@ -161,7 +163,8 @@ const worker = {
     const body = await readLimitedJson(request);
     if (body.error) return error(body.error === 'BODY_TOO_LARGE' ? 413 : 400,body.error,origin);
     // Un catalogo non coerente blocca tutte le risposte prima della policy.
-    if (!auditCanonicalKnowledge().ok) return error(503,'KNOWLEDGE_INVALID',origin);
+    if (!auditCanonicalKnowledge().ok || !auditReviewLedger(CANONICAL_KNOWLEDGE).ok)
+      return error(503,'KNOWLEDGE_INVALID',origin);
     const result = evaluateSafety(body.data.question);
     const status = result.decision === 'PENDING_VALIDATION' ? 503 : 200;
     return respond(status,{ok:status === 200,decision:result.decision,

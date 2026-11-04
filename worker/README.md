@@ -151,3 +151,26 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
   /api/knowledge-status con 8/53/0 approvazioni.
 - Passo successivo: revisione tecnica guidata delle singole procedure,
   dando priorità a prerequisiti di sicurezza e dati modello-specifici.
+
+### Fase 15.1 — Revisione tecnica condizionata del passaggio RASA-OP-01-P01
+- Approvazione esplicita dell'esperto del testo «Preparazione e messa in
+  sicurezza» (2026-11-04), senza modifiche richieste. Revisione F15.1-R1.
+- Evidenze: manuali ufficiali Toro (arresto parti mobili, isolamento candela,
+  raffreddamento e disattivazione avviamento elettrico ove presente).
+- Nuovo registro immutabile worker/src/review-ledger.mjs con testo
+  approvato, condizioni di arresto, ambito, date e fonti citabili.
+- Validazione condizionata LIMITATA a sicurezza generale preparatoria,
+  NON è attestazione di applicabilità a ogni modello. I dispositivi di
+  avviamento elettrico e l'orientamento fisico richiedono il manuale effettivo.
+- Il catalogo originario 14.9 resta IDENTICO alla PWA (53/53 DA_VALIDARE);
+  l'approvazione viene applicata come overlay di revisione sul Worker:
+  passaggi validati con condizioni 1/53, in attesa 52/53.
+- GET /api/knowledge-status restituisce solo contatori e ID revisionato.
+  Nessuna nuova route legge o fornisce istruzioni. /api/assist NON usa il
+  testo approvato ed esegue ancora i controlli safety deterministici.
+- AI non attiva; nessun costo, provider, segreto, mutazione di sessione,
+  modifica a voice.js, /pilot, main o PWA pubblica.
+- Test: snapshot, registro immutabile, tentativi di approvazione falsa,
+  status Access e mancata esposizione del testo.
+- Confermare Deployments e /api/knowledge-status nel collaudo live prima
+  di dichiarare distribuita la fase 15.1.
