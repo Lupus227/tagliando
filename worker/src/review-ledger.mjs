@@ -172,6 +172,64 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-01-P05",
+    "revision": "F15.5-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "asciugatura_sottoscocca_metodi_aria_naturale_motore_con_precauzioni",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_CON_DUE_MODIFICHE_ESPLICITE",
+      "approvedOn": "2026-11-05",
+      "evidence": "approvazione_esplicita_nella_conversazione_fase_15_5"
+    },
+    "content": {
+      "title": "Asciugatura del sottoscocca",
+      "introduction": "Dopo il lavaggio con acqua, completa l'asciugatura del rasaerba scegliendo uno dei seguenti metodi.",
+      "methods": [
+        {
+          "id": "aria_compressa",
+          "title": "Metodo A — Asciugatura con aria compressa",
+          "instruction": "Utilizza aria compressa per eliminare l'acqua residua dalle superfici interne della scocca e dai condotti di espulsione dell'erba.\n\nPresta particolare attenzione agli angoli e alle zone dove l'acqua può ristagnare, evitando di dirigere il getto verso cuscinetti, collegamenti elettrici e componenti sensibili."
+        },
+        {
+          "id": "naturale",
+          "title": "Metodo B — Asciugatura naturale",
+          "instruction": "Lascia asciugare il rasaerba in un luogo asciutto e ventilato, attendendo che l'acqua residua sia evaporata."
+        },
+        {
+          "id": "motore",
+          "title": "Metodo C — Asciugatura mediante funzionamento del motore",
+          "instruction": "Riporta il rasaerba nella normale posizione di funzionamento, con tutte le ruote appoggiate su una superficie piana e stabile.\n\nScegli una superficie liscia, solida come un pavimento in cemento o piastrelle e priva di materiale che possa essere proiettato dalla lama.\n\nVerifica l'assenza di sassi, pietrisco, ghiaia, erba tagliata, detriti e altri oggetti nell'area di lavoro.\n\nEvita superfici delicate o facilmente macchiabili: durante l'asciugatura potrebbero verificarsi sgocciolamenti di acqua sporca e residui di lavorazione.\n\nRipristina completamente le condizioni necessarie per l'avviamento, verificando il corretto funzionamento dei dispositivi di sicurezza.\n\nAll'aperto, avvia il motore secondo le istruzioni del costruttore e mantienilo in funzione indicativamente per 5–10 minuti, sorvegliando costantemente la macchina.\n\nMantieni azionata la leva di presenza dell'operatore, quando prevista, senza bloccarla artificialmente.\n\nAl termine, spegni il motore e attendi l'arresto completo delle parti mobili."
+        }
+      ],
+      "instruction": "Se hai effettuato la pulizia a secco, verifica che non siano rimasti residui di erba e terra.",
+      "stopCondition": "Non avviare la macchina se è inclinata, presenta dispositivi di sicurezza non funzionanti, si trova in un'area con oggetti proiettabili o non può essere mantenuta stabilmente sotto il controllo dell'operatore.\n\nNon avviare il motore in ambienti chiusi. Non accedere al sottoscocca durante il funzionamento."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "methodsContext": "dopo_lavaggio_con_acqua",
+      "motorMethodRequiresOutdoorArea": true,
+      "motorMethodRequiresNormalOperatingPosition": true,
+      "motorMethodRequiresSafeSurface": true,
+      "motorMethodRequiresOperatorSupervision": true,
+      "motorRunMinutesEstimate": [
+        5,
+        10
+      ],
+      "motorRunMinutesCertified": false,
+      "operatorPresenceLeverMustNotBeBlocked": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "Tecnica d'officina: motore acceso come alternativa ad aria compressa e asciugatura naturale; testo integrato con superficie solida priva di corpi proiettabili, senza subordinazione generica al modello.",
+        "approvedOn": "2026-11-05"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -189,7 +247,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==4)
+  if(!Array.isArray(candidate) || candidate.length!==5)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -205,7 +263,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       (entry.approval?.approvedOn==='2026-11-04' || (entry.stepId==='RASA-OP-01-P04' && entry.approval?.approvedOn==='2026-11-05')) &&
+       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05'))) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -271,7 +329,28 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.professionalPracticeNote?.exposedToPrivateUsers===false &&
        entry.professionalPracticeNote?.aiInstructionAllowed===false &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04))
+    const approvedP05=entry.stepId==='RASA-OP-01-P05' &&
+       entry.revision==='F15.5-R1' &&
+       entry.scope==='asciugatura_sottoscocca_metodi_aria_naturale_motore_con_precauzioni' &&
+       entry.approval?.decision==='APPROVATO_CON_DUE_MODIFICHE_ESPLICITE' &&
+       entry.approval?.evidence==='approvazione_esplicita_nella_conversazione_fase_15_5' &&
+       entry.applicability?.motorMethodRequiresOutdoorArea===true &&
+       entry.applicability?.motorMethodRequiresNormalOperatingPosition===true &&
+       entry.applicability?.motorMethodRequiresSafeSurface===true &&
+       entry.applicability?.motorMethodRequiresOperatorSupervision===true &&
+       entry.applicability?.operatorPresenceLeverMustNotBeBlocked===true &&
+       entry.applicability?.motorRunMinutesCertified===false &&
+       JSON.stringify(entry.applicability.motorRunMinutesEstimate)==='[5,10]' &&
+       Array.isArray(entry.content.methods) &&
+       entry.content.methods.length===3 &&
+       entry.content.methods.map(m=>m.id).join(',')==='aria_compressa,naturale,motore' &&
+       entry.content.methods[2].instruction.includes('Scegli una superficie liscia, solida come un pavimento in cemento o piastrelle e priva di materiale che possa essere proiettato dalla lama.') &&
+       !entry.content.methods[2].instruction.includes('se il modello lo consente') &&
+       entry.content.methods[2].instruction.includes('5–10 minuti') &&
+       entry.content.methods[2].instruction.includes("senza bloccarla artificialmente") &&
+       entry.content.stopCondition.includes('Non avviare il motore in ambienti chiusi') &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});

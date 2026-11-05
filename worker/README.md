@@ -211,3 +211,16 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
   invariato e AI disabilitata.
 - Corretto il controllo del registro per la data dell'approvazione 15.4.
 - Nessuna modifica a main, PWA pubblica, pilot o voice.js.
+
+### Fase 15.5 — Asciugatura del sottoscocca (F15.5-R1)
+- Approvazione esperto 2026-11-05: metodi A aria compressa, B asciugatura
+  naturale, C avvio motore dopo ripristino completo nella normale posizione.
+- Metodo C esclusivamente all'aperto, su superficie liscia e solida (cemento
+  o piastrelle) libera da pietre, erba e detriti proiettabili dalla lama.
+- Proteggere pavimentazioni delicate dal possibile sgocciolamento di acqua sporca.
+- Funzionamento indicativo 5–10 minuti, sempre sorvegliato; non bloccare la
+  leva presenza operatore, non avviare macchina inclinata o in ambienti chiusi.
+- Su esplicita richiesta eliminata la clausola generica "se il modello lo consente";
+  la durata resta una stima d'officina, non una specifica universale.
+- Cinque revisioni condizionate su 53; 48 in attesa, AI disabilitata.
+- Nessuna modifica al catalogo fonte, main, PWA pubblica o componente voce.
