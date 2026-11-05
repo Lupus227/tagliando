@@ -205,7 +205,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       entry.approval?.approvedOn==='2026-11-04' &&
+       (entry.approval?.approvedOn==='2026-11-04' || (entry.stepId==='RASA-OP-01-P04' && entry.approval?.approvedOn==='2026-11-05')) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&

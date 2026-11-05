@@ -199,3 +199,15 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
   proponeva un metodo alternativo in caso di incrostazioni non rimovibili.
 - Revisione condizionata: 3/53 approvate, 50 in attesa. AI ancora disabilitata.
 - Nessuna modifica a main, PWA pubblica, voice.js o catalogo fonte.
+
+### Fase 15.4 — Pulizia finale del sottoscocca (F15.4-R1)
+- Revisione dell'esperto approvata il 2026-11-05 e registrata nel registro
+  tecnico: aria compressa senza richiedere regolazione della pressione,
+  lavaggio quando ammesso dal costruttore con tubo e pistola da giardino.
+- Idropulitrice: documentata solo come pratica di officina per incrostazioni
+  resistenti, non istruzione proposta al privato ne all'AI.
+- Asciugatura lasciata al passaggio distinto RASA-OP-01-P05.
+- Stato revisioni condizionate 4/53; in attesa 49/53. Catalogo originale
+  invariato e AI disabilitata.
+- Corretto il controllo del registro per la data dell'approvazione 15.4.
+- Nessuna modifica a main, PWA pubblica, pilot o voice.js.
