@@ -189,7 +189,7 @@ test('15.2 fail-closed tamper prevention: no universal 45-degree permission or p
    assert.equal(audit(kb,modified).ok,false);
  }
  const status=(await getServer()).canonicalKnowledgeStatus();
- assert.equal(status.pendingSteps,49);
+ assert.equal(status.pendingSteps,48);
  assert.equal(status.validatedSteps,5);
  assert.equal(status.readyForTechnicalAnswers,false);
  assert.equal(status.aiEnabled,false);
