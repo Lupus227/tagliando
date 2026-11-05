@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.4 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.6 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01, RASA-OP-01-P02, RASA-OP-01-P03 e RASA-OP-01-P04, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -230,6 +230,65 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-01-P06",
+    "revision": "F15.6-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "controllo_integrita_scocca_corrosione_passante_e_gestione_anomalie",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_DOPO_DISTINZIONE_CORROSIONE_E_ANOMALIE",
+      "approvedOn": "2026-11-05",
+      "evidence": "approvazione_esplicita_nella_conversazione_fase_15_6"
+    },
+    "content": {
+      "title": "Controllo della scocca",
+      "instruction": "Terminata la pulizia e, se necessario, l'asciugatura, esamina visivamente il sottoscocca.\n\nVerifica che siano stati eliminati gli accumuli di erba e terra e controlla le condizioni generali della scocca.\n\nScocca metallica\n\nControlla la presenza di fori, crepe, deformazioni e corrosione passante.\n\nLa ruggine superficiale è comune e, se non compromette l'integrità della scocca, non richiede necessariamente un intervento.\n\nPresta particolare attenzione alle zone in cui la corrosione ha eroso il metallo, provocando perforazioni o una perdita significativa di spessore.\n\nScocca in plastica\n\nVerifica la presenza di crepe, rotture o deformazioni.\n\nUlteriori controlli\n\nVerifica l'integrità dei condotti di espulsione dell'erba, delle protezioni e dei relativi punti di fissaggio.",
+      "anomalyManagement": [
+        {
+          "id": "scocca_integra",
+          "label": "Scocca integra",
+          "action": "Nessun intervento necessario.",
+          "requiresStop": false,
+          "requiresSpecialist": false
+        },
+        {
+          "id": "difetti_superficiali",
+          "label": "Difetti superficiali",
+          "action": "Registra l'osservazione, senza interrompere automaticamente la manutenzione.",
+          "requiresStop": false,
+          "requiresSpecialist": false
+        },
+        {
+          "id": "danni_strutturali_o_sicurezza",
+          "label": "Danni strutturali o di sicurezza",
+          "action": "Registra l'anomalia, sospendi l'utilizzo della macchina e richiedi l'intervento di un meccanico specializzato.",
+          "requiresStop": true,
+          "requiresSpecialist": true
+        }
+      ],
+      "repairSeparation": "Le eventuali riparazioni sono gestite separatamente dalla normale operazione di pulizia.",
+      "stopCondition": "Se rilevi danni strutturali o di sicurezza, registra l'anomalia, sospendi l'utilizzo della macchina e richiedi l'intervento di un meccanico specializzato."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "coversMetalAndPlasticDeck": true,
+      "surfaceRustAloneRequiresStop": false,
+      "throughCorrosionRequiresSpecialistAssessment": true,
+      "significantMaterialLossRequiresSpecialistAssessment": true,
+      "compromisedSafetyGuardRequiresStop": true,
+      "automaticStructuralDiagnosisAllowed": false,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "L'esperto distingue ruggine superficiale comune da corrosione passante, perforazione e perdita di materiale; richiede annotazione dei difetti superficiali e intervento specialistico sui danni strutturali o di sicurezza.",
+        "approvedOn": "2026-11-05"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -247,7 +306,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==5)
+  if(!Array.isArray(candidate) || candidate.length!==6)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -263,7 +322,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05'))) &&
+       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05'))) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -350,7 +409,32 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.methods[2].instruction.includes("senza bloccarla artificialmente") &&
        entry.content.stopCondition.includes('Non avviare il motore in ambienti chiusi') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05))
+    const approvedP06=entry.stepId==='RASA-OP-01-P06' &&
+       entry.revision==='F15.6-R1' &&
+       entry.scope==='controllo_integrita_scocca_corrosione_passante_e_gestione_anomalie' &&
+       entry.approval?.decision==='APPROVATO_DOPO_DISTINZIONE_CORROSIONE_E_ANOMALIE' &&
+       entry.approval?.evidence==='approvazione_esplicita_nella_conversazione_fase_15_6' &&
+       entry.applicability?.coversMetalAndPlasticDeck===true &&
+       entry.applicability?.surfaceRustAloneRequiresStop===false &&
+       entry.applicability?.throughCorrosionRequiresSpecialistAssessment===true &&
+       entry.applicability?.significantMaterialLossRequiresSpecialistAssessment===true &&
+       entry.applicability?.compromisedSafetyGuardRequiresStop===true &&
+       entry.applicability?.automaticStructuralDiagnosisAllowed===false &&
+       entry.content.instruction.includes('La ruggine superficiale è comune') &&
+       entry.content.instruction.includes('corrosione passante') &&
+       entry.content.instruction.includes('perdita significativa di spessore') &&
+       Array.isArray(entry.content.anomalyManagement) &&
+       entry.content.anomalyManagement.length===3 &&
+       entry.content.anomalyManagement.map(a=>a.id).join(',')==='scocca_integra,difetti_superficiali,danni_strutturali_o_sicurezza' &&
+       entry.content.anomalyManagement[0].requiresStop===false &&
+       entry.content.anomalyManagement[1].requiresStop===false &&
+       entry.content.anomalyManagement[2].requiresStop===true &&
+       entry.content.anomalyManagement[2].requiresSpecialist===true &&
+       entry.content.anomalyManagement[2].action.includes('meccanico specializzato') &&
+       entry.content.repairSeparation.includes('gestite separatamente') &&
+       entry.content.stopCondition.includes("sospendi l'utilizzo") &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});

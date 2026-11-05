@@ -224,3 +224,21 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
   la durata resta una stima d'officina, non una specifica universale.
 - Cinque revisioni condizionate su 53; 48 in attesa, AI disabilitata.
 - Nessuna modifica al catalogo fonte, main, PWA pubblica o componente voce.
+
+### Fase 15.6 — Controllo della scocca (F15.6-R1)
+- Approvazione esplicita dell'esperto in data 2026-11-05. Ispezione dopo
+  pulizia/asciugatura: residui, scocca metallica o plastica, condotti, protezioni
+  e punti di fissaggio.
+- Ruggine superficiale comune: non implica da sola arresto o riparazione.
+  Corrosione passante, perforazioni o perdita significativa di spessore
+  richiedono valutazione di un meccanico specializzato.
+- Classificazione: scocca integra (nessun intervento); difetti superficiali
+  (annotare senza arresto automatico); danni strutturali o di sicurezza
+  (registrare anomalia, sospendere utilizzo, richiedere intervento specialista).
+- Riparazioni escluse dall'operazione ordinaria di pulizia. Il catalogo
+  originale e i metadati "DA_VALIDARE" non sono modificati.
+- Tutti i 6 passaggi di RASA-OP-01 sono revisionati con CONDIZIONI; l'eventuale
+  approvazione della procedura nel suo insieme e il rilascio AI sono distinti.
+- 6/53 passaggi revisionati condizionatamente, 47 ancora in attesa; AI,
+  retrieval e generazione restano disabilitati.
+- Nessuna modifica a main, PWA pubblica, sistema vocale o pilot.
