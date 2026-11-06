@@ -301,7 +301,7 @@ test('15.6 deck inspection discriminates surface rust from through-corrosion and
  assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE).ok,true);
  assert.deepEqual(REVIEW_LEDGER.map(r=>r.stepId),[
   'RASA-OP-01-P01','RASA-OP-01-P02','RASA-OP-01-P03',
-  'RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06']);
+  'RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06','RASA-OP-02-P01']);
  const r=REVIEW_LEDGER[5];assert.equal(r.revision,'F15.6-R1');
  assert.equal(r.approval.approvedOn,'2026-11-05');
  assert.match(r.content.instruction,/La ruggine superficiale è comune/);

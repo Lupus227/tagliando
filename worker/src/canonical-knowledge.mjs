@@ -1332,7 +1332,7 @@ export function canonicalKnowledgeStatus(){
     pendingSteps:EXPECTED_STEPS-reviewed,
     validatedSteps:reviewed,
     conditionalValidatedSteps:reviewed,
-    reviewScope:'pulizia_sottoscocca_completa_e_sicurezza_affilatura_lama_condizionata',
+    reviewScope:'pulizia_completa_e_sicurezza_affilatura_lama_condizionata',
     latestReviewedStepId:REVIEW_LEDGER.at(-1)?.stepId||null,
     readyForTechnicalAnswers:false,
     aiEnabled:false,
