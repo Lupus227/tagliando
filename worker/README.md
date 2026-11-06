@@ -242,3 +242,18 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - 6/53 passaggi revisionati condizionatamente, 47 ancora in attesa; AI,
   retrieval e generazione restano disabilitati.
 - Nessuna modifica a main, PWA pubblica, sistema vocale o pilot.
+
+### Fase 15.7 — Messa in sicurezza per affilatura lama (F15.7-R1)
+- Passaggio RASA-OP-02-P01 approvato dall'esperto il 2026-11-06.
+  Confermata ripetizione intenzionale delle precauzioni di sicurezza quando
+  una nuova operazione viene avviata direttamente senza eseguire le precedenti.
+- Motore arrestato, lama completamente ferma, componenti caldi raffreddati,
+  pipetta candela isolata; disabilitare avviamento elettrico dove presente
+  secondo il costruttore; guanti e sostegno stabile.
+- Inclinazione/accesso: rinvio alle revisioni RASA-OP-01-P01/P02, senza
+  attribuire nuova approvazione o bypassare condizioni di orientamento.
+- Bloccaggio lama e smontaggio non autorizzati da questo passo: trattati
+  nei passaggi successivi dell'operazione di affilatura.
+- Il catalogo originale resta immutato; 7/53 revisioni condizionate,
+  46 passaggi ancora in attesa. /api/assist non esegue retrieval tecnico,
+  nessun provider AI, attivazione o modifica della PWA pubblica.

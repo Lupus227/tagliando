@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.6 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.7 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -289,6 +289,46 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-02-P01",
+    "revision": "F15.7-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "sicurezza_preventiva_affilatura_lama_con_accesso_condizionato",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_SENZA_MODIFICHE",
+      "approvedOn": "2026-11-06",
+      "evidence": "approvazione_esplicita_ok_nella_conversazione_fase_15_7"
+    },
+    "content": {
+      "title": "Messa in sicurezza",
+      "instruction": "Posiziona il rasaerba su una superficie stabile.\n\nSpegni il motore, attendi l'arresto completo della lama e lascia raffreddare i componenti caldi.\n\nScollega la pipetta dalla candela, mantenendola separata dal terminale, per impedire l'avviamento accidentale. Nei modelli con avviamento elettrico, disabilita anche il relativo sistema di alimentazione secondo le indicazioni del costruttore.\n\nIndossa guanti protettivi adeguati prima di intervenire sulla lama.\n\nPer accedere al sottoscocca, utilizza il metodo di inclinazione e sostegno già definito nella procedura di preparazione, verificandone la compatibilità con la macchina.",
+      "stopCondition": "Non intervenire sulla lama se non è possibile impedire l'avviamento accidentale, se la macchina non è stabilmente sostenuta oppure se non sono completamente ferme le parti mobili."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "operation": "affilatura_della_lama",
+      "independentEntrySafetyPrerequisites": true,
+      "requiresSparkPlugIsolation": true,
+      "requiresElectricStarterIsolationWhenPresent": true,
+      "requiresStableSupport": true,
+      "requiresStoppedMovingParts": true,
+      "referencedPreparatorySteps": [
+        "RASA-OP-01-P01",
+        "RASA-OP-01-P02"
+      ],
+      "doesNotAuthorizeBladeRemovalOrSharpening": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "Testo di messa in sicurezza proposto in Fase 15.7 e approvato con 'ok'; nota dell'esperto che la ridondanza delle precauzioni è ammissibile per la sicurezza.",
+        "approvedOn": "2026-11-06"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -306,7 +346,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==6)
+  if(!Array.isArray(candidate) || candidate.length!==7)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -322,7 +362,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05'))) &&
+       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (entry.stepId==='RASA-OP-02-P01' && entry.approval?.approvedOn==='2026-11-06')))) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -434,7 +474,25 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.repairSeparation.includes('gestite separatamente') &&
        entry.content.stopCondition.includes("sospendi l'utilizzo") &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06))
+    const approvedOP02P01=entry.stepId==='RASA-OP-02-P01' &&
+       entry.revision==='F15.7-R1' &&
+       entry.scope==='sicurezza_preventiva_affilatura_lama_con_accesso_condizionato' &&
+       entry.approval?.decision==='APPROVATO_SENZA_MODIFICHE' &&
+       entry.approval?.evidence==='approvazione_esplicita_ok_nella_conversazione_fase_15_7' &&
+       entry.applicability?.operation==='affilatura_della_lama' &&
+       entry.applicability?.independentEntrySafetyPrerequisites===true &&
+       entry.applicability?.requiresSparkPlugIsolation===true &&
+       entry.applicability?.requiresElectricStarterIsolationWhenPresent===true &&
+       entry.applicability?.requiresStableSupport===true &&
+       entry.applicability?.requiresStoppedMovingParts===true &&
+       entry.applicability?.doesNotAuthorizeBladeRemovalOrSharpening===true &&
+       JSON.stringify(entry.applicability.referencedPreparatorySteps)==='["RASA-OP-01-P01","RASA-OP-01-P02"]' &&
+       entry.content.instruction.includes('Scollega la pipetta dalla candela') &&
+       entry.content.instruction.includes("Per accedere al sottoscocca") &&
+       entry.content.instruction.includes('Indossa guanti protettivi adeguati') &&
+       entry.content.stopCondition.includes("non è possibile impedire l'avviamento accidentale") &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
