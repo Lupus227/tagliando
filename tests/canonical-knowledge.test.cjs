@@ -375,7 +375,7 @@ test('15.7 fail-closed: disabling isolation, stopping conditions or model gate i
    assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,clone).ok,false);
  }
  const status=m.canonicalKnowledgeStatus();
- assert.equal(status.version,'15.8.0');
+ assert.equal(status.version,'15.9.0');
  assert.equal(status.stepCount,53);assert.equal(status.validatedSteps,9);
  assert.equal(status.pendingSteps,44);assert.equal(status.conditionalValidatedSteps,9);
  assert.equal(status.latestReviewedStepId,'RASA-OP-02-P03');
@@ -419,7 +419,7 @@ test('15.8 audit rejects disabled blade stabilization, missing stop condition, o
   assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,clone).ok,false);
  }
  const status=m.canonicalKnowledgeStatus();
- assert.equal(status.version,'15.8.0');
+ assert.equal(status.version,'15.9.0');
  assert.equal(status.pendingSteps,44);assert.equal(status.validatedSteps,9);
  assert.equal(status.conditionalValidatedSteps,9);
  assert.equal(status.latestReviewedStepId,'RASA-OP-02-P03');
