@@ -272,3 +272,20 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Stato: 8/53 revisioni condizionate, 45 in attesa. AI, retrieval, rimontaggio
   e indicazioni di coppia non abilitati dal presente passaggio.
 - Nessuna modifica a main, catalogo originale, voice.js o pilot.
+
+### Fase 15.9 — Controllo condizionato del mozzo portalama (F15.9-R1)
+- Approvato dall'esperto il 2026-11-06 dopo revisione. Il tagliando gratuito
+  resta destinato soprattutto a privati non meccanici.
+- Mozzo in sede e visibilmente integro: non smontare, non cercare linguetta
+  e non richiedere ulteriori controlli specifici.
+- Solo se il mozzo si sfila: spiegare linguetta/chiavetta, che può essere
+  separata (potrebbe cadere o uscire dalla sede) oppure integrata nel mozzo.
+  Verificare componenti eventualmente fuoriusciti, danni e accoppiamento.
+- Per componenti mancanti/danneggiati o accoppiamento incerto: nessun
+  rimontaggio della lama, registrare anomalia e richiedere verifica tecnica.
+- Esclusi controlli approfonditi professionali del mozzo come routine
+  ordinaria per l'utente del tagliando.
+- Il tagliando gratuito include l'affilatura solo come operazione facoltativa
+  subordinata ad attrezzatura/capacità (roadmap issue #2; non implementato).
+- 9/53 revisioni condizionate, 44 in attesa. AI non abilitata; catalogo
+  originale, main, voice.js, pilot e PWA pubblica non modificati.

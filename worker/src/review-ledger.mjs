@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.8 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.9 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02/P03, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -383,6 +383,56 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-02-P03",
+    "revision": "F15.9-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "verifica_mozzo_condizionata_alla_fuoriuscita_e_linguetta_solo_se_pertinente",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_CON_MODIFICA_ESPLICITA",
+      "approvedOn": "2026-11-06",
+      "evidence": "approvazione_esplicita_dopo_revisione_controllo_condizionato_mozzo_fase_15_9"
+    },
+    "content": {
+      "title": "Controllo del mozzo portalama",
+      "instruction": "Dopo aver smontato la lama, osserva il mozzo portalama.",
+      "cases": [
+        {
+          "id": "mozzo_in_sede",
+          "title": "Caso A — Il mozzo è rimasto montato sull'albero motore",
+          "instruction": "Se il mozzo è rimasto correttamente in posizione e non presenta danni evidenti, non è necessario rimuoverlo o effettuare ulteriori controlli."
+        },
+        {
+          "id": "mozzo_sfilato",
+          "title": "Caso B — Il mozzo si è sfilato durante lo smontaggio",
+          "instruction": "Se il mozzo si è sfilato insieme alla lama o durante la sua rimozione, verifica che non siano presenti componenti caduti o fuoriusciti dalla propria sede.\n\nAlcuni mozzi utilizzano una piccola linguetta metallica, chiamata anche chiavetta, che permette il trascinamento del mozzo da parte dell'albero motore. In altri mozzi questo elemento è integrato.\n\nSe la linguetta è separata, verifica che non sia caduta, danneggiata o rimasta fuori dalla propria sede.\n\nControlla inoltre che il mozzo non presenti crepe, deformazioni o altri danni evidenti."
+        }
+      ],
+      "stopCondition": "Se il mozzo o la linguetta risultano danneggiati, se manca un componente oppure se non sei sicuro del corretto accoppiamento, non procedere al rimontaggio della lama.\n\nRegistra l'anomalia e richiedi una verifica tecnica."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "requiresApprovedBladeRemovalStep": "RASA-OP-02-P02",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "inspectKeyOnlyIfHubSlipped": true,
+      "doNotRemoveHubIfSeatedAndUndamaged": true,
+      "noStandaloneKeyInspection": true,
+      "integralKeyRecognized": true,
+      "separateKeyInspectionConditional": true,
+      "stopOnDamageMissingPartsOrUncertainFit": true,
+      "professionalDeepHubInspectionExcluded": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "L'esperto chiarisce che nel tagliando gratuito la linguetta non è un controllo autonomo; diventa pertinente se il mozzo si sfila, perché la linguetta separata può cadere o uscire dalla sede. Testo condizionale finale confermato.",
+        "approvedOn": "2026-11-06"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -400,7 +450,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==8)
+  if(!Array.isArray(candidate) || candidate.length!==9)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -416,7 +466,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06')))) &&
+       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06')))) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -570,7 +620,31 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.commonActions.includes('orientamento') &&
        entry.content.stopCondition.includes('Non utilizzare la lama come leva') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02))
+    const approvedOP02P03=entry.stepId==='RASA-OP-02-P03' &&
+       entry.revision==='F15.9-R1' &&
+       entry.scope==='verifica_mozzo_condizionata_alla_fuoriuscita_e_linguetta_solo_se_pertinente' &&
+       entry.approval?.decision==='APPROVATO_CON_MODIFICA_ESPLICITA' &&
+       entry.approval?.evidence==='approvazione_esplicita_dopo_revisione_controllo_condizionato_mozzo_fase_15_9' &&
+       entry.applicability?.requiresApprovedBladeRemovalStep==='RASA-OP-02-P02' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.inspectKeyOnlyIfHubSlipped===true &&
+       entry.applicability?.doNotRemoveHubIfSeatedAndUndamaged===true &&
+       entry.applicability?.noStandaloneKeyInspection===true &&
+       entry.applicability?.integralKeyRecognized===true &&
+       entry.applicability?.separateKeyInspectionConditional===true &&
+       entry.applicability?.stopOnDamageMissingPartsOrUncertainFit===true &&
+       entry.applicability?.professionalDeepHubInspectionExcluded===true &&
+       Array.isArray(entry.content.cases) && entry.content.cases.length===2 &&
+       entry.content.cases.map(c=>c.id).join(',')==='mozzo_in_sede,mozzo_sfilato' &&
+       entry.content.cases[0].instruction.includes('non è necessario rimuoverlo o effettuare ulteriori controlli') &&
+       !entry.content.cases[0].instruction.includes('linguetta') &&
+       entry.content.cases[1].instruction.includes('il mozzo si è sfilato') &&
+       entry.content.cases[1].instruction.includes('In altri mozzi questo elemento è integrato') &&
+       entry.content.cases[1].instruction.includes('Se la linguetta è separata') &&
+       entry.content.stopCondition.includes('non procedere al rimontaggio') &&
+       entry.content.stopCondition.includes('verifica tecnica') &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
