@@ -299,7 +299,7 @@ test('15.5 ledger rejects unsafe motor drying changes and never enables AI',asyn
 test('15.6 deck inspection discriminates surface rust from through-corrosion and serious damage',async()=>{
  const m=await getServer(),{REVIEW_LEDGER,auditReviewLedger}=await import('../worker/src/review-ledger.mjs');
  assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE).ok,true);
- assert.deepEqual(REVIEW_LEDGER.map(r=>r.stepId),[
+ assert.deepEqual(REVIEW_LEDGER.slice(0,7).map(r=>r.stepId),[
   'RASA-OP-01-P01','RASA-OP-01-P02','RASA-OP-01-P03',
   'RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06','RASA-OP-02-P01']);
  const r=REVIEW_LEDGER[5];assert.equal(r.revision,'F15.6-R1');
@@ -375,7 +375,7 @@ test('15.7 fail-closed: disabling isolation, stopping conditions or model gate i
    assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,clone).ok,false);
  }
  const status=m.canonicalKnowledgeStatus();
- assert.equal(status.version,'15.7.0');
+ assert.equal(status.version,'15.8.0');
  assert.equal(status.stepCount,53);assert.equal(status.validatedSteps,8);
  assert.equal(status.pendingSteps,45);assert.equal(status.conditionalValidatedSteps,8);
  assert.equal(status.latestReviewedStepId,'RASA-OP-02-P02');
