@@ -1325,14 +1325,14 @@ export function canonicalKnowledgeStatus(){
   const reviewed=REVIEW_LEDGER.length;
   return Object.freeze({
     schema:CANONICAL_KNOWLEDGE.schema,
-    version:'15.7.0',
+    version:'15.8.0',
     sourceAppVersion:CANONICAL_KNOWLEDGE.sourceAppVersion,
     procedureCount:EXPECTED_PROCEDURES,
     stepCount:EXPECTED_STEPS,
     pendingSteps:EXPECTED_STEPS-reviewed,
     validatedSteps:reviewed,
     conditionalValidatedSteps:reviewed,
-    reviewScope:'pulizia_completa_e_sicurezza_affilatura_lama_condizionata',
+    reviewScope:'pulizia_completa_e_sicurezza_smontaggio_lama_condizionati',
     latestReviewedStepId:REVIEW_LEDGER.at(-1)?.stepId||null,
     readyForTechnicalAnswers:false,
     aiEnabled:false,

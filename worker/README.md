@@ -257,3 +257,18 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Il catalogo originale resta immutato; 7/53 revisioni condizionate,
   46 passaggi ancora in attesa. /api/assist non esegue retrieval tecnico,
   nessun provider AI, attivazione o modifica della PWA pubblica.
+
+### Fase 15.8 — Smontaggio della lama (F15.8-R1)
+- Approvazione esperto del 2026-11-06: entrambi i metodi, pistola a impulsi e
+  chiave manuale, con utensili idonei.
+- Correzione espressa dall'esperto: anche con pistola a impulsi, se necessario,
+  contrastare la rotazione della lama con guanti protettivi adeguati e presa
+  lontana dai bordi taglienti, oppure con blocco di legno stabile fra lama e
+  scocca, quando configurazione e costruttore lo consentono.
+- Per il metodo con chiave manuale le stesse alternative; arresto se la
+  rotazione non può essere contrastata in sicurezza.
+- Verificare verso di svitamento, sequenza dei fissaggi e orientamento lama.
+  Non usare la lama come leva; prerequisito la messa in sicurezza F15.7.
+- Stato: 8/53 revisioni condizionate, 45 in attesa. AI, retrieval, rimontaggio
+  e indicazioni di coppia non abilitati dal presente passaggio.
+- Nessuna modifica a main, catalogo originale, voice.js o pilot.

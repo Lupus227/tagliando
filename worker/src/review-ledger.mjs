@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.7 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.8 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -329,6 +329,60 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-02-P02",
+    "revision": "F15.8-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "smontaggio_lama_pistola_impulsi_e_chiave_manuale_condizionati",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_CON_MODIFICA_ESPLICITA",
+      "approvedOn": "2026-11-06",
+      "evidence": "approvazione_del_resto_del_testo_e_correzione_metodo_pistola_in_conversazione_15_8"
+    },
+    "content": {
+      "title": "Smontaggio della lama",
+      "instruction": "Individua il bullone o il sistema di fissaggio della lama.",
+      "methods": [
+        {
+          "id": "pistola_impulsi",
+          "title": "Metodo A — Smontaggio con pistola a impulsi",
+          "instruction": "Utilizza una pistola a impulsi con bussola di misura e tipologia appropriate al fissaggio.\n\nMantieni l'utensile correttamente allineato al bullone ed effettua lo svitamento.\n\nSe la lama tende a ruotare, interrompi lo svitamento e immobilizzala prima di proseguire: puoi trattenerla saldamente con guanti protettivi adeguati, mantenendo la presa lontana dai bordi taglienti, oppure utilizzare un blocco di legno posizionato stabilmente tra lama e scocca, quando la configurazione del rasaerba lo permette e secondo le indicazioni del costruttore."
+        },
+        {
+          "id": "chiave_manuale",
+          "title": "Metodo B — Smontaggio con chiave manuale",
+          "instruction": "Utilizza una chiave adeguata al bullone di fissaggio.\n\nTrattieni saldamente la lama per impedirne la rotazione, indossando guanti protettivi adeguati e mantenendo la presa lontano dai bordi taglienti.\n\nIn alternativa, quando la configurazione del rasaerba lo permette, utilizza un blocco di legno posizionato stabilmente tra la lama e la scocca, secondo le indicazioni del costruttore.\n\nSe non riesci a contrastare la rotazione in modo sicuro, interrompi l'operazione."
+        }
+      ],
+      "commonActions": "Verifica il corretto verso di svitamento in base alle caratteristiche del fissaggio.\n\nRimuovi il bullone e gli eventuali componenti di fissaggio, prestando attenzione alla loro posizione e sequenza di montaggio.\n\nPrima di estrarre la lama, osservane l'orientamento per poterla rimontare correttamente.\n\nRimuovi la lama prestando attenzione ai bordi taglienti.",
+      "stopCondition": "Interrompi lo smontaggio se:\n- Il fissaggio è danneggiato o non si allenta con gli strumenti appropriati.\n- Non riesci a contrastare la rotazione della lama in modo sicuro.\n- La macchina perde stabilità durante l'operazione.\n- Rilevi anomalie che possono compromettere la sicurezza.\nNon utilizzare la lama come leva per forzare lo smontaggio."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "requiresApprovedSafetyStep": "RASA-OP-02-P01",
+      "methodsAuthorized": [
+        "pistola_impulsi",
+        "chiave_manuale"
+      ],
+      "manualGripWithProtectiveGlovesAllowed": true,
+      "stableWoodBlockAlternativeAllowed": true,
+      "stopWhenBladeCannotBeControlled": true,
+      "fastenerDirectionMustBeVerified": true,
+      "assemblyOrderMustBePreserved": true,
+      "bladeOrientationMustBeRecorded": true,
+      "doesNotAuthorizeReassemblyOrTorque": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "Esperto approva la procedura; richiede anche durante lo svitamento con pistola a impulsi blocco lama con guanti adeguati oppure blocco di legno. Il resto del testo è confermato.",
+        "approvedOn": "2026-11-06"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -346,7 +400,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==7)
+  if(!Array.isArray(candidate) || candidate.length!==8)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -362,7 +416,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (entry.stepId==='RASA-OP-02-P01' && entry.approval?.approvedOn==='2026-11-06')))) &&
+       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06')))) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -492,7 +546,31 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.instruction.includes('Indossa guanti protettivi adeguati') &&
        entry.content.stopCondition.includes("non è possibile impedire l'avviamento accidentale") &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01))
+    const approvedOP02P02=entry.stepId==='RASA-OP-02-P02' &&
+       entry.revision==='F15.8-R1' &&
+       entry.scope==='smontaggio_lama_pistola_impulsi_e_chiave_manuale_condizionati' &&
+       entry.approval?.decision==='APPROVATO_CON_MODIFICA_ESPLICITA' &&
+       entry.approval?.evidence==='approvazione_del_resto_del_testo_e_correzione_metodo_pistola_in_conversazione_15_8' &&
+       entry.applicability?.requiresApprovedSafetyStep==='RASA-OP-02-P01' &&
+       entry.applicability?.manualGripWithProtectiveGlovesAllowed===true &&
+       entry.applicability?.stableWoodBlockAlternativeAllowed===true &&
+       entry.applicability?.stopWhenBladeCannotBeControlled===true &&
+       entry.applicability?.fastenerDirectionMustBeVerified===true &&
+       entry.applicability?.assemblyOrderMustBePreserved===true &&
+       entry.applicability?.bladeOrientationMustBeRecorded===true &&
+       entry.applicability?.doesNotAuthorizeReassemblyOrTorque===true &&
+       JSON.stringify(entry.applicability.methodsAuthorized)==='["pistola_impulsi","chiave_manuale"]' &&
+       Array.isArray(entry.content.methods) && entry.content.methods.length===2 &&
+       entry.content.methods.map(m=>m.id).join(',')==='pistola_impulsi,chiave_manuale' &&
+       entry.content.methods[0].instruction.includes('pistola a impulsi') &&
+       entry.content.methods[0].instruction.includes('guanti protettivi adeguati') &&
+       entry.content.methods[0].instruction.includes('blocco di legno') &&
+       entry.content.methods[1].instruction.includes('Trattieni saldamente la lama') &&
+       entry.content.methods[1].instruction.includes('blocco di legno') &&
+       entry.content.commonActions.includes('orientamento') &&
+       entry.content.stopCondition.includes('Non utilizzare la lama come leva') &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
