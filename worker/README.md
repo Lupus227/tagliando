@@ -332,3 +332,25 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
   gratuito (issue #2); il ramo condizionale della PWA non è ancora implementato.
 - 12/53 revisioni condizionate, 41 in attesa; AI, retrieval e PWA pubblica
   non modificati. La revisione è soltanto nell'overlay di staging.
+
+### Fase 15.13 — Montaggio e serraggio della lama (F15.13-R1)
+- Approvato dall'esperto il 2026-11-07 senza modifiche al testo operativo.
+- Prima di smontare la lama (PRIMA di P02) acquisire dichiarazione sulla
+  conoscenza della coppia pertinente, valore numerico Nm, fonte e
+  disponibilità di chiave dinamometrica idonea. Nessuna imposizione di
+  acquisto; la dichiarazione non sostituisce le reali condizioni di sicurezza.
+- Se l'operatore non conferma requisiti, saltare la manutenzione facoltativa
+  della lama e registrarla come NON ESEGUITA, proseguendo il tagliando,
+  salvo condizioni pericolose che richiedono arresto.
+- Se la lama è già smontata e il rimontaggio sicuro non è possibile, NON
+  passare semplicemente al resto del tagliando né consentire utilizzo.
+- Mozzo posizionato, verso lama e sede di centraggio corretti, fissaggi e
+  rondelle nell'ordine originale, bullone avviato a mano.
+- Serrare con dinamometrica alla coppia verificata pertinente. La pistola a
+  impulsi non certifica la coppia finale.
+- Nessuna coppia universale (es. 60 Nm) e nessun frenafiletti soft/medium
+  obbligatorio. Il riconoscimento visivo resta nota di ricerca (issue #3).
+- La verifica preliminare e la diramazione di salto saranno da implementare
+  nella PWA solo in fase successiva, non in questa revisione del registro.
+- 13/53 revisioni condizionate, 40 in attesa; AI, retrieval, main e PWA
+  pubblica invariati.

@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.12 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.13 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02/P03/P04/P05/P06, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02/P03/P04/P05/P06/P07, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -569,6 +569,58 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-02-P07",
+    "revision": "F15.13-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "rimontaggio_lama_serraggio_con_coppia_pertinente_e_prerequisito_prima_dello_smontaggio",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_SENZA_MODIFICHE",
+      "approvedOn": "2026-11-07",
+      "evidence": "conferma_esplicita_testo_montaggio_serraggio_con_verifica_prima_smontaggio_fase_15_13"
+    },
+    "content": {
+      "title": "Montaggio e serraggio della lama",
+      "instruction": "Dopo aver completato l'ispezione e l'eventuale affilatura:\n\n1. Verifica che il mozzo portalama sia correttamente posizionato e non presenti anomalie evidenti.\n2. Rimonta la lama rispettandone l'orientamento originale.\n3. Assicurati che la lama sia correttamente alloggiata nella sede di centraggio del mozzo.\n4. Riposiziona rondelle, viti e altri componenti nell'ordine e nell'orientamento originali.\n5. Avvita inizialmente i bulloni a mano, verificando che la filettatura si impegni correttamente senza forzature.\n\nSe il mozzo si era sfilato, il corretto posizionamento dell'eventuale linguetta separata deve essere già stato verificato.\n\nSerraggio\n\nContrasta la rotazione della lama mediante uno dei metodi di bloccaggio già approvati nella procedura di smontaggio.\n\nUtilizza una chiave dinamometrica idonea e applica la coppia di serraggio precedentemente dichiarata, purché sia stata verificata come pertinente al fissaggio.\n\nSe sono presenti più bulloni, ciascuno deve essere serrato secondo la specifica applicabile.\n\nLa pistola a impulsi non deve essere utilizzata per stabilire la coppia finale, poiché le sue regolazioni non garantiscono un valore misurato.",
+      "prerequisite": "Questa verifica viene eseguita prima dello smontaggio della lama.\n\nPer rimontare correttamente la lama devi conoscere la coppia di serraggio prevista per i suoi bulloni e disporre di una chiave dinamometrica adatta.\n\nConfermi di conoscere la coppia corretta e di avere lo strumento necessario?\n\nSe l'utente conferma, l'app registra la dichiarazione, acquisisce la coppia in Nm e la relativa fonte, quindi prosegue dopo i controlli di sicurezza.\n\nSe non conferma, la manutenzione facoltativa della lama viene registrata come non eseguita e il tagliando prosegue con l'operazione successiva.\n\nLa dichiarazione non sostituisce la necessità di utilizzare effettivamente una coppia pertinente e uno strumento idoneo.",
+      "assemblyInstruction": "Dopo aver completato l'ispezione e l'eventuale affilatura:\n\n1. Verifica che il mozzo portalama sia correttamente posizionato e non presenti anomalie evidenti.\n2. Rimonta la lama rispettandone l'orientamento originale.\n3. Assicurati che la lama sia correttamente alloggiata nella sede di centraggio del mozzo.\n4. Riposiziona rondelle, viti e altri componenti nell'ordine e nell'orientamento originali.\n5. Avvita inizialmente i bulloni a mano, verificando che la filettatura si impegni correttamente senza forzature.\n\nSe il mozzo si era sfilato, il corretto posizionamento dell'eventuale linguetta separata deve essere già stato verificato.",
+      "tighteningInstruction": "Contrasta la rotazione della lama mediante uno dei metodi di bloccaggio già approvati nella procedura di smontaggio.\n\nUtilizza una chiave dinamometrica idonea e applica la coppia di serraggio precedentemente dichiarata, purché sia stata verificata come pertinente al fissaggio.\n\nSe sono presenti più bulloni, ciascuno deve essere serrato secondo la specifica applicabile.\n\nLa pistola a impulsi non deve essere utilizzata per stabilire la coppia finale, poiché le sue regolazioni non garantiscono un valore misurato.",
+      "stopCondition": "Non procedere al rimontaggio o alla rimessa in servizio della macchina se:\n- La lama non si inserisce correttamente sul mozzo.\n- Mancano componenti di fissaggio o sono presenti danni.\n- L'orientamento della lama non è identificabile con sicurezza.\n- Il valore di serraggio risulta incerto o non pertinente.\n- Non è possibile applicare correttamente la coppia prevista.\n\nSe la lama è già stata smontata e non può essere rimontata in sicurezza, registra l'anomalia e richiedi una verifica tecnica."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "prerequisiteBeforeBladeRemovalStep": "RASA-OP-02-P02",
+      "requiresDeclaredRelevantTorqueValueNm": true,
+      "requiresDeclaredTorqueSource": true,
+      "requiresDeclaredSuitableTorqueWrench": true,
+      "declarationDoesNotReplaceActualSafetyRequirements": true,
+      "skipOptionalBladeWorkIfPrerequisitesMissing": true,
+      "recordSkipAsNotExecuted": true,
+      "continueOtherServiceTasksOnSafeSkip": true,
+      "doNotSkipIfAlreadyDismantledUnsafe": true,
+      "stopIfBladeAlreadyRemovedCannotBeSafelyReinstalled": true,
+      "requiresCorrectBladeOrientation": true,
+      "requiresProperHubCentering": true,
+      "preserveFixingComponentOrder": true,
+      "startThreadByHand": true,
+      "requiresApprovedRotationRestraintStep": "RASA-OP-02-P02",
+      "torqueMustBeRelevantToActualFastener": true,
+      "impactGunNotValidForFinalTorque": true,
+      "noUniversalTorqueFallback": true,
+      "noMandatoryThreadlocker": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "Esperto approva testo P07: domanda preventiva coppia di serraggio documentata e disponibilità dichiarata di dinamometrica, salto della manutenzione facoltativa in caso negativo, montaggio in sede e serraggio con valore pertinente, fermo se la lama è già smontata e non rimontabile in sicurezza.",
+        "approvedOn": "2026-11-07"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -586,7 +638,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==12)
+  if(!Array.isArray(candidate) || candidate.length!==13)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -602,7 +654,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07')))) &&
+       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07')))) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -863,7 +915,43 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.instruction.includes('dalla parte più pesante') &&
        entry.content.stopCondition.includes('Non rimontare una lama evidentemente sbilanciata') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06))
+    const approvedOP02P07=entry.stepId==='RASA-OP-02-P07' &&
+       entry.revision==='F15.13-R1' &&
+       entry.scope==='rimontaggio_lama_serraggio_con_coppia_pertinente_e_prerequisito_prima_dello_smontaggio' &&
+       entry.approval?.decision==='APPROVATO_SENZA_MODIFICHE' &&
+       entry.approval?.evidence==='conferma_esplicita_testo_montaggio_serraggio_con_verifica_prima_smontaggio_fase_15_13' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.prerequisiteBeforeBladeRemovalStep==='RASA-OP-02-P02' &&
+       entry.applicability?.requiresDeclaredRelevantTorqueValueNm===true &&
+       entry.applicability?.requiresDeclaredTorqueSource===true &&
+       entry.applicability?.requiresDeclaredSuitableTorqueWrench===true &&
+       entry.applicability?.declarationDoesNotReplaceActualSafetyRequirements===true &&
+       entry.applicability?.skipOptionalBladeWorkIfPrerequisitesMissing===true &&
+       entry.applicability?.recordSkipAsNotExecuted===true &&
+       entry.applicability?.continueOtherServiceTasksOnSafeSkip===true &&
+       entry.applicability?.doNotSkipIfAlreadyDismantledUnsafe===true &&
+       entry.applicability?.stopIfBladeAlreadyRemovedCannotBeSafelyReinstalled===true &&
+       entry.applicability?.requiresCorrectBladeOrientation===true &&
+       entry.applicability?.requiresProperHubCentering===true &&
+       entry.applicability?.preserveFixingComponentOrder===true &&
+       entry.applicability?.startThreadByHand===true &&
+       entry.applicability?.requiresApprovedRotationRestraintStep==='RASA-OP-02-P02' &&
+       entry.applicability?.torqueMustBeRelevantToActualFastener===true &&
+       entry.applicability?.impactGunNotValidForFinalTorque===true &&
+       entry.applicability?.noUniversalTorqueFallback===true &&
+       entry.applicability?.noMandatoryThreadlocker===true &&
+       entry.content.prerequisite.includes('prima dello smontaggio della lama') &&
+       entry.content.prerequisite.includes('coppia in Nm e la relativa fonte') &&
+       entry.content.prerequisite.includes('non eseguita') &&
+       entry.content.assemblyInstruction.includes('sede di centraggio del mozzo') &&
+       entry.content.assemblyInstruction.includes('Avvita inizialmente i bulloni a mano') &&
+       entry.content.tighteningInstruction.includes('chiave dinamometrica idonea') &&
+       entry.content.tighteningInstruction.includes('verificata come pertinente al fissaggio') &&
+       entry.content.tighteningInstruction.includes('pistola a impulsi non deve essere utilizzata per stabilire la coppia finale') &&
+       entry.content.stopCondition.includes('Se la lama è già stata smontata') &&
+       entry.content.stopCondition.includes('richiedi una verifica tecnica') &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
