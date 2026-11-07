@@ -289,3 +289,16 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
   subordinata ad attrezzatura/capacità (roadmap issue #2; non implementato).
 - 9/53 revisioni condizionate, 44 in attesa. AI non abilitata; catalogo
   originale, main, voice.js, pilot e PWA pubblica non modificati.
+
+### Fase 15.10 — Ispezione della lama (F15.10-R1)
+- Approvato senza modifiche dall'esperto il 2026-11-07; ispezione visiva
+  di entrambe le facce, estremità, foro centrale e bordi di taglio.
+- Distinzione tra tagliente ancora efficiente (nessuna affilatura necessaria),
+  tagliente usurato ma lama integra (affilatura opzionale subordinata ad
+  attrezzatura e abilità, o affidamento a un professionista), e difetti
+  strutturali (non affilare, non rimontare, sostituire con ricambio compatibile).
+- Non verificare l'affilatura facendo scorrere le dita sul tagliente.
+- Flusso PWA facoltativo dell'affilatura tracciato separatamente nell'issue #2;
+  nessuna modifica del flusso runtime in questa revisione.
+- Stato: 10/53 revisioni condizionate, 43 in attesa; AI e retrieval tecnico
+  non abilitati, nessuna modifica a main, PWA pubblica, voice.js o pilot.

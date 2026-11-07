@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.9 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.10 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02/P03, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02/P03/P04, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -433,6 +433,46 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-02-P04",
+    "revision": "F15.10-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "ispezione_lama_integrita_tagliente_affilatura_opzionale_e_arresto_su_danni",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_SENZA_MODIFICHE",
+      "approvedOn": "2026-11-07",
+      "evidence": "conferma_esplicita_utente_testo_chiaro_e_sufficiente_fase_15_10"
+    },
+    "content": {
+      "title": "Ispezione della lama",
+      "instruction": "Dopo aver smontato la lama, controllane attentamente le condizioni.\n\nControllo dell'integrità\n\nOsserva entrambi i lati della lama e verifica che non siano presenti crepe, rotture, deformazioni o parti mancanti.\n\nControlla anche la zona centrale, in corrispondenza del foro di fissaggio, e le estremità della lama.\n\nControllo del tagliente\n\nOsserva i bordi di taglio e verifica se sono ancora in buone condizioni oppure se presentano arrotondamenti, scheggiature o usura.\n\nNon verificare l'affilatura facendo scorrere le dita sul tagliente.\n\nValutazione finale\n\nSe la lama è integra e il tagliente è in buone condizioni, non è necessario affilarla.\n\nSe la lama è integra ma il tagliente è consumato, puoi scegliere di procedere con l'affilatura, purché tu disponga degli strumenti adeguati e sia in grado di utilizzarli in sicurezza.\n\nSe non vuoi effettuare personalmente l'affilatura, puoi affidarla a un professionista.",
+      "stopCondition": "Se la lama presenta crepe, deformazioni, rotture, usura eccessiva o altri danni che ne compromettono l'integrità, non procedere all'affilatura.\n\nRegistra l'anomalia e prevedi la sostituzione della lama con un ricambio compatibile.\n\nNon rimontare una lama strutturalmente compromessa."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "requiresBladeRemovalStep": "RASA-OP-02-P02",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "bladeInspectionRequiredBeforeSharpening": true,
+      "sharpeningOptional": true,
+      "requiresAppropriateToolsAndAbility": true,
+      "noFingerSlideAlongCuttingEdge": true,
+      "structurallyCompromisedBladeMustNotBeSharpened": true,
+      "structurallyCompromisedBladeMustNotBeReinstalled": true,
+      "professionalSharpeningAlternativeAllowed": true,
+      "bladeReplacementWithCompatiblePartWhenDamaged": true,
+      "noAutonomousAiDiagnosis": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "Il tecnico approva integralmente il testo Fase 15.10: ispezione di integrità e tagliente, affilatura facoltativa se attrezzatura e manualità adeguate, arresto e sostituzione per danno strutturale.",
+        "approvedOn": "2026-11-07"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -450,7 +490,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==9)
+  if(!Array.isArray(candidate) || candidate.length!==10)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -466,7 +506,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06')))) &&
+       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (entry.stepId==='RASA-OP-02-P04' && entry.approval?.approvedOn==='2026-11-07')))) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -644,7 +684,30 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes('non procedere al rimontaggio') &&
        entry.content.stopCondition.includes('verifica tecnica') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03))
+    const approvedOP02P04=entry.stepId==='RASA-OP-02-P04' &&
+       entry.revision==='F15.10-R1' &&
+       entry.scope==='ispezione_lama_integrita_tagliente_affilatura_opzionale_e_arresto_su_danni' &&
+       entry.approval?.decision==='APPROVATO_SENZA_MODIFICHE' &&
+       entry.approval?.evidence==='conferma_esplicita_utente_testo_chiaro_e_sufficiente_fase_15_10' &&
+       entry.applicability?.requiresBladeRemovalStep==='RASA-OP-02-P02' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.bladeInspectionRequiredBeforeSharpening===true &&
+       entry.applicability?.sharpeningOptional===true &&
+       entry.applicability?.requiresAppropriateToolsAndAbility===true &&
+       entry.applicability?.noFingerSlideAlongCuttingEdge===true &&
+       entry.applicability?.structurallyCompromisedBladeMustNotBeSharpened===true &&
+       entry.applicability?.structurallyCompromisedBladeMustNotBeReinstalled===true &&
+       entry.applicability?.professionalSharpeningAlternativeAllowed===true &&
+       entry.applicability?.bladeReplacementWithCompatiblePartWhenDamaged===true &&
+       entry.applicability?.noAutonomousAiDiagnosis===true &&
+       entry.content.instruction.includes("Non verificare l'affilatura facendo scorrere le dita sul tagliente.") &&
+       entry.content.instruction.includes("non è necessario affilarla") &&
+       entry.content.instruction.includes("puoi scegliere di procedere con l'affilatura") &&
+       entry.content.instruction.includes("puoi affidarla a un professionista") &&
+       entry.content.stopCondition.includes("non procedere all'affilatura") &&
+       entry.content.stopCondition.includes("Non rimontare una lama strutturalmente compromessa.") &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
