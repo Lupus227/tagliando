@@ -315,3 +315,20 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Equilibratura demandata a RASA-OP-02-P06 ancora da validare.
 - 11/53 revisioni condizionate, 42 passaggi da validare; AI e retrieval
   rimangono disabilitati, nessuna modifica a main, PWA o sistemi voce.
+
+### Fase 15.12 — Equilibratura della lama (F15.12-R1)
+- Approvato dall'esperto il 2026-11-07, dopo chiarimento esplicativo per
+  un pubblico senza esperienza: il cacciavite con gambo cilindrico,
+  fissato orizzontalmente in morsa, funge da fulcro di una bilancia.
+- Sostenere la lama esattamente in corrispondenza del foro centrale;
+  lasciare libere le due estremità di oscillare senza urtare ostacoli.
+- Lama sostanzialmente orizzontale: prova superata; estremità che scende
+  ripetutamente: parte più pesante. Ripetere più volte la verifica.
+- Correzione solo se lieve e senza intaccare la geometria, togliendo
+  progressivamente poco materiale dalla parte più pesante e ripetendo
+  il controllo; in caso di difficoltà ricorrere a un professionista.
+- Non rimontare lama chiaramente sbilanciata, deformata o danneggiata.
+- Passaggio previsto dopo affilatura, che resta facoltativa per il tagliando
+  gratuito (issue #2); il ramo condizionale della PWA non è ancora implementato.
+- 12/53 revisioni condizionate, 41 in attesa; AI, retrieval e PWA pubblica
+  non modificati. La revisione è soltanto nell'overlay di staging.

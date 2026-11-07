@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.11 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.12 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02/P03/P04/P05, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02/P03/P04/P05/P06, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -525,6 +525,50 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-02-P06",
+    "revision": "F15.12-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "equilibratura_lama_dopo_affilatura_fulcro_centrale_e_controllo_ripetuto",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_CON_CHIARIMENTO_ESPLICITO",
+      "approvedOn": "2026-11-07",
+      "evidence": "approvazione_esplicita_utente_spiegazione_cacciavite_fulcro_forocentrale_fase_15_12"
+    },
+    "content": {
+      "title": "Equilibratura della lama",
+      "instruction": "Dopo aver affilato la lama, controlla che sia equilibrata, cioè che il peso sia distribuito correttamente tra le due estremità.\n\nPreparazione\n\n1. Prendi un cacciavite con il gambo cilindrico e fissalo orizzontalmente in una morsa, lasciando sporgere una parte del gambo.\n2. Inserisci il gambo del cacciavite nel foro centrale della lama.\n3. Posiziona la lama in modo che sia sostenuta esattamente al centro, come un'altalena appoggiata sul proprio fulcro.\n4. Assicurati che le due estremità della lama siano libere di muoversi, senza toccare la morsa o altri oggetti.\n\nVerifica dell'equilibrio\n\n- Se la lama rimane sostanzialmente orizzontale: il peso è distribuito correttamente.\n- Se un'estremità scende ripetutamente: quella parte è più pesante e la lama deve essere riequilibrata.\n\nRipeti la prova più volte per confermare il risultato.\n\nCorrezione dello squilibrio\n\nSe lo squilibrio è lieve, rimuovi progressivamente una piccola quantità di materiale dalla parte più pesante, rispettando la geometria originale della lama.\n\nDopo ogni intervento ripeti il controllo.\n\nSe non riesci a riequilibrare la lama senza asportare troppo materiale, rivolgiti a un professionista.",
+      "stopCondition": "Non rimontare una lama evidentemente sbilanciata, deformata o danneggiata."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "requiresApprovedBladeSharpeningStep": "RASA-OP-02-P05",
+      "onlyAfterSharpening": true,
+      "screwdriverIsBalanceFulcrum": true,
+      "horizontallySecuredCylindricalShaft": true,
+      "supportAtBladeCenterHole": true,
+      "centerSupportExact": true,
+      "bladeEndsMustMoveFreely": true,
+      "repeatCheckMultipleTimes": true,
+      "heavierEndFalls": true,
+      "removeMinimalMaterialFromHeavierEndOnlyIfCorrectable": true,
+      "preserveBladeOriginalGeometry": true,
+      "stopIfClearlyUnbalancedDeformedOrDamaged": true,
+      "professionalAlternativeAvailable": true,
+      "fingerUsedAsBalanceSupport": false,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "L'esperto conferma la versione che spiega il gambo del cacciavite come fulcro per sostenere la lama esattamente in corrispondenza del foro centrale; controllo ripetuto e arresto su squilibrio evidente o danni.",
+        "approvedOn": "2026-11-07"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -542,7 +586,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==11)
+  if(!Array.isArray(candidate) || candidate.length!==12)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -558,7 +602,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07')))) &&
+       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07')))) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -789,7 +833,37 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes("Non procedere se non hai dimestichezza") &&
        entry.content.stopCondition.includes("affida l'affilatura a un professionista") &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05))
+    const approvedOP02P06=entry.stepId==='RASA-OP-02-P06' &&
+       entry.revision==='F15.12-R1' &&
+       entry.scope==='equilibratura_lama_dopo_affilatura_fulcro_centrale_e_controllo_ripetuto' &&
+       entry.approval?.decision==='APPROVATO_CON_CHIARIMENTO_ESPLICITO' &&
+       entry.approval?.evidence==='approvazione_esplicita_utente_spiegazione_cacciavite_fulcro_forocentrale_fase_15_12' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.requiresApprovedBladeSharpeningStep==='RASA-OP-02-P05' &&
+       entry.applicability?.onlyAfterSharpening===true &&
+       entry.applicability?.screwdriverIsBalanceFulcrum===true &&
+       entry.applicability?.horizontallySecuredCylindricalShaft===true &&
+       entry.applicability?.supportAtBladeCenterHole===true &&
+       entry.applicability?.centerSupportExact===true &&
+       entry.applicability?.bladeEndsMustMoveFreely===true &&
+       entry.applicability?.repeatCheckMultipleTimes===true &&
+       entry.applicability?.heavierEndFalls===true &&
+       entry.applicability?.removeMinimalMaterialFromHeavierEndOnlyIfCorrectable===true &&
+       entry.applicability?.preserveBladeOriginalGeometry===true &&
+       entry.applicability?.stopIfClearlyUnbalancedDeformedOrDamaged===true &&
+       entry.applicability?.professionalAlternativeAvailable===true &&
+       entry.applicability?.fingerUsedAsBalanceSupport===false &&
+       entry.content.instruction.includes('il gambo cilindrico') &&
+       entry.content.instruction.includes('fissalo orizzontalmente in una morsa') &&
+       entry.content.instruction.includes('foro centrale della lama') &&
+       entry.content.instruction.includes("sostenuta esattamente al centro, come un'altalena appoggiata sul proprio fulcro") &&
+       entry.content.instruction.includes('le due estremità della lama siano libere di muoversi') &&
+       entry.content.instruction.includes('Se un\'estremità scende ripetutamente') &&
+       entry.content.instruction.includes('Ripeti la prova più volte') &&
+       entry.content.instruction.includes('dalla parte più pesante') &&
+       entry.content.stopCondition.includes('Non rimontare una lama evidentemente sbilanciata') &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
