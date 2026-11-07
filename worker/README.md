@@ -302,3 +302,16 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
   nessuna modifica del flusso runtime in questa revisione.
 - Stato: 10/53 revisioni condizionate, 43 in attesa; AI e retrieval tecnico
   non abilitati, nessuna modifica a main, PWA pubblica, voice.js o pilot.
+
+### Fase 15.11 — Ripristino del tagliente (F15.11-R1)
+- Esperto approva il testo il 2026-11-07 aggiungendo una tecnica pratica:
+  movimento della smerigliatrice lento, costante e mai fermo sullo stesso punto.
+  Velocità del movimento lungo il tagliente, NON regime numerico del mandrino.
+- Affilatura facoltativa e subordinata a integrità della lama, attrezzatura,
+  dimestichezza con l'utensile e blocco stabile su banco/morsa.
+- Disco lamellare grana 60/80; seguire la geometria originale. L'angolo
+  indicativo 30–35° vale solo per lame compatibili e non sostituisce le
+  istruzioni del produttore. Evitare surriscaldamento e asportazioni eccessive.
+- Equilibratura demandata a RASA-OP-02-P06 ancora da validare.
+- 11/53 revisioni condizionate, 42 passaggi da validare; AI e retrieval
+  rimangono disabilitati, nessuna modifica a main, PWA o sistemi voce.

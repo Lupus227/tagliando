@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.10 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.11 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02/P03/P04, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02/P03/P04/P05, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -473,6 +473,58 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-02-P05",
+    "revision": "F15.11-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "affilatura_lama_opzionale_smerigliatrice_con_movimento_continuo_e_limitazioni",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_CON_INTEGRAZIONE_ESPLICITA",
+      "approvedOn": "2026-11-07",
+      "evidence": "conferma_testo_e_indicazione_movimento_lento_costante_mai_fermo_fase_15_11"
+    },
+    "content": {
+      "title": "Ripristino del tagliente",
+      "instruction": "L'affilatura della lama è un'operazione facoltativa.\n\nProcedi soltanto se la lama è stata precedentemente controllata e risulta integra, e se disponi degli utensili e delle capacità necessarie per eseguire il lavoro in sicurezza.\n\nPreparazione\n\nFissa saldamente la lama su un banco da lavoro, utilizzando una morsa o un sistema di bloccaggio adeguato.\n\nIndossa occhiali protettivi e gli altri dispositivi di protezione previsti per l'utensile utilizzato.\n\nAffilatura con smerigliatrice\n\nUtilizza una smerigliatrice angolare dotata di disco lamellare a grana 60 o 80, adatto all'utensile e al materiale da lavorare.\n\nIndividua l'inclinazione originale del tagliente e cerca di conservarla.\n\nSe l'angolo originale non è più riconoscibile, per le lame compatibili si può utilizzare come riferimento indicativo un'inclinazione di 30–35°. Questo valore non sostituisce eventuali specifiche del costruttore.\n\nLavora sulla faccia superiore dei due taglienti, seguendo la geometria originale della lama.\n\nEffettua passate progressive con un movimento lento, regolare e continuo della smerigliatrice lungo il tagliente, senza fermarti sullo stesso punto, rimuovendo soltanto il materiale necessario per ripristinare il filo.\n\nEvita di esercitare una pressione eccessiva e di riscaldare troppo il metallo.\n\nCerca di distribuire l'asportazione del materiale sui due taglienti, senza modificare eccessivamente la forma originale della lama.\n\nControllo finale\n\nAl termine verifica visivamente che entrambi i taglienti siano regolari e non presentino danni causati dalla lavorazione.\n\nLa verifica dell'equilibratura della lama sarà effettuata nel passaggio successivo.",
+      "stopCondition": "Non procedere se non hai dimestichezza con la smerigliatrice oppure non puoi fissare stabilmente la lama.\n\nInterrompi l'affilatura se rilevi crepe, deformazioni, perdita eccessiva di materiale o condizioni che impediscono di rispettare la geometria della lama.\n\nSe non puoi effettuare l'operazione in sicurezza, affida l'affilatura a un professionista."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "requiresApprovedBladeInspectionStep": "RASA-OP-02-P04",
+      "sharpeningOptional": true,
+      "requiresSkillToolsAndBladeIntegrity": true,
+      "requiresSecureWorkbenchFixation": true,
+      "gritOptions": [
+        60,
+        80
+      ],
+      "referenceAngleDegrees": [
+        30,
+        35
+      ],
+      "angleIsUniversalSpecification": false,
+      "originalBevelPriority": true,
+      "workUpperCuttingFaces": true,
+      "movementSlowSteadyContinuous": true,
+      "neverHoldGrinderInOnePlace": true,
+      "movementSpeedNotSpindleRPM": true,
+      "protectiveEyewearRequired": true,
+      "overheatingAndExcessiveRemovalProhibited": true,
+      "balancingDeferredStep": "RASA-OP-02-P06",
+      "professionalAlternativeAvailable": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "Esperto approva il testo e precisa l'uso della smerigliatrice con movimento lento e costante, mai fermo su un punto; non si specifica un numero di giri.",
+        "approvedOn": "2026-11-07"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -490,7 +542,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==10)
+  if(!Array.isArray(candidate) || candidate.length!==11)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -506,7 +558,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (entry.stepId==='RASA-OP-02-P04' && entry.approval?.approvedOn==='2026-11-07')))) &&
+       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07')))) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -707,7 +759,37 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes("non procedere all'affilatura") &&
        entry.content.stopCondition.includes("Non rimontare una lama strutturalmente compromessa.") &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04))
+    const approvedOP02P05=entry.stepId==='RASA-OP-02-P05' &&
+       entry.revision==='F15.11-R1' &&
+       entry.scope==='affilatura_lama_opzionale_smerigliatrice_con_movimento_continuo_e_limitazioni' &&
+       entry.approval?.decision==='APPROVATO_CON_INTEGRAZIONE_ESPLICITA' &&
+       entry.approval?.evidence==='conferma_testo_e_indicazione_movimento_lento_costante_mai_fermo_fase_15_11' &&
+       entry.applicability?.requiresApprovedBladeInspectionStep==='RASA-OP-02-P04' &&
+       entry.applicability?.sharpeningOptional===true &&
+       entry.applicability?.requiresSkillToolsAndBladeIntegrity===true &&
+       entry.applicability?.requiresSecureWorkbenchFixation===true &&
+       JSON.stringify(entry.applicability.gritOptions)==='[60,80]' &&
+       JSON.stringify(entry.applicability.referenceAngleDegrees)==='[30,35]' &&
+       entry.applicability?.angleIsUniversalSpecification===false &&
+       entry.applicability?.originalBevelPriority===true &&
+       entry.applicability?.workUpperCuttingFaces===true &&
+       entry.applicability?.movementSlowSteadyContinuous===true &&
+       entry.applicability?.neverHoldGrinderInOnePlace===true &&
+       entry.applicability?.movementSpeedNotSpindleRPM===true &&
+       entry.applicability?.protectiveEyewearRequired===true &&
+       entry.applicability?.overheatingAndExcessiveRemovalProhibited===true &&
+       entry.applicability?.balancingDeferredStep==='RASA-OP-02-P06' &&
+       entry.applicability?.professionalAlternativeAvailable===true &&
+       entry.content.instruction.includes("L'affilatura della lama è un'operazione facoltativa") &&
+       entry.content.instruction.includes('disco lamellare a grana 60 o 80') &&
+       entry.content.instruction.includes('30–35°') &&
+       entry.content.instruction.includes('un movimento lento, regolare e continuo') &&
+       entry.content.instruction.includes('senza fermarti sullo stesso punto') &&
+       entry.content.instruction.includes("La verifica dell'equilibratura") &&
+       entry.content.stopCondition.includes("Non procedere se non hai dimestichezza") &&
+       entry.content.stopCondition.includes("affida l'affilatura a un professionista") &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
