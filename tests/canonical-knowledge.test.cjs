@@ -506,8 +506,8 @@ test('15.10 fails closed if structural blade damage or optionality safeguards ar
  const st=m.canonicalKnowledgeStatus();
  assert.equal(st.version,'15.11.0');
  assert.equal(st.validatedSteps,11);assert.equal(st.pendingSteps,42);
- assert.equal(st.conditionalValidatedSteps,10);
- assert.equal(st.latestReviewedStepId,'RASA-OP-02-P04');
+ assert.equal(st.conditionalValidatedSteps,11);
+ assert.equal(st.latestReviewedStepId,'RASA-OP-02-P05');
  assert.equal(st.aiEnabled,false);assert.equal(st.canGenerate,false);
  assert.equal(st.readyForTechnicalAnswers,false);
 });
