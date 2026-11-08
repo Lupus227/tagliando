@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.16 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.17 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -711,6 +711,59 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-03-P02",
+    "revision": "F15.17-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "filtro_aria_valutazione_separata_carta_spugna_misto_ricambio_compatibile_e_stop_se_assente",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_SENZA_MODIFICHE",
+      "approvedOn": "2026-11-08",
+      "evidence": "utente_conferma_corretta_procedura_valutazione_filtro_p02_e_autorizza_procedere_fase_15_17"
+    },
+    "content": {
+      "title": "Valutazione del materiale",
+      "instruction": "Dopo aver aperto il coperchio e identificato il tipo di filtro, estrai l'elemento facendo attenzione a non far cadere residui nel condotto di aspirazione.\n\nEsamina il materiale filtrante:\n\nFiltro in carta: verifica che non presenti strappi, deformazioni, umidità o accumuli eccessivi di sporco. Normalmente viene sostituito durante il tagliando. Se è stato montato recentemente ed è ancora pulito e integro, valuta se può essere mantenuto nel rispetto delle indicazioni del costruttore.\n\nFiltro in spugna: controlla che sia morbido, elastico e integro. Se risulta indurito, friabile, lacerato o deformato, deve essere sostituito. Se è in buone condizioni, potrà essere pulito nel passaggio successivo.\n\nFiltro misto: valuta separatamente l'elemento in carta e il prefiltro in spugna, applicando a ciascuno i relativi criteri.\n\nNon effettuare ancora lavaggio, oliatura o pulizia: saranno trattati nei passaggi successivi.",
+      "stopCondition": "Se un elemento deve essere sostituito e non disponi di un ricambio compatibile, registra la lavorazione come sospesa. Non avviare il motore senza il sistema filtrante correttamente installato."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "requiresApprovedFilterOpeningStep": "RASA-OP-03-P01",
+      "requiresIdentifiedFilterType": true,
+      "removeElementWithoutIntakeContamination": true,
+      "requiresSeparateMixedElementAssessment": true,
+      "filterTypes": [
+        "carta",
+        "spugna",
+        "misto"
+      ],
+      "paperReplaceNormally": true,
+      "paperReuseOnlyIfRecentlyInstalledCleanIntactAndManufacturerPermits": true,
+      "paperDamageCriteria": [
+        "strappi",
+        "deformazioni",
+        "umidità",
+        "sporco_eccessivo"
+      ],
+      "foamReuseOnlyIfSoftElasticIntact": true,
+      "foamReplaceWhenHardenedFriableTornOrDeformed": true,
+      "noWashingOilingOrCleaningAtThisStep": true,
+      "stopIfCompatibleReplacementMissing": true,
+      "recordWorkSuspendedIfReplacementMissing": true,
+      "noEngineStartWithoutCorrectlyInstalledAirFilter": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "L'esperto ha confermato 'corretta. Puoi procedere' per il testo proposto in Fase 15.17 relativo alla valutazione di carta, spugna e filtro misto, al ricambio compatibile e al blocco dell'avviamento senza sistema filtrante correttamente montato.",
+        "approvedOn": "2026-11-08"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -728,7 +781,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==15)
+  if(!Array.isArray(candidate) || candidate.length!==16)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -744,7 +797,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08')))) &&
+       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08')))) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -1104,7 +1157,39 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes('non forzarlo') &&
        entry.content.stopCondition.includes('Registra il problema') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01))
+    const approvedOP03P02=entry.stepId==='RASA-OP-03-P02' &&
+       entry.revision==='F15.17-R1' &&
+       entry.scope==='filtro_aria_valutazione_separata_carta_spugna_misto_ricambio_compatibile_e_stop_se_assente' &&
+       entry.approval?.decision==='APPROVATO_SENZA_MODIFICHE' &&
+       entry.approval?.evidence==='utente_conferma_corretta_procedura_valutazione_filtro_p02_e_autorizza_procedere_fase_15_17' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.requiresApprovedFilterOpeningStep==='RASA-OP-03-P01' &&
+       entry.applicability?.requiresIdentifiedFilterType===true &&
+       entry.applicability?.removeElementWithoutIntakeContamination===true &&
+       entry.applicability?.requiresSeparateMixedElementAssessment===true &&
+       Array.isArray(entry.applicability?.filterTypes) &&
+       JSON.stringify(entry.applicability.filterTypes)==='["carta","spugna","misto"]' &&
+       entry.applicability?.paperReplaceNormally===true &&
+       entry.applicability?.paperReuseOnlyIfRecentlyInstalledCleanIntactAndManufacturerPermits===true &&
+       JSON.stringify(entry.applicability?.paperDamageCriteria)==='["strappi","deformazioni","umidità","sporco_eccessivo"]' &&
+       entry.applicability?.foamReuseOnlyIfSoftElasticIntact===true &&
+       entry.applicability?.foamReplaceWhenHardenedFriableTornOrDeformed===true &&
+       entry.applicability?.noWashingOilingOrCleaningAtThisStep===true &&
+       entry.applicability?.stopIfCompatibleReplacementMissing===true &&
+       entry.applicability?.recordWorkSuspendedIfReplacementMissing===true &&
+       entry.applicability?.noEngineStartWithoutCorrectlyInstalledAirFilter===true &&
+       entry.content.instruction.includes('estrai l\'elemento facendo attenzione a non far cadere residui') &&
+       entry.content.instruction.includes('Filtro in carta:') &&
+       entry.content.instruction.includes('Filtro in spugna:') &&
+       entry.content.instruction.includes('Filtro misto:') &&
+       entry.content.instruction.includes('strappi, deformazioni, umidità') &&
+       entry.content.instruction.includes('morbido, elastico e integro') &&
+       entry.content.instruction.includes('Non effettuare ancora lavaggio, oliatura o pulizia') &&
+       entry.content.stopCondition.includes('ricambio compatibile') &&
+       entry.content.stopCondition.includes('lavorazione come sospesa') &&
+       entry.content.stopCondition.includes('Non avviare il motore') &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
