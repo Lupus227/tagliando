@@ -1,6 +1,6 @@
 # REGISTRO DI PROGETTO — APP TAGLIANDO
 
-**Versione del registro:** 1.4 · **Aggiornato:** 2026-11-08  
+**Versione del registro:** 1.5 · **Aggiornato:** 2026-11-08  
 **Responsabile approvazioni tecniche:** titolare del progetto (utente).  
 **Ambito:** MVP PWA per manutenzione preventiva guidata dei rasaerba a motore; estensibile ad altre macchine.  
 **Repository PWA:** `Lupus227/tagliando`.  
@@ -67,6 +67,8 @@
 
 **CI GitHub Actions:** [test superati per commit 0360eaf](https://github.com/Lupus227/tagliando/actions/runs/42519849583).
 
+**Successiva revisione approvata e integrata nel codice staging (2026-11-08):** `RASA-OP-03-P02` — F15.17-R1, validazione con condizioni approvata senza modifiche dall'esperto. Commit `97a1ee1` su `dev/fase14-ai`, PR #9 integrata, [CI GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42524314782). Il codice prevede **15.17.0**, **16** revisioni condizionate e **37** pendenti; `aiEnabled=false`. **La distribuzione Cloudflare 15.17.0 non è ancora confermata tramite risposta dell'endpoint protetto**: l'ultimo deployment verificato resta quello 15.16.0 sopra riportato.
+
 ## D. Registro tecnico dei passaggi approvati nella Fase 15
 
 Le denominazioni qui servono per orientamento. Il **testo completo approvato** è quello distribuito nella KB 15.14.0; i riassunti seguenti NON lo sostituiscono.
@@ -88,6 +90,7 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 | RASA-OP-02-P07 | Montaggio/serraggio | Validato con condizioni | **Prima dello smontaggio** verificare disponibilità di coppia prescritta e chiave dinamometrica/metodo di serraggio corretto. Altrimenti saltare l'affilatura; non usare una regolazione empirica dell'avvitatore per sostituire la coppia prescritta. |
 | RASA-OP-02-P08 | Verifica finale | Validato con condizioni | Freno motore può opporre resistenza significativa alla rotazione senza bloccarla totalmente. Evitare forzature e artifici impropri; arresto per giochi/interferenze/anomalie. **Eliminata** la frase iniziale ridondante: «Prima di procedere, assicurati che il motore sia spento, il cappuccio della candela sia scollegato e isolato e l'eventuale sistema di avviamento elettrico sia disabilitato.» Restante testo approvato. |
 | RASA-OP-03-P01 | Preparazione/apertura scatola filtro aria | **Approvato F15.16-R1 e deployment Cloudflare confermato** | Con macchina stabile, in normale posizione di lavoro e motore spento/freddo, osservare il fissaggio e aprire senza forzare. Identificare filtro carta/spugna/misto prima di estrarlo, prevenire contaminazione ingresso carburatore. Arresto e registrazione se coperchio bloccato o fissaggi danneggiati. Nessun trattamento filtro autorizzato. |
+| RASA-OP-03-P02 | Valutazione materiale filtrante | **Approvato F15.17-R1, commit staging e CI success; Cloudflare da verificare** | Estrarre senza contaminare l'aspirazione. Carta: sostituzione normalmente prevista, mantenibile solo se recente, pulita, integra e conforme alle istruzioni del costruttore. Spugna: riutilizzabile soltanto se morbida, elastica, integra; sostituire se indurita/friabile/lacerata/deformata. Misto: verificare separatamente i due elementi. Se serve ricambio compatibile non disponibile, registrare sospensione e non avviare senza filtrazione montata correttamente. Lavaggio, oliatura e pulizia esclusi da P02. |
 
 **Nota di accuratezza:** i titoli e i punti riassuntivi derivano dallo storico disponibile e da riferimenti alla PWA; se nasce un conflitto con il testo canonico KB, consultare la KB e correggere il registro, non reinterpretare in autonomia il testo approvato.
 
@@ -116,10 +119,11 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 
 1. **Fase 15.15:** audit statico **completato (20/20)**. Non equivale al collaudo runtime; vedi [relazione](docs/FASE15_15_VERIFICA_INTEGRATA.md) e `OPEN-02`.
 2. **Fase 15.16:** P01 filtro aria **approvato, integrato, testato e deployment Cloudflare 15.16.0 confermato dall'utente**.
-3. **Fase 15.17:** proporre `RASA-OP-03-P02 — Valutazione del materiale`, un passaggio alla volta, con nuova approvazione tecnica dell'esperto.
+3. **Fase 15.17:** `RASA-OP-03-P02` approvato e integrato nel codice staging, CI Success. Verificare lo stato Cloudflare con JSON dell'endpoint protetto prima di segnare il deployment come completato.
+4. **Fase 15.18:** nuova proposta tecnica `RASA-OP-03-P03 — Trattamento carta`, un passaggio alla volta, dopo conferma del deployment.
 
-4. Trattare `OPEN-01` e `OPEN-05` durante la progettazione del controllo stati e dei prerequisiti dell'AI, e comunque prima dell'utilizzo operativo.
-5. Non attivare `aiEnabled`, `canGenerate` o `readyForTechnicalAnswers` senza validazione e collaudo espliciti.
+5. Trattare `OPEN-01` e `OPEN-05` durante la progettazione del controllo stati e dei prerequisiti dell'AI, e comunque prima dell'utilizzo operativo.
+6. Non attivare `aiEnabled`, `canGenerate` o `readyForTechnicalAnswers` senza validazione e collaudo espliciti.
 
 ## G. Protocollo di gestione del registro e cambio chat
 
@@ -148,3 +152,4 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 | 2026-11-08 | F15.15: audit statico integrato OP02 20/20 verifiche superate. | Nessuna modifica PWA/KB, nessun collaudo runtime. Aperto `OPEN-05` su guardia preventiva P07→P02; relazione [F15.15](docs/FASE15_15_VERIFICA_INTEGRATA.md). |
 | 2026-11-08 | F15.16-R1 approvato: apertura filtro aria, stop su fissaggi danneggiati. | Commit staging `0360eaf`, CI success; deployment success confermato successivamente dall'utente. |
 | 2026-11-08 | F15.16-R1: deployment Cloudflare confermato dall'utente. | Commit `0360eaf` Success; endpoint `/api/knowledge-status`: 15.16.0, validati con condizioni 15, pendenti 38, AI disabilitata. |
+| 2026-11-08 | F15.17-R1: P02 valutazione materiale carta/spugna/misto approvata e integrata nel codice staging. | Commit `97a1ee1`, PR #9 integrata; [CI success](https://github.com/Lupus227/tagliando/actions/runs/42524314782), 16 validati con condizioni e 37 pendenti nel codice. **Conferma deployment Cloudflare ancora pendente.** |
