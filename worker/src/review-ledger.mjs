@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.14 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.16 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02/P03/P04/P05/P06/P07/P08, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -665,6 +665,52 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-03-P01",
+    "revision": "F15.16-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "filtro_aria_preparazione_apertura_e_identificazione_tipologia_con_arresto_per_fissaggi_danneggiati",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_SENZA_MODIFICHE",
+      "approvedOn": "2026-11-08",
+      "evidence": "utente_approva_testo_preparazione_apertura_filtro_aria_con_va_bene_fase_15_16"
+    },
+    "content": {
+      "title": "Preparazione e apertura",
+      "instruction": "Prima di intervenire sul filtro dell'aria, verifica che il rasaerba sia nella normale posizione di lavoro, stabile, con il motore spento e freddo.\n\nIndividua la scatola del filtro aria e osserva il sistema di fissaggio del coperchio.\n\nApri il coperchio senza forzarlo, utilizzando il sistema previsto: linguette, viti, pomelli o altri fissaggi.\n\nPrima di estrarre il filtro, osserva come è montato e identifica la tipologia presente:\n- Filtro in carta.\n- Filtro in spugna.\n- Filtro misto, con carta e prefiltro in spugna.\n\nDurante l'operazione evita che polvere, erba o altri residui entrino nel condotto di aspirazione del carburatore.",
+      "stopCondition": "Se il coperchio non si apre normalmente o presenta fissaggi danneggiati, non forzarlo. Registra il problema prima di procedere."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "requiresNormalOperatingPosition": true,
+      "requiresStablePosition": true,
+      "requiresEngineStopped": true,
+      "requiresCoolEngine": true,
+      "identifyCoverFasteningSystemBeforeOpening": true,
+      "noForcingCover": true,
+      "identifyFilterTypeAfterOpeningBeforeExtraction": true,
+      "filterTypes": [
+        "carta",
+        "spugna",
+        "misto"
+      ],
+      "preserveFilterOrientationKnowledge": true,
+      "protectCarburetorIntakeFromContamination": true,
+      "stopOnStuckCoverOrDamagedFasteners": true,
+      "doesNotAuthorizeFilterTreatment": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "L'esperto ha approvato senza modifiche ('va bene') il testo proposto per la preparazione e l'apertura della scatola filtro in Fase 15.16.",
+        "approvedOn": "2026-11-08"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -682,7 +728,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==14)
+  if(!Array.isArray(candidate) || candidate.length!==15)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -698,7 +744,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (entry.stepId==='RASA-OP-02-P08' && entry.approval?.approvedOn==='2026-11-08')))) &&
+       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08')))) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -1027,7 +1073,38 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        !entry.content.instruction.includes('il cappuccio della candela sia scollegato e isolato') &&
        entry.content.stopCondition.includes('non avviare il rasaerba') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08))
+    const approvedOP03P01=entry.stepId==='RASA-OP-03-P01' &&
+       entry.revision==='F15.16-R1' &&
+       entry.scope==='filtro_aria_preparazione_apertura_e_identificazione_tipologia_con_arresto_per_fissaggi_danneggiati' &&
+       entry.approval?.decision==='APPROVATO_SENZA_MODIFICHE' &&
+       entry.approval?.evidence==='utente_approva_testo_preparazione_apertura_filtro_aria_con_va_bene_fase_15_16' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.requiresNormalOperatingPosition===true &&
+       entry.applicability?.requiresStablePosition===true &&
+       entry.applicability?.requiresEngineStopped===true &&
+       entry.applicability?.requiresCoolEngine===true &&
+       entry.applicability?.identifyCoverFasteningSystemBeforeOpening===true &&
+       entry.applicability?.noForcingCover===true &&
+       entry.applicability?.identifyFilterTypeAfterOpeningBeforeExtraction===true &&
+       Array.isArray(entry.applicability?.filterTypes) &&
+       JSON.stringify(entry.applicability.filterTypes)==='["carta","spugna","misto"]' &&
+       entry.applicability?.preserveFilterOrientationKnowledge===true &&
+       entry.applicability?.protectCarburetorIntakeFromContamination===true &&
+       entry.applicability?.stopOnStuckCoverOrDamagedFasteners===true &&
+       entry.applicability?.doesNotAuthorizeFilterTreatment===true &&
+       entry.content.instruction.includes('normale posizione di lavoro') &&
+       entry.content.instruction.includes('motore spento e freddo') &&
+       entry.content.instruction.includes('Apri il coperchio senza forzarlo') &&
+       entry.content.instruction.includes('Prima di estrarre il filtro') &&
+       entry.content.instruction.includes('Filtro in carta') &&
+       entry.content.instruction.includes('Filtro in spugna') &&
+       entry.content.instruction.includes('Filtro misto') &&
+       entry.content.instruction.includes('polvere, erba o altri residui') &&
+       entry.content.stopCondition.includes('fissaggi danneggiati') &&
+       entry.content.stopCondition.includes('non forzarlo') &&
+       entry.content.stopCondition.includes('Registra il problema') &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
