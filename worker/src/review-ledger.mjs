@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.13 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.14 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02/P03/P04/P05/P06/P07, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06 e RASA-OP-02-P01/P02/P03/P04/P05/P06/P07/P08, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -621,6 +621,50 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-02-P08",
+    "revision": "F15.14-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "verifica_finale_lama_rotazione_controllata_freno_motore_e_rilascio_leva",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_CON_RIMOZIONE_RIPETIZIONE_SICUREZZA",
+      "approvedOn": "2026-11-08",
+      "evidence": "utente_elimina_richiamo_sicurezza_gia_nel_passaggio_precedente_e_approva_resto_fase_15_14"
+    },
+    "content": {
+      "title": "Verifica finale del montaggio della lama",
+      "instruction": "Controllo della rotazione della lama\n\nMantieni il rasaerba stabile e indossa guanti protettivi adeguati.\n\nProva a far ruotare lentamente la lama a mano, senza afferrare i bordi taglienti.\n\nAttenzione al freno motore\n\nSu molti rasaerba, quando la leva di sicurezza sul manubrio viene rilasciata, si attiva un freno che rende più difficoltosa la rotazione della lama.\n\nQuesta resistenza può essere normale e non indica necessariamente un problema.\n\nSe la lama oppone molta resistenza, non forzarla.\n\nSe necessario, e soltanto dopo aver verificato che il motore non possa avviarsi, puoi chiedere a un'altra persona di mantenere temporaneamente azionata la leva di sicurezza mentre effettui il controllo.\n\nNon bloccare la leva con corde o altri dispositivi: un blocco potrebbe lasciare disattivato il sistema di sicurezza anche dopo il controllo.\n\nVerifica finale\n\nControlla che:\n- La lama non tocchi la scocca o altri componenti.\n- Non siano presenti giochi anomali nel fissaggio.\n- Non si avvertano urti, impuntamenti o sfregamenti anomali.\n\nUna volta completata la verifica, assicurati che la leva di sicurezza sia stata rilasciata.",
+      "stopCondition": "Se rilevi interferenze, giochi anomali o non riesci a effettuare il controllo in condizioni di sicurezza, non considerare completata la verifica e non avviare il rasaerba finché il problema non è stato risolto."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "requiresActualBladeReinstallation": true,
+      "doNotRequestIfOptionalBladeRemovalSkipped": true,
+      "motorCannotStartPrerequisiteRemainsEffective": true,
+      "avoidRepeatedGeneralSafetyParagraph": true,
+      "stableMowerAndProtectiveGloves": true,
+      "controlledManualRotationAwayFromCuttingEdges": true,
+      "brakeMayIncreaseResistanceWithoutDefect": true,
+      "doNotForceBladeAgainstBrake": true,
+      "assistantMayHoldSafetyLeverOnlyAfterMotorStartDisabled": true,
+      "ropeOrOtherLeverBlockingProhibited": true,
+      "releaseSafetyLeverAfterCheck": true,
+      "inspectDeckInterferenceAndAbnormalPlay": true,
+      "stopOnAbnormalitiesOrUnsafeTest": true,
+      "noEngineStartWhileUnresolved": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "Esperto conferma che il freno motore può opporre forte resistenza ma non blocca necessariamente la rotazione; accetta collaboratore per tenere la leva ma esclude cordicelle; chiede di eliminare il richiamo iniziale ripetitivo a motore spento/candela scollegata/avviamento elettrico.",
+        "approvedOn": "2026-11-08"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -638,7 +682,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==13)
+  if(!Array.isArray(candidate) || candidate.length!==14)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -654,7 +698,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07')))) &&
+       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (entry.stepId==='RASA-OP-02-P08' && entry.approval?.approvedOn==='2026-11-08')))) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -951,7 +995,39 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes('Se la lama è già stata smontata') &&
        entry.content.stopCondition.includes('richiedi una verifica tecnica') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07))
+    const approvedOP02P08=entry.stepId==='RASA-OP-02-P08' &&
+       entry.revision==='F15.14-R1' &&
+       entry.scope==='verifica_finale_lama_rotazione_controllata_freno_motore_e_rilascio_leva' &&
+       entry.approval?.decision==='APPROVATO_CON_RIMOZIONE_RIPETIZIONE_SICUREZZA' &&
+       entry.approval?.evidence==='utente_elimina_richiamo_sicurezza_gia_nel_passaggio_precedente_e_approva_resto_fase_15_14' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.requiresActualBladeReinstallation===true &&
+       entry.applicability?.doNotRequestIfOptionalBladeRemovalSkipped===true &&
+       entry.applicability?.motorCannotStartPrerequisiteRemainsEffective===true &&
+       entry.applicability?.avoidRepeatedGeneralSafetyParagraph===true &&
+       entry.applicability?.stableMowerAndProtectiveGloves===true &&
+       entry.applicability?.controlledManualRotationAwayFromCuttingEdges===true &&
+       entry.applicability?.brakeMayIncreaseResistanceWithoutDefect===true &&
+       entry.applicability?.doNotForceBladeAgainstBrake===true &&
+       entry.applicability?.assistantMayHoldSafetyLeverOnlyAfterMotorStartDisabled===true &&
+       entry.applicability?.ropeOrOtherLeverBlockingProhibited===true &&
+       entry.applicability?.releaseSafetyLeverAfterCheck===true &&
+       entry.applicability?.inspectDeckInterferenceAndAbnormalPlay===true &&
+       entry.applicability?.stopOnAbnormalitiesOrUnsafeTest===true &&
+       entry.applicability?.noEngineStartWhileUnresolved===true &&
+       entry.content.instruction.includes('Mantieni il rasaerba stabile e indossa guanti protettivi adeguati') &&
+       entry.content.instruction.includes('un freno che rende più difficoltosa la rotazione') &&
+       entry.content.instruction.includes('non indica necessariamente un problema') &&
+       entry.content.instruction.includes('non forzarla') &&
+       entry.content.instruction.includes("soltanto dopo aver verificato che il motore non possa avviarsi") &&
+       entry.content.instruction.includes("un'altra persona di mantenere temporaneamente azionata la leva di sicurezza") &&
+       entry.content.instruction.includes('Non bloccare la leva con corde o altri dispositivi') &&
+       entry.content.instruction.includes('la leva di sicurezza sia stata rilasciata') &&
+       !entry.content.instruction.includes('Prima di procedere, assicurati che il motore sia spento') &&
+       !entry.content.instruction.includes('il cappuccio della candela sia scollegato e isolato') &&
+       entry.content.stopCondition.includes('non avviare il rasaerba') &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});

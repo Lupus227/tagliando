@@ -354,3 +354,23 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
   nella PWA solo in fase successiva, non in questa revisione del registro.
 - 13/53 revisioni condizionate, 40 in attesa; AI, retrieval, main e PWA
   pubblica invariati.
+
+### Fase 15.14 — Verifica finale montaggio lama (F15.14-R1)
+- Approvato il 2026-11-08 con rimozione esplicita dell'introduzione
+  ripetitiva sulla messa in sicurezza già eseguita in precedenza.
+- Con rasaerba stabile e guanti appropriati, rotazione manuale controllata
+  senza afferrare il tagliente: controllare interferenze, giochi e impuntamenti.
+- Il freno motore può rendere forte la resistenza alla rotazione senza un
+  guasto; non forzare la lama per contrastare il freno.
+- Un collaboratore può tenere temporaneamente la leva di sicurezza solo
+  dopo verifica che il motore non possa avviarsi. Non bloccare la leva con
+  cordicelle o dispositivi; dopo il controllo assicurare il rilascio.
+- Se la manutenzione lama è stata saltata prima dello smontaggio, non
+  richiedere P08. Anomalie critiche ancora aperte restano bloccanti.
+- Su interferenze, giochi anomali o verifica non eseguibile in sicurezza:
+  non avviare il rasaerba e non segnare il passaggio come completato.
+- Con P08 si conclude la validazione dei singoli 8 passaggi dell'Operazione 2;
+  l'eventuale approvazione della procedura nel suo insieme richiede
+  revisione separata e il flusso PWA condizionale resta da implementare.
+- 14/53 revisioni condizionate, 39 in attesa; AI, retrieval tecnico e PWA
+  pubblica non abilitati/modificati.
