@@ -1,6 +1,6 @@
 # REGISTRO DI PROGETTO — APP TAGLIANDO
 
-**Versione del registro:** 1.7 · **Aggiornato:** 2026-11-08  
+**Versione del registro:** 1.8 · **Aggiornato:** 2026-11-08  
 **Responsabile approvazioni tecniche:** titolare del progetto (utente).  
 **Ambito:** MVP PWA per manutenzione preventiva guidata dei rasaerba a motore; estensibile ad altre macchine.  
 **Repository PWA:** `Lupus227/tagliando`.  
@@ -39,21 +39,21 @@
 
 ## C. Stato ufficiale noto al 2026-11-08
 
-**Ultimo deployment Cloudflare confermato:** commit `97a1ee1` del ramo `dev/fase14-ai`, dichiarato `Success` dall'utente. L'endpoint Access-protetto `/api/knowledge-status` ha restituito all'utente la risposta seguente:
+**Ultimo deployment Cloudflare verificato:** `063dc43` sul ramo `dev/fase14-ai`, confermato dall'utente come **Success** con risposta JSON dell'endpoint Access-protetto `/api/knowledge-status`.
 
 ```json
 {
   "ok": true,
   "schema": "tagliando.knowledge.v1",
-  "version": "15.17.0",
+  "version": "15.18.0",
   "sourceAppVersion": "0.12.1",
   "procedureCount": 8,
   "stepCount": 53,
-  "pendingSteps": 37,
-  "validatedSteps": 16,
-  "conditionalValidatedSteps": 16,
-  "reviewScope": "pulizia_completa_e_sicurezza_smontaggio_mozzo_ispezione_affilatura_equilibratura_rimontaggio_verifica_condizionati_e_filtro_aria_preparazione_apertura_valutazione_condizionati",
-  "latestReviewedStepId": "RASA-OP-03-P02",
+  "pendingSteps": 36,
+  "validatedSteps": 17,
+  "conditionalValidatedSteps": 17,
+  "reviewScope": "pulizia_completa_e_sicurezza_smontaggio_mozzo_ispezione_affilatura_equilibratura_rimontaggio_verifica_condizionati_e_filtro_aria_preparazione_apertura_valutazione_trattamento_carta_condizionati",
+  "latestReviewedStepId": "RASA-OP-03-P03",
   "readyForTechnicalAnswers": false,
   "aiEnabled": false,
   "canGenerate": false,
@@ -61,17 +61,14 @@
 }
 ```
 
-**Interpretazione:** **16/53** passaggi validati *con condizioni* (circa 30,2%), **37** in attesa. Non equivale a un'autorizzazione universale delle procedure né ad attivazione dell'AI. La conferma del deployment si fonda sul JSON riportato dall'utente e sul suo riscontro Cloudflare; non comporta accesso indipendente ai segreti del servizio.
+**Interpretazione:** 17/53 passaggi validati **con condizioni** (circa 32,1%), 36 ancora pendenti. **L'AI, il retrieval tecnico e la generazione restano disabilitati.** Il risultato proviene dalla risposta JSON fornita dall'utente, non da una lettura indipendente di Cloudflare Access. [Test GitHub Actions superati per commit 063dc43](https://github.com/Lupus227/tagliando/actions/runs/42528155237); [PR #12](https://github.com/Lupus227/tagliando/pull/12) integrata.
 
-**CI GitHub Actions:** [test superati per commit 97a1ee1](https://github.com/Lupus227/tagliando/actions/runs/42524314782). PR #9 integrata.
+**Versioni precedenti confermate:**
+- `15.17.0`: commit `97a1ee1`, 16 passaggi validati con condizioni, 37 pendenti, ultimo `RASA-OP-03-P02`.
+- `15.16.0`: commit `0360eaf`, 15 condizionati, 38 pendenti, ultimo `RASA-OP-03-P01`.
+- `15.14.0`: commit `23642ef`, 14 condizionati, 39 pendenti, ultimo `RASA-OP-02-P08`.
 
-**Revisione successiva approvata e integrata in staging, NON ancora confermata come deployment Cloudflare:** `RASA-OP-03-P03` — **F15.18-R2**, approvata dopo due correzioni dell'esperto. Commit `063dc43` su `dev/fase14-ai`, [PR #12 integrata](https://github.com/Lupus227/tagliando/pull/12), [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42528155237). Il codice prevede **15.18.0**, **17/53** passaggi validati con condizioni e **36** pendenti; `aiEnabled=false`. **Non sostituire lo stato Cloudflare verificato 15.17.0 finché l'utente non fornisce il JSON dell'endpoint protetto e il deployment Success.**
-
-**Versioni precedenti confermate:** 
-- `15.16.0`: commit `0360eaf`, 15 revisioni condizionate e 38 pendenti; ultimo `RASA-OP-03-P01`.
-- `15.14.0`: commit `23642ef`, 14 revisioni condizionate e 39 pendenti; ultimo `RASA-OP-02-P08`.
-
-Il catalogo canonico di origine rimane immutato e la PWA v0.12.1 non è stata modificata.
+Catalogo canonico di origine immutato; PWA v0.12.1 e `voice.js` invariati.
 
 ## D. Registro tecnico dei passaggi approvati nella Fase 15
 
@@ -95,7 +92,7 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 | RASA-OP-02-P08 | Verifica finale | Validato con condizioni | Freno motore può opporre resistenza significativa alla rotazione senza bloccarla totalmente. Evitare forzature e artifici impropri; arresto per giochi/interferenze/anomalie. **Eliminata** la frase iniziale ridondante: «Prima di procedere, assicurati che il motore sia spento, il cappuccio della candela sia scollegato e isolato e l'eventuale sistema di avviamento elettrico sia disabilitato.» Restante testo approvato. |
 | RASA-OP-03-P01 | Preparazione/apertura scatola filtro aria | **Approvato F15.16-R1 e deployment Cloudflare confermato** | Con macchina stabile, in normale posizione di lavoro e motore spento/freddo, osservare il fissaggio e aprire senza forzare. Identificare filtro carta/spugna/misto prima di estrarlo, prevenire contaminazione ingresso carburatore. Arresto e registrazione se coperchio bloccato o fissaggi danneggiati. Nessun trattamento filtro autorizzato. |
 | RASA-OP-03-P02 | Valutazione materiale filtrante | **Approvato F15.17-R1, CI e deployment Cloudflare confermati** | Estrarre senza contaminare l'aspirazione. Carta: sostituzione normalmente prevista, mantenibile solo se recente, pulita, integra e conforme alle istruzioni del costruttore. Spugna: riutilizzabile soltanto se morbida, elastica, integra; sostituire se indurita/friabile/lacerata/deformata. Misto: verificare separatamente i due elementi. Se serve ricambio compatibile non disponibile, registrare sospensione e non avviare senza filtrazione montata correttamente. Lavaggio, oliatura e pulizia esclusi da P02. |
-| RASA-OP-03-P03 | Trattamento filtro in carta | **F15.18-R2 approvato; PR #12 e CI Success; deployment Cloudflare DA VERIFICARE** | Carta o elemento carta del misto; saltare se solo spugna. Sostituire con ricambio compatibile oppure conservare elemento recente, integro e pulito. **Non lavare né oliare i filtri in carta**; unico metodo di pulizia eventualmente descritto: soffiaggio delicato con aria compressa, mai getti aggressivi. Pre-filtro in spugna gestito separatamente. Non montare ricambio non compatibile; registrare anomalia e non avviare senza filtro idoneo installato. **Eliminate su esplicita richiesta le eccezioni del costruttore al divieto di lavaggio/oliatura e la frase che suggeriva ulteriori metodi di pulizia.** |
+| RASA-OP-03-P03 | Trattamento filtro in carta | **F15.18-R2 approvato; PR #12, CI e deployment Cloudflare confermati** | Carta o elemento carta del misto; saltare se solo spugna. Sostituire con ricambio compatibile oppure conservare elemento recente, integro e pulito. **Non lavare né oliare i filtri in carta**; unico metodo di pulizia eventualmente descritto: soffiaggio delicato con aria compressa, mai getti aggressivi. Pre-filtro in spugna gestito separatamente. Non montare ricambio non compatibile; registrare anomalia e non avviare senza filtro idoneo installato. **Eliminate su esplicita richiesta le eccezioni del costruttore al divieto di lavaggio/oliatura e la frase che suggeriva ulteriori metodi di pulizia.** |
 
 **Nota di accuratezza:** i titoli e i punti riassuntivi derivano dallo storico disponibile e da riferimenti alla PWA; se nasce un conflitto con il testo canonico KB, consultare la KB e correggere il registro, non reinterpretare in autonomia il testo approvato.
 
@@ -105,7 +102,7 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 |---|---|---|---|
 | OPEN-01 | Nella PWA v0.12.1, `app.js` la segnalazione **manuale** di anomalia richiama `setStatus('stopped')`, che causa un avanzamento alla successiva operazione; `recordVoiceAnomaly()` non avanza. Verificato mediante lettura del codice GitHub 2026-11-08. | **Non modificare ora la PWA.** Integrare la correzione nella futura revisione della gestione stati/anomalie, evitando lavoro doppio se l'AI sostituisce la logica. | **Bloccante prima di uso operativo/rilascio**; non bloccante per validazione documentale KB. |
 | OPEN-02 | Verifica integrata dell'Operazione 2: **audit statico 20/20 superato in F15.15**; collaudo effettivo di percorsi, navigazione e stati ancora assente. | Testare T1–T8 quando esisterà il controllore di esecuzione della procedura; nessuna modifica alla PWA o alla KB ora. Vedi [relazione F15.15](docs/FASE15_15_VERIFICA_INTEGRATA.md). | **Bloccante prima del rilascio**, non per avviare revisione OP03. |
-| OPEN-03 | **36** passaggi pendenti nel codice KB 15.18.0; **37** nell'ultimo deployment Cloudflare verificato 15.17.0. AI disabilitata. | Continuare revisione per singolo passaggio, con approvazione tecnica e prova di deployment; non confondere codice e ambiente distribuito. | Prima di autorizzare risposte tecniche AI. |
+| OPEN-03 | **36** passaggi pendenti nella KB 15.18.0, confermata su Cloudflare; AI disabilitata. | Continuare revisione per singolo passaggio, con approvazione tecnica, test e prova del deployment. | Prima di autorizzare risposte tecniche AI. |
 | OPEN-04 | Testo completo delle revisioni precedenti non integralmente copiato in questo registro. | Fare riferimento alla KB 15.14.0 e all'archivio delle chat per le formulazioni esatte; aggiungere tracciabilità puntuale progressivamente senza inventare contenuti. | Miglioramento della tracciabilità. |
 | OPEN-05 | **Guardia P07→P02:** la coppia pertinente, la fonte e la dinamometrica devono essere dichiarate/verificate prima dello smontaggio benché il prerequisito sia documentato in P07. | In futuro il motore di esecuzione deve applicare la guardia preventiva (fail closed), con test positivo/negativo e verifica del salto sicuro. | **Bloccante prima del rilascio**; requisito già dichiarato nel ledger. |
 
@@ -125,8 +122,8 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 1. **Fase 15.15:** audit statico **completato (20/20)**. Non equivale al collaudo runtime; vedi [relazione](docs/FASE15_15_VERIFICA_INTEGRATA.md) e `OPEN-02`.
 2. **Fase 15.16:** P01 filtro aria **approvato, integrato, testato e deployment Cloudflare 15.16.0 confermato dall'utente**.
 3. **Fase 15.17:** `RASA-OP-03-P02` approvato, integrato, CI Success e **deployment Cloudflare 15.17.0 confermato con JSON dell'utente**.
-4. **Fase 15.18:** P03 trattamento carta **R2 approvato, integrato in staging e GitHub Actions Success**. Prima attività: **verificare deployment Cloudflare** `063dc43` e JSON 15.18.0 (17/53 condizionati, 36 pendenti, ultimo P03, AI disabilitata).
-5. **Fase 15.19:** dopo conferma deployment, proporre `RASA-OP-03-P04 — Lavaggio spugna` per approvazione dell'esperto. Nessuna modifica tecnica preventiva.
+4. **Fase 15.18:** P03 trattamento carta **R2 approvato, integrato, CI Success e deployment Cloudflare 15.18.0 confermato dall'utente**.
+5. **Fase 15.19 — prossima azione:** proporre `RASA-OP-03-P04 — Lavaggio spugna` per approvazione dell'esperto, un passaggio alla volta, senza ripetere la verifica della 15.18.
 
 6. Trattare `OPEN-01` e `OPEN-05` durante la progettazione del controllo stati e dei prerequisiti dell'AI, e comunque prima dell'utilizzo operativo.
 7. Non attivare `aiEnabled`, `canGenerate` o `readyForTechnicalAnswers` senza validazione e collaudo espliciti.
@@ -163,5 +160,6 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 | 2026-11-08 | F15.16-R1: deployment Cloudflare confermato dall'utente. | Commit `0360eaf` Success; endpoint `/api/knowledge-status`: 15.16.0, validati con condizioni 15, pendenti 38, AI disabilitata. |
 | 2026-11-08 | F15.17-R1: P02 valutazione materiale carta/spugna/misto approvata e integrata nel codice staging. | Commit `97a1ee1`, PR #9 integrata; [CI success](https://github.com/Lupus227/tagliando/actions/runs/42524314782), 16 validati con condizioni e 37 pendenti nel codice. **Deployment Cloudflare successivamente confermato dall'utente.** |
 | 2026-11-08 | F15.17: deployment Cloudflare e stato KB verificati. | Commit `97a1ee1` Success; JSON endpoint: 15.17.0, 16 revisioni condizionate, 37 pendenti, ultimo `RASA-OP-03-P02`, AI disabilitata. |
-| 2026-11-08 | F15.18-R2: trattamento filtro carta approvato dopo due rimozioni esplicite. | Commit staging `063dc43`, PR #12 integrata, [CI Success](https://github.com/Lupus227/tagliando/actions/runs/42528155237); codice KB 15.18.0 / 17 condizionati / 36 pendenti. **Cloudflare da verificare.** |
-| 2026-11-08 | Preparato il cambio chat preventivo, secondo GOV-09/GOV-10. | [Scheda di ripresa F15.18](docs/RIPRESA_CHAT_F15_18.md); prossima attività: verifica deployment Cloudflare 15.18.0. |
+| 2026-11-08 | F15.18-R2: trattamento filtro carta approvato dopo due rimozioni esplicite. | Commit staging `063dc43`, PR #12 integrata, [CI Success](https://github.com/Lupus227/tagliando/actions/runs/42528155237); codice KB 15.18.0 / 17 condizionati / 36 pendenti. Cloudflare successivamente confermato dall'utente. |
+| 2026-11-08 | F15.18: deployment Cloudflare verificato. | L'utente riporta `063dc43` Success e JSON `15.18.0`, 17 condizionati, 36 pendenti, ultimo `RASA-OP-03-P03`; `aiEnabled=false`. |
+| 2026-11-08 | Aggiornata la scheda di ripresa per il cambio chat, secondo GOV-09/GOV-10. | [Scheda di ripresa F15.18](docs/RIPRESA_CHAT_F15_18.md); prossima attività: **F15.19 / RASA-OP-03-P04**, senza nuova verifica di F15.18. |
