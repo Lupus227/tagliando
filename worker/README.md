@@ -389,3 +389,14 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Questa approvazione **non** autorizza trattamento/pulizia/oliatura del filtro né procedure successive, e non vale come istruzione universale.
 - Catalogo canonico immutato, 8 procedure / 53 passaggi. Revisioni condizionate: 15; pendenti: 38.
 - `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`. Il retrieval tecnico, la PWA pubblica, `voice.js` e il rilascio AI restano invariati.
+
+### Fase 15.17 — Valutazione del materiale filtrante (F15.17-R1)
+- Passaggio `RASA-OP-03-P02` approvato senza modifiche dall'esperto il 2026-11-08 ("corretta. Puoi procedere").
+- Solo dopo l'apertura/identificazione P01, estrarre l'elemento senza contaminare il condotto di aspirazione.
+- Carta: valutare integrità, deformazioni, umidità e sporcizia; normalmente sostituire. Solo se recente, pulita, integra e compatibile con le indicazioni del costruttore può essere mantenuta.
+- Spugna: valutare elasticità, morbidezza e integrità; sostituire se indurita, friabile, lacerata o deformata.
+- Filtro misto: valutare separatamente carta e prefiltro in spugna.
+- Non eseguire in P02 lavaggio, pulizia o oliatura: rimandati ai passaggi specifici.
+- Se serve sostituzione e manca il ricambio compatibile, registrare sospensione. Non avviare senza sistema filtrante correttamente installato.
+- Il passaggio è solo revisione condizionata in overlay; catalogo canonico originale invariato.
+- Stato previsto 15.17.0: 16/53 revisioni condizionate, 37 in attesa; `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`. PWA pubblica, voice.js e capacità AI inalterate.
