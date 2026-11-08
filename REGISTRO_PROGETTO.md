@@ -1,6 +1,6 @@
 # REGISTRO DI PROGETTO — APP TAGLIANDO
 
-**Versione del registro:** 1.0 · **Aggiornato:** 2026-11-08  
+**Versione del registro:** 1.1 · **Aggiornato:** 2026-11-08  
 **Responsabile approvazioni tecniche:** titolare del progetto (utente).  
 **Ambito:** MVP PWA per manutenzione preventiva guidata dei rasaerba a motore; estensibile ad altre macchine.  
 **Repository PWA:** `Lupus227/tagliando`.  
@@ -24,6 +24,7 @@
 | GOV-10 | Un checkpoint di continuità si effettua orientativamente ogni 20–25 scambi tecnici, o prima in caso di molto codice/JSON e ai passaggi di fase. Non esiste un misuratore affidabile dello spazio chat residuo. | APPROVATO 2026-11-08 |
 | GOV-11 | All'avvio di un nuovo lavoro/chat sul progetto, consultare questo registro **prima** di proporre modifiche. Quando non disponibile, dichiararlo e chiedere un collegamento o estratto, senza supporre decisioni mancanti. | APPROVATO 2026-11-08 |
 | GOV-12 | Il registro si aggiorna dopo ciascuna nuova decisione tecnica approvata e dopo i collaudi/deployment rilevanti; conservare le modifiche come storico e non sovrascrivere silenziosamente gli esiti. | APPROVATO 2026-11-08 |
+| GOV-13 | All'inizio di ogni sessione di lavoro sul progetto, a ogni cambio fase e prima di chiudere decisioni sul comportamento dell'app, consultare le Issue GitHub **aperte** e confrontarle con questo registro e la KB. Le Issue possono essere appunti o ipotesi non approvate: non autorizzano codice né modifiche alla KB. | APPROVATO COME PROTOCOLLO DI LAVORO 2026-11-08 |
 
 ## B. Architettura e ambito prodotto
 
@@ -93,6 +94,17 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 | OPEN-03 | 39 passaggi KB ancora pendenti; generazione AI disabilitata. | Continuare revisione per singolo passaggio, con approvazione tecnica + deployment/collaudo. | Prima di autorizzare risposte tecniche AI. |
 | OPEN-04 | Testo completo delle revisioni precedenti non integralmente copiato in questo registro. | Fare riferimento alla KB 15.14.0 e all'archivio delle chat per le formulazioni esatte; aggiungere tracciabilità puntuale progressivamente senza inventare contenuti. | Miglioramento della tracciabilità. |
 
+
+### Issue GitHub da controllare
+
+| Issue | Oggetto | Stato e relazione con la KB |
+|---|---|---|
+| [#1](https://github.com/Lupus227/tagliando/issues/1) | Evitare ripetizioni di procedure già confermate nella sessione, salvo ricontrolli di sicurezza per cambi di contesto. | **OPEN**; requisito della futura UX/motore conversazionale; nessuna modifica immediata. |
+| [#2](https://github.com/Lupus227/tagliando/issues/2) | Affilatura facoltativa nel tagliando gratuito, subordinata a strumenti, capacità e sicurezza. | **OPEN**; decisione di prodotto già recepita nel registro, implementazione di branch e navigazione ancora da progettare. |
+| [#3](https://github.com/Lupus227/tagliando/issues/3) | Identificazione visiva di fissaggi lama e attribuzione di coppie con evidenze tecniche verificabili; ipotesi empirica 60 Nm non approvata per uso universale. | **OPEN**, attività di ricerca e progettazione. La nota storica della Issue del 2026-11-07 che descrive P07 come da validare **non prevale** sul JSON successivo 15.14.0 che riporta P07/P08 validati *con condizioni*; la ricerca su riconoscimento/coppie resta aperta. |
+
+Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro costituisce la mappa delle decisioni. Il backend KB distribuito e i relativi test costituiscono la prova dello stato di validazione. Non equiparare *Issue open* a *passaggio KB non validato*.
+
 ## F. Sequenza di lavoro successiva
 
 1. **Fase 15.15:** verifica integrata dell'Operazione 2, per coerenza tra prerequisiti, affilatura opzionale, arresti per anomalie, registrazione delle omissioni, fissaggio e controllo finale.
@@ -108,6 +120,9 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 
 **Scheda di ripresa minima:** repository e ramo; link a questo registro; ultima versione KB e deployment; conteggi validati/pendenti; ultimo step; vincoli di sicurezza; ultimo intervento effettivamente svolto; anomalie aperte; prossima singola azione. La scheda serve come promemoria; il registro resta la fonte delle decisioni.
 
+
+**Controllo Issue GitHub:** a ogni nuova chat/sessione sul progetto e a ogni passaggio di fase, interrogare GitHub per tutte le Issue aperte (`Lupus227/tagliando`), leggere quelle nuove o aggiornate e confrontarne i contenuti con registro e versioni KB. Se la connessione GitHub non è disponibile, dichiararlo. **Questo controllo avviene nel corso della conversazione, non in background continuo.**
+
 **Nuova chat:** l'assistente deve aprire il registro su GitHub e confrontarlo con l'ultimo JSON/risultato disponibile. L'accesso automatico tra chat dipende dalla disponibilità degli strumenti e dal contesto; per maggiore affidabilità, avviare la nuova chat con:  
 `Continuiamo App Tagliando. Leggi prima REGISTRO_PROGETTO.md nel repository Lupus227/tagliando, verifica lo stato attuale e prosegui dalla prossima fase.`
 
@@ -120,3 +135,4 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 | 2026-11-08 | Revisione P08: eliminata una ripetizione della messa in sicurezza; restante testo approvato. | Conferma utente; deployment `15.14.0`. |
 | 2026-11-08 | Problema `OPEN-01` rilevato e deliberatamente differito. | Revisione `app.js` e decisione utente/assistente. |
 | 2026-11-08 | Richiesti registro permanente e avvisi anticipati di passaggio chat. | Requisiti di continuità GOV-09–GOV-12. |
+| 2026-11-08 | Verifica delle Issue #1–#3 e integrazione nel protocollo di ripresa. | Issue #3 contiene un dato storico antecedente al JSON KB 15.14.0; GOVERNANCE GOV-13. |
