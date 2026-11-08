@@ -400,3 +400,14 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Se serve sostituzione e manca il ricambio compatibile, registrare sospensione. Non avviare senza sistema filtrante correttamente installato.
 - Il passaggio è solo revisione condizionata in overlay; catalogo canonico originale invariato.
 - Stato previsto 15.17.0: 16/53 revisioni condizionate, 37 in attesa; `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`. PWA pubblica, voice.js e capacità AI inalterate.
+
+### Fase 15.18 — Trattamento filtro carta (F15.18-R2)
+- L'esperto ha approvato la seconda revisione R2 del passaggio `RASA-OP-03-P03` il 2026-11-08.
+- Campo di applicazione: filtro in carta o elemento carta di un sistema misto; se c'è soltanto spugna, non proporre P03.
+- Carta da sostituire: elemento nuovo compatibile per forma, dimensioni e superfici di tenuta. Carta recente, integra e pulita: può essere conservata pulita fino al rimontaggio.
+- Carta: **non lavare e non oliare**, senza eccezioni aggiunte. Unico metodo di pulizia citato, se necessario: **soffiaggio delicato con aria compressa** senza getti aggressivi.
+- Escluse esplicitamente dall'esperto le frasi "salvo esplicita previsione del costruttore" per lavaggio/oliatura e "eventuali metodi di pulizia devono rispettare le istruzioni specifiche" dopo il soffiaggio.
+- Nel sistema misto, spugna gestita separatamente in un passaggio successivo.
+- Filtro sostitutivo non compatibile: non montare, segnalare anomalia e non avviare senza elemento idoneo installato.
+- Revisione condizionata nell'overlay di staging; catalogo canonico originale, PWA pubblica, `voice.js` invariati.
+- Stato previsto 15.18.0: 17/53 revisioni condizionate, 36 in attesa. `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`.
