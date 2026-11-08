@@ -1,6 +1,6 @@
 # REGISTRO DI PROGETTO — APP TAGLIANDO
 
-**Versione del registro:** 1.1 · **Aggiornato:** 2026-11-08  
+**Versione del registro:** 1.3 · **Aggiornato:** 2026-11-08  
 **Responsabile approvazioni tecniche:** titolare del progetto (utente).  
 **Ambito:** MVP PWA per manutenzione preventiva guidata dei rasaerba a motore; estensibile ad altre macchine.  
 **Repository PWA:** `Lupus227/tagliando`.  
@@ -62,6 +62,8 @@ Fonte: risultato JSON riportato dall'utente dopo deployment Cloudflare `23642ef`
 
 **Interpretazione:** 14/53 passaggi validati *con condizioni* (26,4%), 39 in attesa. Non significa che le procedure siano universalmente applicabili né che la risposta AI sia autorizzata. Non è stato eseguito in questa registrazione un nuovo test del backend in tempo reale.
 
+**Aggiornamento del codice staging (2026-11-08; non ancora verifica deploy Cloudflare):** approvato `RASA-OP-03-P01` in F15.16-R1 e integrato sul ramo `dev/fase14-ai` nel commit `0360eaf`. Il codice dello stato KB ora prevede **versione 15.16.0**, **15** revisioni condizionate e **38** passaggi pendenti. [Test GitHub Actions superati](https://github.com/Lupus227/tagliando/actions/runs/42519849583). Questa è una verifica di codice e CI, NON ancora prova che il deployment Cloudflare sia stato completato: fino a un nuovo JSON utente, il deployment verificato resta `23642ef`/15.14.0.
+
 ## D. Registro tecnico dei passaggi approvati nella Fase 15
 
 Le denominazioni qui servono per orientamento. Il **testo completo approvato** è quello distribuito nella KB 15.14.0; i riassunti seguenti NON lo sostituiscono.
@@ -82,6 +84,7 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 | RASA-OP-02-P06 | Equilibratura | Validato con condizioni | Verifica bilanciamento mediante supporto idoneo; eventuali squilibri non ignorati. |
 | RASA-OP-02-P07 | Montaggio/serraggio | Validato con condizioni | **Prima dello smontaggio** verificare disponibilità di coppia prescritta e chiave dinamometrica/metodo di serraggio corretto. Altrimenti saltare l'affilatura; non usare una regolazione empirica dell'avvitatore per sostituire la coppia prescritta. |
 | RASA-OP-02-P08 | Verifica finale | Validato con condizioni | Freno motore può opporre resistenza significativa alla rotazione senza bloccarla totalmente. Evitare forzature e artifici impropri; arresto per giochi/interferenze/anomalie. **Eliminata** la frase iniziale ridondante: «Prima di procedere, assicurati che il motore sia spento, il cappuccio della candela sia scollegato e isolato e l'eventuale sistema di avviamento elettrico sia disabilitato.» Restante testo approvato. |
+| RASA-OP-03-P01 | Preparazione/apertura scatola filtro aria | **Approvato F15.16-R1 nel codice staging**, deployment Cloudflare da verificare | Con macchina stabile, in normale posizione di lavoro e motore spento/freddo, osservare il fissaggio e aprire senza forzare. Identificare filtro carta/spugna/misto prima di estrarlo, prevenire contaminazione ingresso carburatore. Arresto e registrazione se coperchio bloccato o fissaggi danneggiati. Nessun trattamento filtro autorizzato. |
 
 **Nota di accuratezza:** i titoli e i punti riassuntivi derivano dallo storico disponibile e da riferimenti alla PWA; se nasce un conflitto con il testo canonico KB, consultare la KB e correggere il registro, non reinterpretare in autonomia il testo approvato.
 
@@ -90,9 +93,10 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 | ID | Problema | Decisione | Priorità / condizione di chiusura |
 |---|---|---|---|
 | OPEN-01 | Nella PWA v0.12.1, `app.js` la segnalazione **manuale** di anomalia richiama `setStatus('stopped')`, che causa un avanzamento alla successiva operazione; `recordVoiceAnomaly()` non avanza. Verificato mediante lettura del codice GitHub 2026-11-08. | **Non modificare ora la PWA.** Integrare la correzione nella futura revisione della gestione stati/anomalie, evitando lavoro doppio se l'AI sostituisce la logica. | **Bloccante prima di uso operativo/rilascio**; non bloccante per validazione documentale KB. |
-| OPEN-02 | Test integrati di Operazione 2 / sequenze e diramazioni non ancora completati. | Eseguire Fase 15.15 senza cambiare PWA o KB già approvata se non emerge un difetto effettivamente bloccante. | Prossima fase. |
+| OPEN-02 | Verifica integrata dell'Operazione 2: **audit statico 20/20 superato in F15.15**; collaudo effettivo di percorsi, navigazione e stati ancora assente. | Testare T1–T8 quando esisterà il controllore di esecuzione della procedura; nessuna modifica alla PWA o alla KB ora. Vedi [relazione F15.15](docs/FASE15_15_VERIFICA_INTEGRATA.md). | **Bloccante prima del rilascio**, non per avviare revisione OP03. |
 | OPEN-03 | 39 passaggi KB ancora pendenti; generazione AI disabilitata. | Continuare revisione per singolo passaggio, con approvazione tecnica + deployment/collaudo. | Prima di autorizzare risposte tecniche AI. |
 | OPEN-04 | Testo completo delle revisioni precedenti non integralmente copiato in questo registro. | Fare riferimento alla KB 15.14.0 e all'archivio delle chat per le formulazioni esatte; aggiungere tracciabilità puntuale progressivamente senza inventare contenuti. | Miglioramento della tracciabilità. |
+| OPEN-05 | **Guardia P07→P02:** la coppia pertinente, la fonte e la dinamometrica devono essere dichiarate/verificate prima dello smontaggio benché il prerequisito sia documentato in P07. | In futuro il motore di esecuzione deve applicare la guardia preventiva (fail closed), con test positivo/negativo e verifica del salto sicuro. | **Bloccante prima del rilascio**; requisito già dichiarato nel ledger. |
 
 
 ### Issue GitHub da controllare
@@ -107,10 +111,12 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 
 ## F. Sequenza di lavoro successiva
 
-1. **Fase 15.15:** verifica integrata dell'Operazione 2, per coerenza tra prerequisiti, affilatura opzionale, arresti per anomalie, registrazione delle omissioni, fissaggio e controllo finale.
-2. Se i test non evidenziano blocchi reali della KB, iniziare **Operazione 3 — Filtro aria**, sempre un passaggio alla volta.
-3. Trattare `OPEN-01` durante la progettazione del controllo stati nell'integrazione AI, e comunque prima del rilascio utilizzabile sul campo.
-4. Non attivare `aiEnabled`, `canGenerate` o `readyForTechnicalAnswers` senza validazione e collaudo espliciti.
+1. **Fase 15.15:** audit statico **completato (20/20)**. Non equivale al collaudo runtime; vedi [relazione](docs/FASE15_15_VERIFICA_INTEGRATA.md) e `OPEN-02`.
+2. **Fase 15.16:** testo P01 filtro aria **approvato** e integrato sul ramo di sviluppo (CI success). **Verificare il deployment Cloudflare 15.16.0** prima di considerare conclusa la pubblicazione.
+3. **Successiva revisione tecnica:** `RASA-OP-03-P02 — Valutazione del materiale`, un passaggio alla volta, dopo verifica del deployment.
+
+4. Trattare `OPEN-01` e `OPEN-05` durante la progettazione del controllo stati e dei prerequisiti dell'AI, e comunque prima dell'utilizzo operativo.
+5. Non attivare `aiEnabled`, `canGenerate` o `readyForTechnicalAnswers` senza validazione e collaudo espliciti.
 
 ## G. Protocollo di gestione del registro e cambio chat
 
@@ -136,3 +142,5 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 | 2026-11-08 | Problema `OPEN-01` rilevato e deliberatamente differito. | Revisione `app.js` e decisione utente/assistente. |
 | 2026-11-08 | Richiesti registro permanente e avvisi anticipati di passaggio chat. | Requisiti di continuità GOV-09–GOV-12. |
 | 2026-11-08 | Verifica delle Issue #1–#3 e integrazione nel protocollo di ripresa. | Issue #3 contiene un dato storico antecedente al JSON KB 15.14.0; GOVERNANCE GOV-13. |
+| 2026-11-08 | F15.15: audit statico integrato OP02 20/20 verifiche superate. | Nessuna modifica PWA/KB, nessun collaudo runtime. Aperto `OPEN-05` su guardia preventiva P07→P02; relazione [F15.15](docs/FASE15_15_VERIFICA_INTEGRATA.md). |
+| 2026-11-08 | F15.16-R1 approvato: apertura filtro aria, stop su fissaggi danneggiati. | Commit staging `0360eaf`, status code 15.16.0 (15 condizionati/38 pendenti), [CI success](https://github.com/Lupus227/tagliando/actions/runs/42519849583). Deployment Cloudflare ancora da verificare. |
