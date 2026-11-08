@@ -1,64 +1,61 @@
 # Scheda di ripresa — App Tagliando, dopo Fase 15.18
-**Data:** 2026-11-08 · **Stato della scheda:** predisposta per passaggio anticipato a nuova chat.
 
-## Avvio obbligatorio della nuova chat
+**Aggiornato:** 2026-11-08 · **Stato:** Fase 15.18 conclusa, pronto per Fase 15.19.
 
-1. Leggere il [registro permanente](../REGISTRO_PROGETTO.md) su `main`; controllare le [Issue GitHub aperte](https://github.com/Lupus227/tagliando/issues).
-2. Verificare separatamente stato del codice staging, GitHub Actions e **deployment effettivo Cloudflare**; non considerarli equivalenti.
-3. Non riproporre per approvazione i passaggi già approvati né cambiare PWA/AI senza nuovo mandato.
+## Per iniziare la nuova chat
 
-## Stato tecnico canonico
+1. Consultare [REGISTRO_PROGETTO.md](../REGISTRO_PROGETTO.md) (v1.8 o successiva), le [Issue GitHub aperte](https://github.com/Lupus227/tagliando/issues) e questa scheda.
+2. **Non chiedere nuovamente il JSON di F15.18**: l'utente ha già confermato il deployment Cloudflare `063dc43` **Success** e fornito una risposta coerente dell'endpoint protetto.
+3. Iniziare dalla proposta tecnica per **Fase 15.19 — `RASA-OP-03-P04`, lavaggio del filtro in spugna**, da sottoporre a nuova approvazione dell'utente esperto prima di modificare la KB.
 
-| Campo | Ultimo Cloudflare confermato dall'utente | Stato del codice staging dopo PR #12 |
-|---|---|---|
-| Commit | `97a1ee1` | `063dc43` |
-| Versione KB | `15.17.0` | `15.18.0` |
-| Procedure | 8 | 8 |
-| Passaggi totali | 53 | 53 |
-| Validati con condizioni | 16 | 17 |
-| Ancora da validare | 37 | 36 |
-| Ultimo step | `RASA-OP-03-P02` | `RASA-OP-03-P03` |
-| AI e retrieval tecnico | Disabilitati | Disabilitati |
-| GitHub Actions | Success | [Success, run 42528155237](https://github.com/Lupus227/tagliando/actions/runs/42528155237) |
-| Deployment Cloudflare | Success verificato tramite JSON fornito dall'utente | **DA VERIFICARE**; mai inferire da GitHub Actions |
+## Ultimo stato Cloudflare verificato (da JSON fornito dall'utente)
 
-**Backend:** ramo `dev/fase14-ai`; catalogo `tagliando.knowledge.v1`. La versione di origine del catalogo (`14.3.0`) è distinta dalla versione cumulativa del registro di revisione (`15.18.0`). PWA pubblica di riferimento: **v0.12.1**, invariata; repository `Lupus227/tagliando`.
+| Campo | Stato |
+|---|---|
+| Commit Cloudflare | `063dc43` — **Success** dichiarato dall'utente |
+| Versione KB | **`15.18.0`** |
+| Fonte schema | `tagliando.knowledge.v1` |
+| Procedure / passaggi | 8 / 53 |
+| Passaggi validati con condizioni | **17** |
+| Passaggi pendenti | **36** |
+| Ultimo step validato | **`RASA-OP-03-P03`** |
+| `readyForTechnicalAnswers`, `aiEnabled`, `canGenerate` | **false** |
+| PWA GitHub Pages | **v0.12.1**, non modificata |
+| GitHub Actions | [Success per `063dc43`](https://github.com/Lupus227/tagliando/actions/runs/42528155237) |
+| Repository backend | `Lupus227/tagliando` → `dev/fase14-ai` |
 
-## Decisione tecnica più recente (già approvata)
+Non confondere il catalogo canonico d'origine `14.3.0` (immutato) con la versione cumulativa di revisione `15.18.0`. Il deployment è verificato **tramite riscontro dell'utente**, non con accesso indipendente a Cloudflare Access. AI e retrieval tecnico restano disabilitati.
 
-- **F15.18-R2**, `RASA-OP-03-P03`: trattamento carta. L'utente ha approvato la revisione con la risposta **«confermo»**.
-- Campo: carta e elemento carta dei filtri misti; saltare se il sistema contiene soltanto spugna.
-- Caso A: nuovo filtro compatibile, rispettando forma/dimensioni/tenuta. Caso B: mantenere pulito e protetto il filtro installato da poco, ancora integro e pulito.
-- **Non lavare né oliare i filtri di carta.** Eliminata espressamente la frase «salvo esplicita previsione del costruttore».
-- Eventuale unica pulizia riportata: **soffiaggio delicato con aria compressa**, mai getti aggressivi. Eliminata espressamente la frase «eventuali metodi di pulizia devono rispettare le istruzioni specifiche».
-- Prefiltro spugna del sistema misto da trattare separatamente nei passaggi seguenti.
-- Se il sostitutivo non è compatibile: non montare, registrare anomalia, non avviare senza elemento idoneo correttamente installato.
-- Revisione inserita nell'overlay immutabile `worker/src/review-ledger.mjs`; test e `knowledge-status` aggiornati. PR [#12](https://github.com/Lupus227/tagliando/pull/12) già integrata in `dev/fase14-ai`.
+## Ultima decisione tecnica approvata
 
-## Prima azione in nuova chat — **solo verifica del deployment**
+**F15.18-R2** per `RASA-OP-03-P03` — filtro in carta. Revisione approvata dall'utente con «confermo», implementata nell'overlay tracciato `worker/src/review-ledger.mjs` mediante [PR #12](https://github.com/Lupus227/tagliando/pull/12).
 
-Chiedere all'utente di confermare che il deploy Cloudflare del commit **`063dc43`** risulti `Success`, quindi leggere/incollare il risultato dell'endpoint protetto:
+- Applicare a filtro in carta e componente carta dei filtri misti; saltare se è presente solo spugna.
+- Sostituire con elemento compatibile per dimensioni e tenuta, oppure conservare protetto quello recente, integro e pulito.
+- **Non lavare né oliare la carta**, senza inserire eccezioni.
+- Unica pulizia eventualmente prevista nel testo: **soffiaggio delicato con aria compressa**, mai getti aggressivi.
+- Due frasi eliminate su richiesta dell'esperto: «salvo esplicita previsione del costruttore» e «eventuali metodi di pulizia devono rispettare le istruzioni specifiche».
+- Nei filtri misti, il prefiltro spugna è trattato separatamente.
+- Un ricambio non compatibile non va montato; registrare anomalia e non avviare senza sistema filtrante idoneo correttamente installato.
 
-https://tagliando-ai-staging.maico-gua.workers.dev/api/knowledge-status
+**Non ripetere l'approvazione P03.** Il contenuto canonico della revisione è nel ledger del backend, non nella presente scheda riassuntiva.
 
-Valori attesi: `version="15.18.0"`, `stepCount=53`, `validatedSteps=17`, `conditionalValidatedSteps=17`, `pendingSteps=36`, `latestReviewedStepId="RASA-OP-03-P03"`, `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`.
+## Prossimo passo — Fase 15.19
 
-Solo dopo questa verifica registrare il deployment effettivo nel file `REGISTRO_PROGETTO.md` su `main` (con PR documentale autonoma secondo GOV-14), evitando di modificare il codice della PWA.
+**`RASA-OP-03-P04 — Lavaggio del filtro in spugna`**. Presentare una proposta tecnica per approvazione, coerente con le decisioni già prese e limitata a questo passaggio. Distinguere il trattamento della spugna dalla carta e dai filtri misti. Solo dopo approvazione creare overlay condizionato, audit fail-closed, test e deployment staging. Non abilitare AI.
 
-## Successiva fase dopo verifica
+## Problemi aperti e vincoli trasversali
 
-**Fase 15.19 — `RASA-OP-03-P04`, lavaggio del filtro in spugna.** Presentare **un solo testo tecnico proposto** all'utente esperto, chiedere l'approvazione, poi creare revisione condizionata + audit fail-closed + test su ramo staging. Non approvare automaticamente `P04` senza esplicita conferma.
+- **OPEN-01:** la segnalazione *manuale* di anomalia nella PWA v0.12.1 può avanzare involontariamente; correzione rinviata all'integrazione futura del motore di esecuzione, ma obbligatoria prima del rilascio.
+- **OPEN-02:** F15.15, audit statico dell'Operazione 2 superato 20/20, ma collaudi runtime del motore di esecuzione ancora mancanti.
+- **OPEN-05:** verificare coppia, fonte e dinamometrica *prima* dello smontaggio lama (guardia P07→P02); implementazione runtime futura obbligatoria.
+- **Issue GitHub [#1](https://github.com/Lupus227/tagliando/issues/1)**: evitare ripetizioni delle operazioni già confermate, conservando i ricontrolli di sicurezza quando il contesto cambia.
+- **Issue [#2](https://github.com/Lupus227/tagliando/issues/2)**: affilatura lama facoltativa; registrare eseguito/saltato/interrotto.
+- **Issue [#3](https://github.com/Lupus227/tagliando/issues/3)**: classificazione fissaggi/coppie ancora oggetto di ricerca; nessuna coppia universale autorizzata.
+- L'AI deve operare solo dentro contenuti validati e condizioni pertinenti; nessuna specifica inventata.
+- **GOV-14:** l'approvazione tecnica in chat è necessaria per nuovi testi; dopo approvazione, documentazione, PR e merge del perimetro autorizzato possono essere gestiti autonomamente con verifiche.
+- Evitare ulteriori modifiche alla PWA pubblica finché non saranno progettate le nuove logiche. A ogni 20–25 scambi tecnici, o prima se il contesto è corposo, predisporre nuovo handoff.
 
-## Vincoli trasversali sempre attivi
+## Messaggio consigliato per la nuova chat
 
-- `REGISTRO_PROGETTO.md` governa le decisioni; le Issue aperte (#1: deduplicazione istruzioni già eseguite; #2: affilatura facoltativa; #3: fissaggi/coppie) rappresentano backlog, non approvazioni.
-- Solo procedure validate con campo di applicazione esplicito; niente valori tecnici universali non verificati, nessuna abilitazione AI prima di decisione separata.
-- F15.15: audit statico lama 20/20 superato; **test integrati del motore runtime ancora da eseguire**. In particolare guardia coppia P07 prima dello smontaggio P02.
-- **OPEN-01:** nella PWA, ticket anomalia manuale causa avanzamento involontario; già deciso **non correggere ora**, ma chiudere prima del rilascio. Via vocale si sospende correttamente.
-- Non ripetere istruzioni già completate senza ragioni di sicurezza; non inferire dal contesto che requisiti critici siano ancora soddisfatti se è cambiata la macchina/sessione/stato.
-- **GOV-14:** approvazione tecnica in chat obbligatoria per nuove istruzioni; le PR di documentazione e modifiche già autorizzate nel perimetro concordato si possono gestire autonomamente dopo i controlli, senza chiedere una seconda conferma amministrativa.
-- Per prevenire saturazione della chat, preparare una nuova scheda di ripresa all'incirca ogni 20–25 scambi tecnici o prima, e avvisare l'utente **prima** della saturazione.
-
-## Testo breve da usare nella nuova chat
-
-«Continuiamo App Tagliando. Leggi il REGISTRO_PROGETTO.md e docs/RIPRESA_CHAT_F15_18.md nel repository GitHub Lupus227/tagliando, controlla le Issue aperte. È stata approvata e integrata F15.18-R2 (filtro carta P03). Il commit staging è 063dc43, GitHub Actions Success, ma il deployment Cloudflare 15.18.0 va ancora verificato. Riprendi esattamente da quella verifica, senza rifare le approvazioni già ottenute. Poi procediamo con F15.19-P04.»
+«Riprendiamo App Tagliando dalla Fase 15.19. Leggi prima REGISTRO_PROGETTO.md e docs/RIPRESA_CHAT_F15_18.md in Lupus227/tagliando; controlla le Issue aperte. La Fase 15.18 è già approvata e il deployment Cloudflare 063dc43 Success con KB 15.18.0, 17 validati con condizioni, 36 pendenti, AI disabilitata. Non richiedermi nuovamente il JSON. Proponi soltanto RASA-OP-03-P04, lavaggio spugna, per la mia valutazione tecnica.»
