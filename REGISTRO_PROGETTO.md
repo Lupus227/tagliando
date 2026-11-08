@@ -1,6 +1,6 @@
 # REGISTRO DI PROGETTO — APP TAGLIANDO
 
-**Versione del registro:** 1.1 · **Aggiornato:** 2026-11-08  
+**Versione del registro:** 1.2 · **Aggiornato:** 2026-11-08  
 **Responsabile approvazioni tecniche:** titolare del progetto (utente).  
 **Ambito:** MVP PWA per manutenzione preventiva guidata dei rasaerba a motore; estensibile ad altre macchine.  
 **Repository PWA:** `Lupus227/tagliando`.  
@@ -90,9 +90,10 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 | ID | Problema | Decisione | Priorità / condizione di chiusura |
 |---|---|---|---|
 | OPEN-01 | Nella PWA v0.12.1, `app.js` la segnalazione **manuale** di anomalia richiama `setStatus('stopped')`, che causa un avanzamento alla successiva operazione; `recordVoiceAnomaly()` non avanza. Verificato mediante lettura del codice GitHub 2026-11-08. | **Non modificare ora la PWA.** Integrare la correzione nella futura revisione della gestione stati/anomalie, evitando lavoro doppio se l'AI sostituisce la logica. | **Bloccante prima di uso operativo/rilascio**; non bloccante per validazione documentale KB. |
-| OPEN-02 | Test integrati di Operazione 2 / sequenze e diramazioni non ancora completati. | Eseguire Fase 15.15 senza cambiare PWA o KB già approvata se non emerge un difetto effettivamente bloccante. | Prossima fase. |
+| OPEN-02 | Verifica integrata dell'Operazione 2: **audit statico 20/20 superato in F15.15**; collaudo effettivo di percorsi, navigazione e stati ancora assente. | Testare T1–T8 quando esisterà il controllore di esecuzione della procedura; nessuna modifica alla PWA o alla KB ora. Vedi [relazione F15.15](docs/FASE15_15_VERIFICA_INTEGRATA.md). | **Bloccante prima del rilascio**, non per avviare revisione OP03. |
 | OPEN-03 | 39 passaggi KB ancora pendenti; generazione AI disabilitata. | Continuare revisione per singolo passaggio, con approvazione tecnica + deployment/collaudo. | Prima di autorizzare risposte tecniche AI. |
 | OPEN-04 | Testo completo delle revisioni precedenti non integralmente copiato in questo registro. | Fare riferimento alla KB 15.14.0 e all'archivio delle chat per le formulazioni esatte; aggiungere tracciabilità puntuale progressivamente senza inventare contenuti. | Miglioramento della tracciabilità. |
+| OPEN-05 | **Guardia P07→P02:** la coppia pertinente, la fonte e la dinamometrica devono essere dichiarate/verificate prima dello smontaggio benché il prerequisito sia documentato in P07. | In futuro il motore di esecuzione deve applicare la guardia preventiva (fail closed), con test positivo/negativo e verifica del salto sicuro. | **Bloccante prima del rilascio**; requisito già dichiarato nel ledger. |
 
 
 ### Issue GitHub da controllare
@@ -107,9 +108,9 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 
 ## F. Sequenza di lavoro successiva
 
-1. **Fase 15.15:** verifica integrata dell'Operazione 2, per coerenza tra prerequisiti, affilatura opzionale, arresti per anomalie, registrazione delle omissioni, fissaggio e controllo finale.
-2. Se i test non evidenziano blocchi reali della KB, iniziare **Operazione 3 — Filtro aria**, sempre un passaggio alla volta.
-3. Trattare `OPEN-01` durante la progettazione del controllo stati nell'integrazione AI, e comunque prima del rilascio utilizzabile sul campo.
+1. **Fase 15.15:** audit statico **completato (20/20)**. Non equivale al collaudo runtime; vedi [relazione](docs/FASE15_15_VERIFICA_INTEGRATA.md) e `OPEN-02`.
+2. **Fase 15.16:** esaminare e proporre **RASA-OP-03-P01 — filtro aria**, un passaggio alla volta, senza cambiare ora PWA o Knowledge Base già approvata.
+3. Trattare `OPEN-01` e `OPEN-05` durante la progettazione del controllo stati e dei prerequisiti dell'AI, e comunque prima dell'utilizzo operativo.
 4. Non attivare `aiEnabled`, `canGenerate` o `readyForTechnicalAnswers` senza validazione e collaudo espliciti.
 
 ## G. Protocollo di gestione del registro e cambio chat
@@ -136,3 +137,4 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 | 2026-11-08 | Problema `OPEN-01` rilevato e deliberatamente differito. | Revisione `app.js` e decisione utente/assistente. |
 | 2026-11-08 | Richiesti registro permanente e avvisi anticipati di passaggio chat. | Requisiti di continuità GOV-09–GOV-12. |
 | 2026-11-08 | Verifica delle Issue #1–#3 e integrazione nel protocollo di ripresa. | Issue #3 contiene un dato storico antecedente al JSON KB 15.14.0; GOVERNANCE GOV-13. |
+| 2026-11-08 | F15.15: audit statico integrato OP02 20/20 verifiche superate. | Nessuna modifica PWA/KB, nessun collaudo runtime. Aperto `OPEN-05` su guardia preventiva P07→P02; relazione [F15.15](docs/FASE15_15_VERIFICA_INTEGRATA.md). |
