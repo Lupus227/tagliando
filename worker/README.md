@@ -374,3 +374,18 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
   revisione separata e il flusso PWA condizionale resta da implementare.
 - 14/53 revisioni condizionate, 39 in attesa; AI, retrieval tecnico e PWA
   pubblica non abilitati/modificati.
+
+### Fase 15.15 — Audit statico integrato dell'Operazione 2 (non runtime)
+- Confrontati 8 passaggi revisionati della lama con le condizioni di applicabilità: 20/20 controlli statici superati.
+- Il prerequisito della coppia di serraggio e della chiave dinamometrica è documentato in P07, ma deve essere valutato PRIMA di P02, prima dello smontaggio: la guardia runtime è ancora da implementare.
+- Restano aperti i test di percorso eseguito/saltato/interrotto, gestione delle anomalie manuali/vocali e verifica di avanzamento/non avanzamento.
+- Nessun intervento correttivo sulla PWA, nessun modello AI attivato.
+
+### Fase 15.16 — Preparazione e apertura filtro aria (F15.16-R1)
+- Passaggio `RASA-OP-03-P01` approvato senza modifiche dall'esperto il 2026-11-08.
+- Istruzioni: macchina in posizione normale di lavoro, stabile, motore spento e freddo; identificare il fissaggio del coperchio, aprire senza forzare e riconoscere carta/spugna/misto prima dell'estrazione.
+- Proteggere l'ingresso al carburatore dall'introduzione di polvere, erba o residui.
+- Se il coperchio non si apre o i fissaggi sono danneggiati, non forzare; registrare il problema.
+- Questa approvazione **non** autorizza trattamento/pulizia/oliatura del filtro né procedure successive, e non vale come istruzione universale.
+- Catalogo canonico immutato, 8 procedure / 53 passaggi. Revisioni condizionate: 15; pendenti: 38.
+- `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`. Il retrieval tecnico, la PWA pubblica, `voice.js` e il rilascio AI restano invariati.
