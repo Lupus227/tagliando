@@ -1,6 +1,6 @@
 # REGISTRO DI PROGETTO — APP TAGLIANDO
 
-**Versione del registro:** 1.6 · **Aggiornato:** 2026-11-08  
+**Versione del registro:** 1.7 · **Aggiornato:** 2026-11-08  
 **Responsabile approvazioni tecniche:** titolare del progetto (utente).  
 **Ambito:** MVP PWA per manutenzione preventiva guidata dei rasaerba a motore; estensibile ad altre macchine.  
 **Repository PWA:** `Lupus227/tagliando`.  
@@ -65,6 +65,8 @@
 
 **CI GitHub Actions:** [test superati per commit 97a1ee1](https://github.com/Lupus227/tagliando/actions/runs/42524314782). PR #9 integrata.
 
+**Revisione successiva approvata e integrata in staging, NON ancora confermata come deployment Cloudflare:** `RASA-OP-03-P03` — **F15.18-R2**, approvata dopo due correzioni dell'esperto. Commit `063dc43` su `dev/fase14-ai`, [PR #12 integrata](https://github.com/Lupus227/tagliando/pull/12), [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42528155237). Il codice prevede **15.18.0**, **17/53** passaggi validati con condizioni e **36** pendenti; `aiEnabled=false`. **Non sostituire lo stato Cloudflare verificato 15.17.0 finché l'utente non fornisce il JSON dell'endpoint protetto e il deployment Success.**
+
 **Versioni precedenti confermate:** 
 - `15.16.0`: commit `0360eaf`, 15 revisioni condizionate e 38 pendenti; ultimo `RASA-OP-03-P01`.
 - `15.14.0`: commit `23642ef`, 14 revisioni condizionate e 39 pendenti; ultimo `RASA-OP-02-P08`.
@@ -93,6 +95,7 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 | RASA-OP-02-P08 | Verifica finale | Validato con condizioni | Freno motore può opporre resistenza significativa alla rotazione senza bloccarla totalmente. Evitare forzature e artifici impropri; arresto per giochi/interferenze/anomalie. **Eliminata** la frase iniziale ridondante: «Prima di procedere, assicurati che il motore sia spento, il cappuccio della candela sia scollegato e isolato e l'eventuale sistema di avviamento elettrico sia disabilitato.» Restante testo approvato. |
 | RASA-OP-03-P01 | Preparazione/apertura scatola filtro aria | **Approvato F15.16-R1 e deployment Cloudflare confermato** | Con macchina stabile, in normale posizione di lavoro e motore spento/freddo, osservare il fissaggio e aprire senza forzare. Identificare filtro carta/spugna/misto prima di estrarlo, prevenire contaminazione ingresso carburatore. Arresto e registrazione se coperchio bloccato o fissaggi danneggiati. Nessun trattamento filtro autorizzato. |
 | RASA-OP-03-P02 | Valutazione materiale filtrante | **Approvato F15.17-R1, CI e deployment Cloudflare confermati** | Estrarre senza contaminare l'aspirazione. Carta: sostituzione normalmente prevista, mantenibile solo se recente, pulita, integra e conforme alle istruzioni del costruttore. Spugna: riutilizzabile soltanto se morbida, elastica, integra; sostituire se indurita/friabile/lacerata/deformata. Misto: verificare separatamente i due elementi. Se serve ricambio compatibile non disponibile, registrare sospensione e non avviare senza filtrazione montata correttamente. Lavaggio, oliatura e pulizia esclusi da P02. |
+| RASA-OP-03-P03 | Trattamento filtro in carta | **F15.18-R2 approvato; PR #12 e CI Success; deployment Cloudflare DA VERIFICARE** | Carta o elemento carta del misto; saltare se solo spugna. Sostituire con ricambio compatibile oppure conservare elemento recente, integro e pulito. **Non lavare né oliare i filtri in carta**; unico metodo di pulizia eventualmente descritto: soffiaggio delicato con aria compressa, mai getti aggressivi. Pre-filtro in spugna gestito separatamente. Non montare ricambio non compatibile; registrare anomalia e non avviare senza filtro idoneo installato. **Eliminate su esplicita richiesta le eccezioni del costruttore al divieto di lavaggio/oliatura e la frase che suggeriva ulteriori metodi di pulizia.** |
 
 **Nota di accuratezza:** i titoli e i punti riassuntivi derivano dallo storico disponibile e da riferimenti alla PWA; se nasce un conflitto con il testo canonico KB, consultare la KB e correggere il registro, non reinterpretare in autonomia il testo approvato.
 
@@ -102,7 +105,7 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 |---|---|---|---|
 | OPEN-01 | Nella PWA v0.12.1, `app.js` la segnalazione **manuale** di anomalia richiama `setStatus('stopped')`, che causa un avanzamento alla successiva operazione; `recordVoiceAnomaly()` non avanza. Verificato mediante lettura del codice GitHub 2026-11-08. | **Non modificare ora la PWA.** Integrare la correzione nella futura revisione della gestione stati/anomalie, evitando lavoro doppio se l'AI sostituisce la logica. | **Bloccante prima di uso operativo/rilascio**; non bloccante per validazione documentale KB. |
 | OPEN-02 | Verifica integrata dell'Operazione 2: **audit statico 20/20 superato in F15.15**; collaudo effettivo di percorsi, navigazione e stati ancora assente. | Testare T1–T8 quando esisterà il controllore di esecuzione della procedura; nessuna modifica alla PWA o alla KB ora. Vedi [relazione F15.15](docs/FASE15_15_VERIFICA_INTEGRATA.md). | **Bloccante prima del rilascio**, non per avviare revisione OP03. |
-| OPEN-03 | 39 passaggi KB ancora pendenti; generazione AI disabilitata. | Continuare revisione per singolo passaggio, con approvazione tecnica + deployment/collaudo. | Prima di autorizzare risposte tecniche AI. |
+| OPEN-03 | **36** passaggi pendenti nel codice KB 15.18.0; **37** nell'ultimo deployment Cloudflare verificato 15.17.0. AI disabilitata. | Continuare revisione per singolo passaggio, con approvazione tecnica e prova di deployment; non confondere codice e ambiente distribuito. | Prima di autorizzare risposte tecniche AI. |
 | OPEN-04 | Testo completo delle revisioni precedenti non integralmente copiato in questo registro. | Fare riferimento alla KB 15.14.0 e all'archivio delle chat per le formulazioni esatte; aggiungere tracciabilità puntuale progressivamente senza inventare contenuti. | Miglioramento della tracciabilità. |
 | OPEN-05 | **Guardia P07→P02:** la coppia pertinente, la fonte e la dinamometrica devono essere dichiarate/verificate prima dello smontaggio benché il prerequisito sia documentato in P07. | In futuro il motore di esecuzione deve applicare la guardia preventiva (fail closed), con test positivo/negativo e verifica del salto sicuro. | **Bloccante prima del rilascio**; requisito già dichiarato nel ledger. |
 
@@ -122,10 +125,11 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 1. **Fase 15.15:** audit statico **completato (20/20)**. Non equivale al collaudo runtime; vedi [relazione](docs/FASE15_15_VERIFICA_INTEGRATA.md) e `OPEN-02`.
 2. **Fase 15.16:** P01 filtro aria **approvato, integrato, testato e deployment Cloudflare 15.16.0 confermato dall'utente**.
 3. **Fase 15.17:** `RASA-OP-03-P02` approvato, integrato, CI Success e **deployment Cloudflare 15.17.0 confermato con JSON dell'utente**.
-4. **Fase 15.18:** proporre `RASA-OP-03-P03 — Trattamento carta` per nuova approvazione tecnica; non implementare prima della conferma.
+4. **Fase 15.18:** P03 trattamento carta **R2 approvato, integrato in staging e GitHub Actions Success**. Prima attività: **verificare deployment Cloudflare** `063dc43` e JSON 15.18.0 (17/53 condizionati, 36 pendenti, ultimo P03, AI disabilitata).
+5. **Fase 15.19:** dopo conferma deployment, proporre `RASA-OP-03-P04 — Lavaggio spugna` per approvazione dell'esperto. Nessuna modifica tecnica preventiva.
 
-5. Trattare `OPEN-01` e `OPEN-05` durante la progettazione del controllo stati e dei prerequisiti dell'AI, e comunque prima dell'utilizzo operativo.
-6. Non attivare `aiEnabled`, `canGenerate` o `readyForTechnicalAnswers` senza validazione e collaudo espliciti.
+6. Trattare `OPEN-01` e `OPEN-05` durante la progettazione del controllo stati e dei prerequisiti dell'AI, e comunque prima dell'utilizzo operativo.
+7. Non attivare `aiEnabled`, `canGenerate` o `readyForTechnicalAnswers` senza validazione e collaudo espliciti.
 
 ## G. Protocollo di gestione del registro e cambio chat
 
@@ -140,6 +144,9 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 
 **Nuova chat:** l'assistente deve aprire il registro su GitHub e confrontarlo con l'ultimo JSON/risultato disponibile. L'accesso automatico tra chat dipende dalla disponibilità degli strumenti e dal contesto; per maggiore affidabilità, avviare la nuova chat con:  
 `Continuiamo App Tagliando. Leggi prima REGISTRO_PROGETTO.md nel repository Lupus227/tagliando, verifica lo stato attuale e prosegui dalla prossima fase.`
+
+
+**Scheda di continuità per cambio chat:** [Ripresa F15.18](docs/RIPRESA_CHAT_F15_18.md). Aprire il registro e le Issue GitHub nella nuova conversazione. Distinguere il CI Success dal deployment non ancora verificato.
 
 ## H. Storico aggiornamenti
 
@@ -156,3 +163,5 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 | 2026-11-08 | F15.16-R1: deployment Cloudflare confermato dall'utente. | Commit `0360eaf` Success; endpoint `/api/knowledge-status`: 15.16.0, validati con condizioni 15, pendenti 38, AI disabilitata. |
 | 2026-11-08 | F15.17-R1: P02 valutazione materiale carta/spugna/misto approvata e integrata nel codice staging. | Commit `97a1ee1`, PR #9 integrata; [CI success](https://github.com/Lupus227/tagliando/actions/runs/42524314782), 16 validati con condizioni e 37 pendenti nel codice. **Deployment Cloudflare successivamente confermato dall'utente.** |
 | 2026-11-08 | F15.17: deployment Cloudflare e stato KB verificati. | Commit `97a1ee1` Success; JSON endpoint: 15.17.0, 16 revisioni condizionate, 37 pendenti, ultimo `RASA-OP-03-P02`, AI disabilitata. |
+| 2026-11-08 | F15.18-R2: trattamento filtro carta approvato dopo due rimozioni esplicite. | Commit staging `063dc43`, PR #12 integrata, [CI Success](https://github.com/Lupus227/tagliando/actions/runs/42528155237); codice KB 15.18.0 / 17 condizionati / 36 pendenti. **Cloudflare da verificare.** |
+| 2026-11-08 | Preparato il cambio chat preventivo, secondo GOV-09/GOV-10. | [Scheda di ripresa F15.18](docs/RIPRESA_CHAT_F15_18.md); prossima attività: verifica deployment Cloudflare 15.18.0. |
