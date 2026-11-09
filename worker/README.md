@@ -462,3 +462,12 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - In caso di specifica incerta o ricambio compatibile assente: registrare il problema, sospendere la sostituzione e non installare una candela di compatibilità incerta.
 - Revisione condizionata solo nel ledger Worker; catalogo originale, PWA e `voice.js` invariati.
 - Stato previsto dopo integrazione: KB `15.23.0`, 22/53 validati con condizioni, 31 pendenti, ultimo P01 candela; `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. CI e dry-run non confermano il deployment Cloudflare.
+
+### Fase 15.24 — Rimozione candela (F15.24-R2)
+- L'esperto ha confermato il 2026-11-09 la revisione R2 dopo aver richiesto di aggiungere le bussole esagonali profonde come alternativa alle chiavi per candele; il restante testo R1 è stato approvato senza cambiamenti.
+- Su motore spento e freddo, scollegare la pipetta prendendola dal corpo e pulire la zona intorno alla candela con pennello o aria compressa se disponibile, evitando che lo sporco entri nel cilindro.
+- Svitare in senso antiorario con chiave per candele o bussola esagonale profonda (a collo lungo) della misura adatta; utensile completamente inserito sull'esagono senza pressione sull'isolatore ceramico. Terminare a mano se accessibile, evitare urti agli elettrodi.
+- Conservare la candela rimossa per l'ispezione successiva; proteggere l'apertura nella testata da corpi estranei. Controllo della sede e della candela rinviato a `RASA-OP-04-P03`.
+- Arresto con registrazione anomalia e sospensione rimozione per resistenza anomala, presa insufficiente dell'utensile o possibile danneggiamento del filetto; non forzare.
+- Revisione con condizioni nel ledger Worker; catalogo originale, PWA pubblica e `voice.js` invariati.
+- Stato atteso dopo integrazione: KB `15.24.0`, 23/53 validati con condizioni, 30 pendenti, ultimo `RASA-OP-04-P02`; `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. CI e dry-run Wrangler non attestano il deployment Cloudflare.
