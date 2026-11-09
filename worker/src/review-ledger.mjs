@@ -1883,7 +1883,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.instruction.includes('No, è da sostituire') &&
        entry.content.instruction.includes('Non lo so') &&
        entry.content.instruction.includes('può essere riutilizzata senza acquistarne una nuova') &&
-       entry.content.instruction.includes('prima dello smontaggio, procura una candela nuova compatibile') &&
+       entry.content.instruction.includes('Prima dello smontaggio, procura una candela nuova compatibile') &&
        entry.content.instruction.includes('Diametro, passo e lunghezza della filettatura') &&
        entry.content.instruction.includes('Grado termico della candela') &&
        entry.content.instruction.includes('resistenza antidisturbo') &&
