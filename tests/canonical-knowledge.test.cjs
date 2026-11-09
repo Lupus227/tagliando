@@ -26,10 +26,10 @@ test('every technical step and procedure is pending review; no approvals inferre
   assert.ok(ps.every(op=>op.review.status==='DA_VALIDARE' && op.review.reviewer===null));
   assert.ok(ps.flatMap(op=>op.steps).every(s=>s.review.status==='DA_VALIDARE' && s.review.reviewer===null));
   const summary=m.canonicalKnowledgeStatus();
-  assert.equal(summary.pendingSteps,35);
-  assert.equal(summary.validatedSteps,18);
-  assert.equal(summary.conditionalValidatedSteps,18);
-  assert.equal(summary.latestReviewedStepId,'RASA-OP-03-P04');
+  assert.equal(summary.pendingSteps,34);
+  assert.equal(summary.validatedSteps,19);
+  assert.equal(summary.conditionalValidatedSteps,19);
+  assert.equal(summary.latestReviewedStepId,'RASA-OP-03-P05');
   assert.equal(summary.readyForTechnicalAnswers,false);
   assert.equal(summary.canGenerate,false);
   assert.equal(summary.aiEnabled,false);
@@ -68,10 +68,10 @@ test('status endpoint is Access-protected, read only, and includes no technical 
   assert.equal(json.ok,true);
   assert.equal(json.procedureCount,8);
   assert.equal(json.stepCount,53);
-  assert.equal(json.pendingSteps,35);
-  assert.equal(json.validatedSteps,18);
-  assert.equal(json.conditionalValidatedSteps,18);
-  assert.equal(json.latestReviewedStepId,'RASA-OP-03-P04');
+  assert.equal(json.pendingSteps,34);
+  assert.equal(json.validatedSteps,19);
+  assert.equal(json.conditionalValidatedSteps,19);
+  assert.equal(json.latestReviewedStepId,'RASA-OP-03-P05');
   assert.equal(json.aiEnabled,false);
   assert.equal(json.canGenerate,false);
   assert.equal(json.sessionChanged,false);
@@ -105,7 +105,7 @@ test('the existing /api/assist still refuses a regular technical how-to until re
 
 test('15.1 review ledger contains the exact expert-approved preparation text and stop condition',async()=>{
   const [m,reviews]=await Promise.all([getServer(),import('../worker/src/review-ledger.mjs')]);
-  assert.equal(reviews.REVIEW_LEDGER.length,18);
+  assert.equal(reviews.REVIEW_LEDGER.length,19);
   assert.equal(reviews.auditReviewLedger(m.CANONICAL_KNOWLEDGE).ok,true);
   const r=reviews.REVIEW_LEDGER[0];
   assert.equal(r.stepId,'RASA-OP-01-P01');
@@ -146,7 +146,7 @@ test('15.1 technical approval is never auto-exposed to client through knowledge 
   const r=await worker.fetch(new Request('https://staging.invalid/api/knowledge-status'),env,{access:{aud}});
   assert.equal(r.status,200);
   const s=await r.json();
-  assert.equal(s.validatedSteps,18);
+  assert.equal(s.validatedSteps,19);
   assert.equal(s.readyForTechnicalAnswers,false);
   assert.equal(s.canGenerate,false);
   const payload=JSON.stringify(s);
@@ -157,7 +157,7 @@ test('15.2 approved conditional inclination is recorded verbatim and no AI use i
  const {REVIEW_LEDGER:ledger,auditReviewLedger:audit}=await import('../worker/src/review-ledger.mjs');
  const {CANONICAL_KNOWLEDGE:kb}=await getServer();
  assert.equal(audit(kb).ok,true);
- assert.deepEqual(ledger.map(r=>r.stepId),['RASA-OP-01-P01','RASA-OP-01-P02','RASA-OP-01-P03','RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06','RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03','RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07','RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03','RASA-OP-03-P04']);
+ assert.deepEqual(ledger.map(r=>r.stepId),['RASA-OP-01-P01','RASA-OP-01-P02','RASA-OP-01-P03','RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06','RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03','RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07','RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03','RASA-OP-03-P04','RASA-OP-03-P05']);
  const r=ledger[1];
  assert.equal(r.revision,'F15.2-R1');
  assert.equal(r.approval.decision,'APPROVATO_DOPO_REVISIONE_CONCORDATA');
@@ -189,8 +189,8 @@ test('15.2 fail-closed tamper prevention: no universal 45-degree permission or p
    assert.equal(audit(kb,modified).ok,false);
  }
  const status=(await getServer()).canonicalKnowledgeStatus();
- assert.equal(status.pendingSteps,35);
- assert.equal(status.validatedSteps,18);
+ assert.equal(status.pendingSteps,34);
+ assert.equal(status.validatedSteps,19);
  assert.equal(status.readyForTechnicalAnswers,false);
  assert.equal(status.aiEnabled,false);
 });
@@ -224,8 +224,8 @@ test('15.3 ledger rejects tampering and keeps AI disabled',async()=>{
  assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,candidate).ok,false);
  }
  const state=m.canonicalKnowledgeStatus();
- assert.equal(state.version,'15.19.0');assert.equal(state.validatedSteps,18);
- assert.equal(state.pendingSteps,35);assert.equal(state.aiEnabled,false);
+ assert.equal(state.version,'15.20.0');assert.equal(state.validatedSteps,19);
+ assert.equal(state.pendingSteps,34);assert.equal(state.aiEnabled,false);
  assert.equal(state.readyForTechnicalAnswers,false);
 });
 
@@ -258,8 +258,8 @@ test('15.4 review cannot be changed to authorize pressure washing or AI',async()
  const copy=JSON.parse(JSON.stringify(REVIEW_LEDGER));mutate(copy);
  assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,copy).ok,false);
  }
- const state=m.canonicalKnowledgeStatus();assert.equal(state.version,'15.19.0');
- assert.equal(state.pendingSteps,35);assert.equal(state.validatedSteps,18);
+ const state=m.canonicalKnowledgeStatus();assert.equal(state.version,'15.20.0');
+ assert.equal(state.pendingSteps,34);assert.equal(state.validatedSteps,19);
  assert.equal(state.readyForTechnicalAnswers,false);assert.equal(state.aiEnabled,false);
 });
 
@@ -291,8 +291,8 @@ test('15.5 ledger rejects unsafe motor drying changes and never enables AI',asyn
   const altered=JSON.parse(JSON.stringify(REVIEW_LEDGER));edit(altered);
   assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,altered).ok,false);
  }
- const st=m.canonicalKnowledgeStatus();assert.equal(st.version,'15.19.0');
- assert.equal(st.validatedSteps,18);assert.equal(st.pendingSteps,35);
+ const st=m.canonicalKnowledgeStatus();assert.equal(st.version,'15.20.0');
+ assert.equal(st.validatedSteps,19);assert.equal(st.pendingSteps,34);
  assert.equal(st.aiEnabled,false);assert.equal(st.readyForTechnicalAnswers,false);
 });
 
@@ -333,10 +333,10 @@ test('15.6 unauthorized promotion of surface rust or structural damage is blocke
   assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,clone).ok,false);
  }
  const state=m.canonicalKnowledgeStatus();
- assert.equal(state.version,'15.19.0');
- assert.equal(state.pendingSteps,35);assert.equal(state.validatedSteps,18);
- assert.equal(state.conditionalValidatedSteps,18);
- assert.equal(state.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(state.version,'15.20.0');
+ assert.equal(state.pendingSteps,34);assert.equal(state.validatedSteps,19);
+ assert.equal(state.conditionalValidatedSteps,19);
+ assert.equal(state.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(state.readyForTechnicalAnswers,false);
  assert.equal(state.canGenerate,false);assert.equal(state.aiEnabled,false);
 });
@@ -375,10 +375,10 @@ test('15.7 fail-closed: disabling isolation, stopping conditions or model gate i
    assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,clone).ok,false);
  }
  const status=m.canonicalKnowledgeStatus();
- assert.equal(status.version,'15.19.0');
- assert.equal(status.stepCount,53);assert.equal(status.validatedSteps,18);
- assert.equal(status.pendingSteps,35);assert.equal(status.conditionalValidatedSteps,18);
- assert.equal(status.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(status.version,'15.20.0');
+ assert.equal(status.stepCount,53);assert.equal(status.validatedSteps,19);
+ assert.equal(status.pendingSteps,34);assert.equal(status.conditionalValidatedSteps,19);
+ assert.equal(status.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(status.readyForTechnicalAnswers,false);assert.equal(status.aiEnabled,false);
  assert.equal(status.canGenerate,false);
 });
@@ -419,10 +419,10 @@ test('15.8 audit rejects disabled blade stabilization, missing stop condition, o
   assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,clone).ok,false);
  }
  const status=m.canonicalKnowledgeStatus();
- assert.equal(status.version,'15.19.0');
- assert.equal(status.pendingSteps,35);assert.equal(status.validatedSteps,18);
- assert.equal(status.conditionalValidatedSteps,18);
- assert.equal(status.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(status.version,'15.20.0');
+ assert.equal(status.pendingSteps,34);assert.equal(status.validatedSteps,19);
+ assert.equal(status.conditionalValidatedSteps,19);
+ assert.equal(status.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(status.readyForTechnicalAnswers,false);
  assert.equal(status.aiEnabled,false);assert.equal(status.canGenerate,false);
 });
@@ -461,10 +461,10 @@ test('15.9 tampering with conditional inspection, risk stopping, or AI gate fail
   assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,copy).ok,false);
  }
  const state=m.canonicalKnowledgeStatus();
- assert.equal(state.version,'15.19.0');
- assert.equal(state.validatedSteps,18);assert.equal(state.pendingSteps,35);
- assert.equal(state.conditionalValidatedSteps,18);
- assert.equal(state.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(state.version,'15.20.0');
+ assert.equal(state.validatedSteps,19);assert.equal(state.pendingSteps,34);
+ assert.equal(state.conditionalValidatedSteps,19);
+ assert.equal(state.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(state.readyForTechnicalAnswers,false);
  assert.equal(state.aiEnabled,false);assert.equal(state.canGenerate,false);
 });
@@ -504,10 +504,10 @@ test('15.10 fails closed if structural blade damage or optionality safeguards ar
   assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,candidate).ok,false);
  }
  const st=m.canonicalKnowledgeStatus();
- assert.equal(st.version,'15.19.0');
- assert.equal(st.validatedSteps,18);assert.equal(st.pendingSteps,35);
- assert.equal(st.conditionalValidatedSteps,18);
- assert.equal(st.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(st.version,'15.20.0');
+ assert.equal(st.validatedSteps,19);assert.equal(st.pendingSteps,34);
+ assert.equal(st.conditionalValidatedSteps,19);
+ assert.equal(st.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(st.aiEnabled,false);assert.equal(st.canGenerate,false);
  assert.equal(st.readyForTechnicalAnswers,false);
 });
@@ -548,10 +548,10 @@ test('15.11 tampering with continuous movement, optionality or safety is refused
   assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,copy).ok,false);
  }
  const state=m.canonicalKnowledgeStatus();
- assert.equal(state.version,'15.19.0');
- assert.equal(state.validatedSteps,18);assert.equal(state.pendingSteps,35);
- assert.equal(state.conditionalValidatedSteps,18);
- assert.equal(state.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(state.version,'15.20.0');
+ assert.equal(state.validatedSteps,19);assert.equal(state.pendingSteps,34);
+ assert.equal(state.conditionalValidatedSteps,19);
+ assert.equal(state.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(state.readyForTechnicalAnswers,false);
  assert.equal(state.aiEnabled,false);assert.equal(state.canGenerate,false);
 });
@@ -595,10 +595,10 @@ test('15.12 rejects missing centered support, freely moving ends or stopping con
   assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,candidate).ok,false);
  }
  const state=m.canonicalKnowledgeStatus();
- assert.equal(state.version,'15.19.0');
- assert.equal(state.validatedSteps,18);assert.equal(state.pendingSteps,35);
- assert.equal(state.conditionalValidatedSteps,18);
- assert.equal(state.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(state.version,'15.20.0');
+ assert.equal(state.validatedSteps,19);assert.equal(state.pendingSteps,34);
+ assert.equal(state.conditionalValidatedSteps,19);
+ assert.equal(state.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(state.readyForTechnicalAnswers,false);
  assert.equal(state.aiEnabled,false);assert.equal(state.canGenerate,false);
 });
@@ -644,10 +644,10 @@ test('15.13 fail-closed when prerequisites, tightening, stop conditions or AI ga
   assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,candidate).ok,false);
  }
  const st=m.canonicalKnowledgeStatus();
- assert.equal(st.version,'15.19.0');
- assert.equal(st.validatedSteps,18);assert.equal(st.pendingSteps,35);
- assert.equal(st.conditionalValidatedSteps,18);
- assert.equal(st.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(st.version,'15.20.0');
+ assert.equal(st.validatedSteps,19);assert.equal(st.pendingSteps,34);
+ assert.equal(st.conditionalValidatedSteps,19);
+ assert.equal(st.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(st.readyForTechnicalAnswers,false);
  assert.equal(st.aiEnabled,false);assert.equal(st.canGenerate,false);
 });
@@ -691,10 +691,10 @@ test('15.14 fail closed if brake handling or conditional safety checks are alter
   assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,candidate).ok,false);
  }
  const state=m.canonicalKnowledgeStatus();
- assert.equal(state.version,'15.19.0');
- assert.equal(state.validatedSteps,18);assert.equal(state.pendingSteps,35);
- assert.equal(state.conditionalValidatedSteps,18);
- assert.equal(state.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(state.version,'15.20.0');
+ assert.equal(state.validatedSteps,19);assert.equal(state.pendingSteps,34);
+ assert.equal(state.conditionalValidatedSteps,19);
+ assert.equal(state.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(state.readyForTechnicalAnswers,false);
  assert.equal(state.aiEnabled,false);assert.equal(state.canGenerate,false);
 });
@@ -729,11 +729,11 @@ test('15.16 filter cover preparation and identification are conditionally review
  assert.equal(r.applicability.universalAuthorization,false);
  assert.equal(r.aiUseAllowed,false);
  const state=m.canonicalKnowledgeStatus();
- assert.equal(state.version,'15.19.0');
- assert.equal(state.validatedSteps,18);
- assert.equal(state.conditionalValidatedSteps,18);
- assert.equal(state.pendingSteps,35);
- assert.equal(state.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(state.version,'15.20.0');
+ assert.equal(state.validatedSteps,19);
+ assert.equal(state.conditionalValidatedSteps,19);
+ assert.equal(state.pendingSteps,34);
+ assert.equal(state.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(state.readyForTechnicalAnswers,false);
  assert.equal(state.canGenerate,false);
  assert.equal(state.aiEnabled,false);
@@ -760,7 +760,7 @@ test('15.16 fail-closed on unsafe filter opening, contaminated air intake, forge
   assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,candidate).ok,false);
  }
  const state=m.canonicalKnowledgeStatus();
- assert.equal(state.version,'15.19.0');
+ assert.equal(state.version,'15.20.0');
  assert.equal(state.aiEnabled,false);
  assert.equal(state.canGenerate,false);
 });
@@ -800,11 +800,11 @@ test('15.17 assessment of paper foam and mixed air filters is conditionally revi
  assert.match(r.content.stopCondition,/Non avviare il motore/);
  assert.equal(r.aiUseAllowed,false);
  const st=m.canonicalKnowledgeStatus();
- assert.equal(st.version,'15.19.0');
- assert.equal(st.validatedSteps,18);
- assert.equal(st.conditionalValidatedSteps,18);
- assert.equal(st.pendingSteps,35);
- assert.equal(st.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(st.version,'15.20.0');
+ assert.equal(st.validatedSteps,19);
+ assert.equal(st.conditionalValidatedSteps,19);
+ assert.equal(st.pendingSteps,34);
+ assert.equal(st.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(st.readyForTechnicalAnswers,false);
  assert.equal(st.canGenerate,false);
  assert.equal(st.aiEnabled,false);
@@ -865,11 +865,11 @@ test('15.18 approved paper-filter step R2 limits cleaning to gentle air and forb
  assert.match(r.content.stopCondition,/non avviare il motore/);
  assert.equal(r.aiUseAllowed,false);
  const st=m.canonicalKnowledgeStatus();
- assert.equal(st.version,'15.19.0');
- assert.equal(st.validatedSteps,18);
- assert.equal(st.conditionalValidatedSteps,18);
- assert.equal(st.pendingSteps,35);
- assert.equal(st.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(st.version,'15.20.0');
+ assert.equal(st.validatedSteps,19);
+ assert.equal(st.conditionalValidatedSteps,19);
+ assert.equal(st.pendingSteps,34);
+ assert.equal(st.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(st.readyForTechnicalAnswers,false);
  assert.equal(st.aiEnabled,false);
  assert.equal(st.canGenerate,false);
@@ -931,11 +931,11 @@ test('15.19 foam-only and mixed-filter washing uses dedicated cleaner, immersion
  assert.equal(r.applicability.universalAuthorization,false);
  assert.equal(r.aiUseAllowed,false);
  const state=m.canonicalKnowledgeStatus();
- assert.equal(state.version,'15.19.0');
- assert.equal(state.validatedSteps,18);
- assert.equal(state.conditionalValidatedSteps,18);
- assert.equal(state.pendingSteps,35);
- assert.equal(state.latestReviewedStepId,'RASA-OP-03-P04');
+ assert.equal(state.version,'15.20.0');
+ assert.equal(state.validatedSteps,19);
+ assert.equal(state.conditionalValidatedSteps,19);
+ assert.equal(state.pendingSteps,34);
+ assert.equal(state.latestReviewedStepId,'RASA-OP-03-P05');
  assert.equal(state.aiEnabled,false);
  assert.equal(state.canGenerate,false);
  assert.equal(state.readyForTechnicalAnswers,false);
@@ -958,6 +958,82 @@ test('15.19 fails closed on filter type, cleaner, solvent, washability, dry-befo
   rs=>rs[17].content.stopCondition='',
   rs=>rs[17].aiUseAllowed=true,
   rs=>rs.push({...rs[17],stepId:'RASA-OP-03-P05'})
+ ]){
+  const candidate=JSON.parse(JSON.stringify(REVIEW_LEDGER));
+  edit(candidate);
+  assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE,candidate).ok,false);
+ }
+});
+
+
+test('15.20 expert-approved R3 oils foam-only and skips oiling the standard paper-plus-foam prefilter',async()=>{
+ const m=await getServer(),{REVIEW_LEDGER,auditReviewLedger}=await import('../worker/src/review-ledger.mjs');
+ assert.equal(auditReviewLedger(m.CANONICAL_KNOWLEDGE).ok,true);
+ const r=REVIEW_LEDGER[18];
+ assert.equal(r.stepId,'RASA-OP-03-P05');
+ assert.equal(r.revision,'F15.20-R3');
+ assert.equal(r.status,'VALIDATO_CONDIZIONATO');
+ assert.equal(r.approval.decision,'APPROVATO_DOPO_REVISIONE_R3');
+ assert.equal(r.approval.approvedOn,'2026-11-09');
+ assert.equal(r.applicability.requiresApprovedFilterAssessmentStep,'RASA-OP-03-P02');
+ assert.equal(r.applicability.requiresApprovedFoamWashingStepIfPerformed,'RASA-OP-03-P04');
+ assert.deepEqual([...r.applicability.allowedFilterTypes],['spugna','misto']);
+ assert.equal(r.applicability.skipForPaperOnly,true);
+ assert.equal(r.applicability.oilFoamOnlyFilter,true);
+ assert.equal(r.applicability.noPrefilterOilingInStandardApp,true);
+ assert.equal(r.applicability.modelSpecificExceptionOnlyWithOperatorPriorKnowledge,true);
+ assert.equal(r.applicability.unknownConfigurationMustNotBeGuessed,true);
+ assert.equal(r.applicability.foamMustBeCompletelyDryAfterWashing,true);
+ assert.equal(r.applicability.allowAirFilterOilSpray,true);
+ assert.equal(r.applicability.allowNewCleanMotorOil,true);
+ assert.equal(r.applicability.distributeOilByGentleCompression,true);
+ assert.equal(r.applicability.avoidTwisting,true);
+ assert.equal(r.applicability.removeExcessOil,true);
+ assert.equal(r.applicability.noAccumulationOrDrips,true);
+ assert.equal(r.applicability.keepPreparedFilterProtected,true);
+ assert.equal(r.applicability.stopIfRequiredOilUnavailable,true);
+ assert.equal(r.applicability.noEngineStartWithoutCorrectlyTreatedAndReassembledFilter,true);
+ assert.ok(r.content.instruction.includes("Filtro in sola spugna: eseguire l'oliatura"));
+ assert.ok(r.content.instruction.includes("Prefiltro in spugna abbinato a filtro in carta: non oliare nella procedura standard dell'app"));
+ assert.ok(r.content.instruction.includes("conoscenza tecnica pregressa dell'operatore"));
+ assert.ok(r.content.instruction.includes('olio spray specifico per filtri aria'));
+ assert.ok(r.content.instruction.includes('olio motore nuovo e pulito'));
+ assert.ok(r.content.instruction.includes('senza torcerla'));
+ assert.ok(r.content.instruction.includes('accumuli o gocciolamenti'));
+ assert.ok(r.content.stopCondition.includes("registra l'anomalia"));
+ assert.ok(r.content.stopCondition.includes('Non avviare il motore'));
+ assert.equal(r.applicability.universalAuthorization,false);
+ assert.equal(r.aiUseAllowed,false);
+ const state=m.canonicalKnowledgeStatus();
+ assert.equal(state.version,'15.20.0');
+ assert.equal(state.stepCount,53);
+ assert.equal(state.validatedSteps,19);
+ assert.equal(state.conditionalValidatedSteps,19);
+ assert.equal(state.pendingSteps,34);
+ assert.equal(state.latestReviewedStepId,'RASA-OP-03-P05');
+ assert.equal(state.readyForTechnicalAnswers,false);
+ assert.equal(state.aiEnabled,false);
+ assert.equal(state.canGenerate,false);
+});
+
+test('15.20 fail-closed on prefilter oiling, guessed models, dirty oil or unauthorized AI use',async()=>{
+ const m=await getServer(),{REVIEW_LEDGER,auditReviewLedger}=await import('../worker/src/review-ledger.mjs');
+ for(const edit of [
+  rs=>rs[18].applicability.skipForPaperOnly=false,
+  rs=>rs[18].applicability.oilFoamOnlyFilter=false,
+  rs=>rs[18].applicability.noPrefilterOilingInStandardApp=false,
+  rs=>rs[18].applicability.modelSpecificExceptionOnlyWithOperatorPriorKnowledge=false,
+  rs=>rs[18].applicability.unknownConfigurationMustNotBeGuessed=false,
+  rs=>rs[18].applicability.foamMustBeCompletelyDryAfterWashing=false,
+  rs=>rs[18].applicability.allowAirFilterOilSpray=false,
+  rs=>rs[18].applicability.allowNewCleanMotorOil=false,
+  rs=>rs[18].applicability.removeExcessOil=false,
+  rs=>rs[18].applicability.stopIfRequiredOilUnavailable=false,
+  rs=>rs[18].applicability.noEngineStartWithoutCorrectlyTreatedAndReassembledFilter=false,
+  rs=>rs[18].content.instruction='Olia il prefiltro misto con olio usato',
+  rs=>rs[18].content.stopCondition='',
+  rs=>rs[18].aiUseAllowed=true,
+  rs=>rs.push({...rs[18],stepId:'RASA-OP-03-P06'})
  ]){
   const candidate=JSON.parse(JSON.stringify(REVIEW_LEDGER));
   edit(candidate);
