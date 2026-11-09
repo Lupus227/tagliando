@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.21 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.22 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05/P06, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05/P06/P07, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -966,6 +966,59 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-03-P07",
+    "revision": "F15.22-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "rimontaggio_filtro_aria_carta_spugna_misto_posizionamento_aderenza_chiusura_tenuta",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_SENZA_MODIFICHE",
+      "approvedOn": "2026-11-09",
+      "evidence": "utente_approva_integralmente_proposta_f15_22_r1_rimontaggio_filtro_aria"
+    },
+    "content": {
+      "title": "Rimontaggio del filtro aria",
+      "instruction": "Preparazione al rimontaggio\n\nDopo aver completato i trattamenti previsti nei passaggi precedenti, prepara gli elementi filtranti per il rimontaggio.\n\nControlla che la scatola filtro sia pulita e asciutta e che non siano rimasti residui sulle superfici di appoggio.\n\nInserimento del filtro\n\nInserisci il filtro nella propria sede, rispettando l'orientamento e gli eventuali incastri.\n\nFiltro in carta: posiziona correttamente l'elemento filtrante, verificando l'aderenza delle superfici di tenuta.\n\nFiltro in sola spugna: inserisci la spugna precedentemente trattata nella propria sede, senza deformarla.\n\nFiltro misto: rimonta l'elemento in carta e il prefiltro in spugna nelle rispettive posizioni, rispettando la configurazione originaria.\n\nControlla che gli elementi siano correttamente appoggiati e che nessuna parte del filtro rimanga piegata, schiacciata o fuori sede.\n\nChiusura della scatola filtro\n\nRiposiziona il coperchio facendo coincidere eventuali guide, linguette o incastri.\n\nChiudi i ganci oppure serra le viti di fissaggio, secondo il sistema presente, evitando di forzare o deformare il coperchio.\n\nVerifica finale\n\nControlla che il coperchio sia stabilmente fissato, che non presenti aperture involontarie e che il filtro sia correttamente posizionato.\n\nVerifica che non siano presenti fessure o discontinuità nelle superfici di tenuta che consentirebbero all'aria di bypassare l'elemento filtrante.",
+      "stopCondition": "Se il filtro non entra correttamente nella propria sede, il coperchio non si chiude, i fissaggi sono danneggiati oppure non è possibile garantire la tenuta del sistema, registra l'anomalia e sospendi il completamento dell'operazione.\n\nNon avviare il motore senza il sistema filtrante correttamente installato."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "afterApplicableFilterTreatments": true,
+      "requiresCleanAndDryHousing": true,
+      "allowedFilterTypes": [
+        "carta",
+        "spugna",
+        "misto"
+      ],
+      "respectElementOrientationAndRetainers": true,
+      "paperFilterRequiresSealingSurfaceContact": true,
+      "foamOnlyMustBePreviouslyTreatedAndUndeformed": true,
+      "mixedFilterRequiresCorrectPaperAndPrefilterPositions": true,
+      "noFoldedCrushedOrMisplacedElement": true,
+      "alignHousingLatchesTabsOrGuides": true,
+      "closeUsingExistingLatchesOrScrews": true,
+      "avoidForceOrCoverDeformation": true,
+      "verifyStableCoverClosure": true,
+      "verifyNoUnfilteredAirBypass": true,
+      "stopIfFilterCannotSeat": true,
+      "stopIfCoverCannotClose": true,
+      "stopIfFastenersDamaged": true,
+      "stopIfSealingCannotBeEnsured": true,
+      "recordAnomalyOnStop": true,
+      "noEngineStartWithoutCorrectlyInstalledFilter": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "L'esperto approva integralmente F15.22-R1 per rimontaggio filtro carta/spugna/misto, chiusura e verifica della tenuta, con sospensione del completamento in caso di fissaggi, sede o tenuta anomali.",
+        "approvedOn": "2026-11-09"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -983,7 +1036,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==20)
+  if(!Array.isArray(candidate) || candidate.length!==21)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -999,7 +1052,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (['RASA-OP-03-P04','RASA-OP-03-P05','RASA-OP-03-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-09')) &&
+       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (['RASA-OP-03-P04','RASA-OP-03-P05','RASA-OP-03-P06','RASA-OP-03-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-09')) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -1541,7 +1594,48 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes('corpi estranei nel condotto di aspirazione') &&
        entry.content.stopCondition.includes("registra l'anomalia e sospendi il rimontaggio") &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04 || approvedOP03P05 || approvedOP03P06))
+
+    const approvedOP03P07=entry.stepId==='RASA-OP-03-P07' &&
+       entry.revision==='F15.22-R1' &&
+       entry.scope==='rimontaggio_filtro_aria_carta_spugna_misto_posizionamento_aderenza_chiusura_tenuta' &&
+       entry.approval?.decision==='APPROVATO_SENZA_MODIFICHE' &&
+       entry.approval?.evidence==='utente_approva_integralmente_proposta_f15_22_r1_rimontaggio_filtro_aria' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.afterApplicableFilterTreatments===true &&
+       entry.applicability?.requiresCleanAndDryHousing===true &&
+       JSON.stringify(entry.applicability?.allowedFilterTypes)==='["carta","spugna","misto"]' &&
+       entry.applicability?.respectElementOrientationAndRetainers===true &&
+       entry.applicability?.paperFilterRequiresSealingSurfaceContact===true &&
+       entry.applicability?.foamOnlyMustBePreviouslyTreatedAndUndeformed===true &&
+       entry.applicability?.mixedFilterRequiresCorrectPaperAndPrefilterPositions===true &&
+       entry.applicability?.noFoldedCrushedOrMisplacedElement===true &&
+       entry.applicability?.alignHousingLatchesTabsOrGuides===true &&
+       entry.applicability?.closeUsingExistingLatchesOrScrews===true &&
+       entry.applicability?.avoidForceOrCoverDeformation===true &&
+       entry.applicability?.verifyStableCoverClosure===true &&
+       entry.applicability?.verifyNoUnfilteredAirBypass===true &&
+       entry.applicability?.stopIfFilterCannotSeat===true &&
+       entry.applicability?.stopIfCoverCannotClose===true &&
+       entry.applicability?.stopIfFastenersDamaged===true &&
+       entry.applicability?.stopIfSealingCannotBeEnsured===true &&
+       entry.applicability?.recordAnomalyOnStop===true &&
+       entry.applicability?.noEngineStartWithoutCorrectlyInstalledFilter===true &&
+       entry.content.instruction.includes('Dopo aver completato i trattamenti previsti nei passaggi precedenti') &&
+       entry.content.instruction.includes('scatola filtro sia pulita e asciutta') &&
+       entry.content.instruction.includes("Filtro in carta: posiziona correttamente l'elemento filtrante") &&
+       entry.content.instruction.includes('Filtro in sola spugna: inserisci la spugna precedentemente trattata') &&
+       entry.content.instruction.includes("Filtro misto: rimonta l'elemento in carta e il prefiltro in spugna") &&
+       entry.content.instruction.includes('piegata, schiacciata o fuori sede') &&
+       entry.content.instruction.includes('guide, linguette o incastri') &&
+       entry.content.instruction.includes('evitando di forzare o deformare il coperchio') &&
+       entry.content.instruction.includes('non presenti aperture involontarie') &&
+       entry.content.instruction.includes("all'aria di bypassare l'elemento filtrante") &&
+       entry.content.stopCondition.includes('il filtro non entra correttamente nella propria sede') &&
+       entry.content.stopCondition.includes('i fissaggi sono danneggiati') &&
+       entry.content.stopCondition.includes("registra l'anomalia e sospendi") &&
+       entry.content.stopCondition.includes('Non avviare il motore senza il sistema filtrante correttamente installato') &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04 || approvedOP03P05 || approvedOP03P06 || approvedOP03P07))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
