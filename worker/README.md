@@ -432,3 +432,14 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Arresto registrato in assenza di olio idoneo quando richiesto; motore non avviabile prima del corretto trattamento e rimontaggio.
 - Revisione condizionata nell'overlay del Worker, senza alterare catalogo originale, PWA pubblica, pilot o `voice.js`.
 - Stato atteso dopo integrazione: KB `15.20.0`, 19/53 condizionati, 34 pendenti; `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. Conferma separata deployment Cloudflare necessaria dopo CI.
+
+### Fase 15.21 — Pulizia della scatola filtro aria (F15.21-R1)
+- Proposta R1 del passaggio `RASA-OP-03-P06` approvata senza modifiche dall'esperto il 2026-11-09.
+- Applicabile a filtri carta, spugna e misti dopo la rimozione degli elementi; pulizia del vano, del coperchio e dell'area prossima al condotto.
+- Rimuovere depositi con panno pulito, asciutto o leggermente inumidito; per residui oleosi utilizzare solo una piccola quantità di detergente compatibile con plastica e guarnizioni, asportandone i residui.
+- Pulire le superfici di appoggio e tenuta del filtro; proteggere il condotto di aspirazione del carburatore dall'ingresso di residui, liquidi o oggetti.
+- Vietato dirigere getti d'aria compressa o acqua verso l'ingresso carburatore; non inserire panni o utensili nel condotto.
+- Verifica finale: scatola e coperchio puliti, privi di residui e umidità. Rimontaggio rinviato a `RASA-OP-03-P07`, non approvato in questa fase.
+- Arresto e registrazione anomalia se scatola danneggiata, guarnizioni compromesse o sospetta contaminazione del condotto di aspirazione; non proseguire con il rimontaggio fino a verifica.
+- Overlay revisionale condizionato separato dal catalogo canonico originale, PWA pubblica e `voice.js` invariati.
+- Stato atteso: KB `15.21.0`, 20/53 condizionati, 33 pendenti; `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. Test e dry-run non attestano il deployment Cloudflare.
