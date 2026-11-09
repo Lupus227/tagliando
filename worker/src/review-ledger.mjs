@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.22 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.23 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05/P06/P07, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05/P06/P07 e RASA-OP-04-P01, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -1019,6 +1019,55 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-04-P01",
+    "revision": "F15.23-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "candela_ricambio_identificazione_codice_equivalenza_verificata_caratteristiche_modello_specifiche",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_SENZA_MODIFICHE",
+      "approvedOn": "2026-11-09",
+      "evidence": "utente_approva_f15_23_r1_verifica_candela_di_ricambio_senza_modifiche"
+    },
+    "content": {
+      "title": "Verifica della candela di ricambio",
+      "instruction": "Identificazione della candela corretta\n\nPrima di smontare la candela esistente, verifica di avere a disposizione il ricambio adatto al motore.\n\nIdentifica la marca e il modello del motore, quindi individua il codice della candela previsto dal costruttore.\n\nPuoi utilizzare il manuale del motore oppure un catalogo ricambi affidabile.\n\nVerifica della compatibilità\n\nLa candela nuova deve avere il codice originale prescritto oppure un codice equivalente di cui sia stata verificata la compatibilità.\n\nPer valutare un'eventuale equivalenza, considera:\n\n- Diametro, passo e lunghezza della filettatura.\n- Tipo di sede di tenuta, con rondella oppure conica.\n- Grado termico della candela.\n- Configurazione degli elettrodi e caratteristiche del terminale superiore.\n- Eventuale presenza di resistenza antidisturbo.\n\nNon basarti soltanto sulla somiglianza esteriore delle due candele.\n\nUtilizzo della candela esistente come riferimento\n\nSe riesci a leggere il codice della candela attualmente installata, puoi utilizzarlo per individuare il ricambio.\n\nTuttavia, verifica che tale codice sia effettivamente adatto al motore: una candela montata in precedenza potrebbe essere di tipo errato.\n\nVerifica finale\n\nPrima di proseguire, assicurati di avere una candela nuova corretta e integra, con caratteristiche compatibili con quelle richieste dal motore.\n\nLa rimozione della candela esistente viene effettuata nel passaggio successivo, RASA-OP-04-P02.",
+      "stopCondition": "Se non riesci a identificare con sufficiente certezza la candela corretta oppure non disponi di un ricambio compatibile, registra il problema e sospendi la sostituzione.\n\nNon montare una candela di compatibilità incerta."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "beforeOldSparkPlugRemoval": true,
+      "motorMakeAndModelMustBeIdentified": true,
+      "useManufacturerManualOrReliablePartsCatalog": true,
+      "originalPartCodeOrVerifiedEquivalentRequired": true,
+      "threadDiameterPitchAndReachChecked": true,
+      "gasketOrConicalSeatChecked": true,
+      "heatRangeChecked": true,
+      "electrodeConfigurationAndTerminalChecked": true,
+      "resistorFeatureCheckedIfApplicable": true,
+      "visualSimilarityNotSufficient": true,
+      "existingPlugCodeReferenceOnlyNotProof": true,
+      "replacementMustBeNewUndamagedAndCompatible": true,
+      "oldPlugRemovalHandledByStepId": "RASA-OP-04-P02",
+      "electrodeGapDeferredToStepId": "RASA-OP-04-P03",
+      "installationTorqueDeferredToStepId": "RASA-OP-04-P05",
+      "stopIfSpecificationUncertain": true,
+      "stopIfCompatibleReplacementUnavailable": true,
+      "recordAnomalyOnStop": true,
+      "doNotInstallUnverifiedPlug": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "L'esperto approva senza modifiche la F15.23-R1 per identificazione preventiva del ricambio candela da codice prescritto o equivalenza verificata, controllo di filettatura/sede/grado termico/elettrodi/terminale/resistenza, stop per incertezza.",
+        "approvedOn": "2026-11-09"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -1036,7 +1085,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==21)
+  if(!Array.isArray(candidate) || candidate.length!==22)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -1052,7 +1101,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (['RASA-OP-03-P04','RASA-OP-03-P05','RASA-OP-03-P06','RASA-OP-03-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-09')) &&
+       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (['RASA-OP-03-P04','RASA-OP-03-P05','RASA-OP-03-P06','RASA-OP-03-P07','RASA-OP-04-P01'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-09')) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -1635,7 +1684,50 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes("registra l'anomalia e sospendi") &&
        entry.content.stopCondition.includes('Non avviare il motore senza il sistema filtrante correttamente installato') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04 || approvedOP03P05 || approvedOP03P06 || approvedOP03P07))
+
+    const approvedOP04P01=entry.stepId==='RASA-OP-04-P01' &&
+       entry.revision==='F15.23-R1' &&
+       entry.scope==='candela_ricambio_identificazione_codice_equivalenza_verificata_caratteristiche_modello_specifiche' &&
+       entry.approval?.decision==='APPROVATO_SENZA_MODIFICHE' &&
+       entry.approval?.evidence==='utente_approva_f15_23_r1_verifica_candela_di_ricambio_senza_modifiche' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.beforeOldSparkPlugRemoval===true &&
+       entry.applicability?.motorMakeAndModelMustBeIdentified===true &&
+       entry.applicability?.useManufacturerManualOrReliablePartsCatalog===true &&
+       entry.applicability?.originalPartCodeOrVerifiedEquivalentRequired===true &&
+       entry.applicability?.threadDiameterPitchAndReachChecked===true &&
+       entry.applicability?.gasketOrConicalSeatChecked===true &&
+       entry.applicability?.heatRangeChecked===true &&
+       entry.applicability?.electrodeConfigurationAndTerminalChecked===true &&
+       entry.applicability?.resistorFeatureCheckedIfApplicable===true &&
+       entry.applicability?.visualSimilarityNotSufficient===true &&
+       entry.applicability?.existingPlugCodeReferenceOnlyNotProof===true &&
+       entry.applicability?.replacementMustBeNewUndamagedAndCompatible===true &&
+       entry.applicability?.oldPlugRemovalHandledByStepId==='RASA-OP-04-P02' &&
+       entry.applicability?.electrodeGapDeferredToStepId==='RASA-OP-04-P03' &&
+       entry.applicability?.installationTorqueDeferredToStepId==='RASA-OP-04-P05' &&
+       entry.applicability?.stopIfSpecificationUncertain===true &&
+       entry.applicability?.stopIfCompatibleReplacementUnavailable===true &&
+       entry.applicability?.recordAnomalyOnStop===true &&
+       entry.applicability?.doNotInstallUnverifiedPlug===true &&
+       entry.content.instruction.includes('Prima di smontare la candela esistente') &&
+       entry.content.instruction.includes('Identifica la marca e il modello del motore') &&
+       entry.content.instruction.includes('manuale del motore oppure un catalogo ricambi affidabile') &&
+       entry.content.instruction.includes('un codice equivalente di cui sia stata verificata la compatibilità') &&
+       entry.content.instruction.includes('Diametro, passo e lunghezza della filettatura') &&
+       entry.content.instruction.includes('sede di tenuta, con rondella oppure conica') &&
+       entry.content.instruction.includes('Grado termico della candela') &&
+       entry.content.instruction.includes('Configurazione degli elettrodi e caratteristiche del terminale superiore') &&
+       entry.content.instruction.includes('resistenza antidisturbo') &&
+       entry.content.instruction.includes('Non basarti soltanto sulla somiglianza esteriore') &&
+       entry.content.instruction.includes('una candela montata in precedenza potrebbe essere di tipo errato') &&
+       entry.content.instruction.includes('candela nuova corretta e integra') &&
+       entry.content.instruction.includes('RASA-OP-04-P02') &&
+       entry.content.stopCondition.includes('non disponi di un ricambio compatibile') &&
+       entry.content.stopCondition.includes('registra il problema e sospendi la sostituzione') &&
+       entry.content.stopCondition.includes('Non montare una candela di compatibilità incerta') &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04 || approvedOP03P05 || approvedOP03P06 || approvedOP03P07 || approvedOP04P01))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
