@@ -1325,15 +1325,16 @@ export function canonicalKnowledgeStatus(){
   const reviewed=REVIEW_LEDGER.length;
   return Object.freeze({
     schema:CANONICAL_KNOWLEDGE.schema,
-    version:'15.25.0',
+    version:'15.25.1',
     sourceAppVersion:CANONICAL_KNOWLEDGE.sourceAppVersion,
     procedureCount:EXPECTED_PROCEDURES,
     stepCount:EXPECTED_STEPS,
     pendingSteps:EXPECTED_STEPS-reviewed,
     validatedSteps:reviewed,
     conditionalValidatedSteps:reviewed,
-    reviewScope:'pulizia_completa_e_sicurezza_smontaggio_mozzo_ispezione_affilatura_equilibratura_rimontaggio_verifica_condizionati_e_filtro_aria_preparazione_apertura_valutazione_trattamento_carta_lavaggio_spugna_oliatura_spugna_pulizia_scatola_filtro_rimontaggio_filtro_e_candela_verifica_ricambio_rimozione_controllo_sede_e_riutilizzo_condizionati',
-    latestReviewedStepId:REVIEW_LEDGER.at(-1)?.stepId||null,
+    reviewScope:'pulizia_completa_e_sicurezza_smontaggio_mozzo_ispezione_affilatura_equilibratura_rimontaggio_verifica_condizionati_e_filtro_aria_preparazione_apertura_valutazione_trattamento_carta_lavaggio_spugna_oliatura_spugna_pulizia_scatola_filtro_rimontaggio_filtro_e_candela_verifica_ricambio_rimozione_controllo_sede_riutilizzo_e_domanda_iniziale_condizionati',
+    // F15.25.1 revisiona P01 fuori dall'ordine originale degli ID di passo.
+    latestReviewedStepId:'RASA-OP-04-P01',
     readyForTechnicalAnswers:false,
     aiEnabled:false,
     canGenerate:false,
