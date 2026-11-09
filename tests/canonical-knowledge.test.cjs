@@ -1150,7 +1150,7 @@ test('15.22 approved R1 seats and seals paper, foam and mixed air filters',async
  assert.ok(r.content.instruction.includes("Filtro in carta: posiziona correttamente l'elemento filtrante"));
  assert.ok(r.content.instruction.includes('Filtro in sola spugna: inserisci la spugna precedentemente trattata'));
  assert.ok(r.content.instruction.includes("Filtro misto: rimonta l'elemento in carta e il prefiltro in spugna"));
- assert.ok(r.content.instruction.includes("non presenti fessure o discontinuità nelle superfici di tenuta"));
+ assert.ok(r.content.instruction.includes("non siano presenti fessure o discontinuità nelle superfici di tenuta"));
  assert.ok(r.content.instruction.includes("all'aria di bypassare l'elemento filtrante"));
  assert.ok(r.content.stopCondition.includes('i fissaggi sono danneggiati'));
  assert.ok(r.content.stopCondition.includes("registra l'anomalia e sospendi"));
