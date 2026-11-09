@@ -105,7 +105,7 @@ test('the existing /api/assist still refuses a regular technical how-to until re
 
 test('15.1 review ledger contains the exact expert-approved preparation text and stop condition',async()=>{
   const [m,reviews]=await Promise.all([getServer(),import('../worker/src/review-ledger.mjs')]);
-  assert.equal(reviews.REVIEW_LEDGER.length,17);
+  assert.equal(reviews.REVIEW_LEDGER.length,18);
   assert.equal(reviews.auditReviewLedger(m.CANONICAL_KNOWLEDGE).ok,true);
   const r=reviews.REVIEW_LEDGER[0];
   assert.equal(r.stepId,'RASA-OP-01-P01');
