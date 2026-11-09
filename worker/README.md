@@ -452,3 +452,13 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Se filtro fuori sede, coperchio non chiudibile, fissaggi danneggiati o tenuta non garantita: registrare anomalia e sospendere il completamento. Non avviare senza filtro correttamente installato.
 - Revisione condizionata nell'overlay separato; catalogo canonico, PWA pubblica e `voice.js` invariati. Tutte le funzioni AI restano disabilitate.
 - Stato atteso nel codice: KB `15.22.0`, 21/53 revisioni condizionate e 32 passaggi pendenti; `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. Conferma deployment Cloudflare richiesta separatamente.
+
+### Fase 15.23 — Verifica della candela di ricambio (F15.23-R1)
+- Approvazione integrale senza modifiche della proposta R1 per `RASA-OP-04-P01` da parte dell'esperto il 2026-11-09.
+- Prima di smontare la candela identificare marca e modello del motore, codice prescritto nel manuale o catalogo ricambi affidabile; accettare solo ricambio originale o equivalente verificato.
+- Per l'equivalenza verificare filettatura (diametro/passo/lunghezza), sede (rondella o conica), grado termico, elettrodi e terminale, eventuale resistenza antidisturbo. Somiglianza visiva insufficiente.
+- Il codice della candela precedentemente montata è un riferimento, non una prova di correttezza. Ricambio nuovo, integro e compatibile necessario.
+- Rimozione P02, controllo della distanza elettrodi P03, serraggio P05 rimangono passaggi successivi distinti.
+- In caso di specifica incerta o ricambio compatibile assente: registrare il problema, sospendere la sostituzione e non installare una candela di compatibilità incerta.
+- Revisione condizionata solo nel ledger Worker; catalogo originale, PWA e `voice.js` invariati.
+- Stato previsto dopo integrazione: KB `15.23.0`, 22/53 validati con condizioni, 31 pendenti, ultimo P01 candela; `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. CI e dry-run non confermano il deployment Cloudflare.
