@@ -1,6 +1,6 @@
 # REGISTRO DI PROGETTO — APP TAGLIANDO
 
-**Versione del registro:** 1.10 · **Aggiornato:** 2026-11-09  
+**Versione del registro:** 1.11 · **Aggiornato:** 2026-11-09  
 **Responsabile approvazioni tecniche:** titolare del progetto (utente).  
 **Ambito:** MVP PWA per manutenzione preventiva guidata dei rasaerba a motore; estensibile ad altre macchine.  
 **Repository PWA:** `Lupus227/tagliando`.  
@@ -39,21 +39,21 @@
 
 ## C. Stato ufficiale noto al 2026-11-09
 
-**Ultimo deployment Cloudflare verificato:** `bd3a380` sul ramo `dev/fase14-ai`, confermato dall'utente come **Success** con risposta JSON dell'endpoint Access-protetto `/api/knowledge-status`.
+**Ultimo deployment Cloudflare verificato:** `613114b` sul ramo `dev/fase14-ai`, confermato dall'utente come **Success** con risposta JSON dell'endpoint Access-protetto `/api/knowledge-status`.
 
 ```json
 {
   "ok": true,
   "schema": "tagliando.knowledge.v1",
-  "version": "15.19.0",
+  "version": "15.20.0",
   "sourceAppVersion": "0.12.1",
   "procedureCount": 8,
   "stepCount": 53,
-  "pendingSteps": 35,
-  "validatedSteps": 18,
-  "conditionalValidatedSteps": 18,
-  "reviewScope": "pulizia_completa_e_sicurezza_smontaggio_mozzo_ispezione_affilatura_equilibratura_rimontaggio_verifica_condizionati_e_filtro_aria_preparazione_apertura_valutazione_trattamento_carta_e_lavaggio_spugna_condizionati",
-  "latestReviewedStepId": "RASA-OP-03-P04",
+  "pendingSteps": 34,
+  "validatedSteps": 19,
+  "conditionalValidatedSteps": 19,
+  "reviewScope": "pulizia_completa_e_sicurezza_smontaggio_mozzo_ispezione_affilatura_equilibratura_rimontaggio_verifica_condizionati_e_filtro_aria_preparazione_apertura_valutazione_trattamento_carta_lavaggio_spugna_e_oliatura_spugna_condizionati",
+  "latestReviewedStepId": "RASA-OP-03-P05",
   "readyForTechnicalAnswers": false,
   "aiEnabled": false,
   "canGenerate": false,
@@ -61,13 +61,12 @@
 }
 ```
 
-**Interpretazione:** 18/53 passaggi validati **con condizioni** (circa 34,0%), 35 pendenti. **AI, retrieval tecnico e generazione rimangono disabilitati.** La conferma del deployment `bd3a380` e il JSON di `/api/knowledge-status` sono stati comunicati dall'utente il 2026-11-09; il backend Access-protetto non è stato interrogato indipendentemente. [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42619147181), con test di regressione e dry-run Wrangler riusciti. La revisione F15.19-R2 è stata integrata via PR #15 e i test corretti via PR #16 e #17. Il catalogo canonico di origine resta invariato; PWA v0.12.1 e `voice.js` invariati.
+**Interpretazione:** 19/53 passaggi validati **con condizioni** (circa 35,8%), 34 pendenti. **AI, retrieval tecnico e generazione restano disabilitati.** L'utente ha confermato il 2026-11-09 il deployment Cloudflare `613114b` come **Success** e ha fornito il JSON Access-protetto `/api/knowledge-status`, coerente con KB `15.20.0`. Questa conferma è riportata dall'utente, non deriva da interrogazione indipendente di Cloudflare. [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42622646240): regressioni e dry-run Wrangler completati. [PR #20](https://github.com/Lupus227/tagliando/pull/20) integrata in `dev/fase14-ai`.
 
-**Fase 15.19 chiusa:** il testo approvato per il lavaggio della spugna è distribuito e l'endpoint riferisce gli stati attesi.
-
-**Fase 15.20-R3 approvata, integrata e testata, deployment da confermare:** `RASA-OP-03-P05 — Oliatura filtro in spugna`. Approvazione esplicita dell'esperto il 2026-11-09. PR [#20](https://github.com/Lupus227/tagliando/pull/20) unita a `dev/fase14-ai`, commit `613114b`; [CI Success](https://github.com/Lupus227/tagliando/actions/runs/42622646240), test di regressione e dry-run Wrangler superati. **Stato atteso nel codice:** KB `15.20.0`, 19/53 revisioni condizionate, 34 pendenti, ultimo `RASA-OP-03-P05`; `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. **Questo non conferma ancora il deployment Cloudflare**: l'ultimo confermato resta `bd3a380` / KB `15.19.0`.
+**Fase 15.20 chiusa:** `RASA-OP-03-P05 — Oliatura filtro in spugna` approvato come `F15.20-R3`, integrato, testato e confermato su Cloudflare. **Prossima attività:** Fase 15.21, sottoporre `RASA-OP-03-P06 — Pulizia scatola filtro` alla valutazione tecnica. P06 resta `DA_VALIDARE` fino ad approvazione esplicita. Catalogo canonico originale, PWA v0.12.1 e `voice.js` invariati.
 
 **Versioni precedenti confermate:**
+- `15.19.0`: commit `bd3a380`, 18 condizionati, 35 pendenti, ultimo `RASA-OP-03-P04`.
 - `15.18.0`: commit `063dc43`, 17 condizionati, 36 pendenti, ultimo `RASA-OP-03-P03`.
 - `15.17.0`: commit `97a1ee1`, 16 passaggi validati con condizioni, 37 pendenti, ultimo `RASA-OP-03-P02`.
 - `15.16.0`: commit `0360eaf`, 15 condizionati, 38 pendenti, ultimo `RASA-OP-03-P01`.
@@ -77,9 +76,9 @@ Catalogo canonico di origine immutato; PWA v0.12.1 e `voice.js` invariati.
 
 ## D. Registro tecnico dei passaggi approvati nella Fase 15
 
-Le denominazioni qui servono per orientamento. Il **testo completo approvato** è quello distribuito nella KB 15.14.0; i riassunti seguenti NON lo sostituiscono.
+Le denominazioni qui servono per orientamento. Il **testo completo approvato** è tracciato nel registro revisioni del Worker e distribuito tramite l'overlay KB; i riassunti seguenti NON lo sostituiscono.
 
-| ID | Passaggio | Stato nel JSON 15.14.0 | Decisioni principali recuperate |
+| ID | Passaggio | Stato / revisione | Decisioni principali recuperate |
 |---|---|---|---|
 | RASA-OP-01-P01 | Sicurezza generale | Validato con condizioni | Verifiche preliminari di sicurezza e arresti. |
 | RASA-OP-01-P02 | Preparazione / accesso sottoscocca | Validato con condizioni | Orientamento compatibile con il modello; candela verso l'alto come riferimento non universale; inclinazione graduale (orientativamente 45°) e stop per instabilità/perdite. |
@@ -99,7 +98,7 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 | RASA-OP-03-P02 | Valutazione materiale filtrante | **Approvato F15.17-R1, CI e deployment Cloudflare confermati** | Estrarre senza contaminare l'aspirazione. Carta: sostituzione normalmente prevista, mantenibile solo se recente, pulita, integra e conforme alle istruzioni del costruttore. Spugna: riutilizzabile soltanto se morbida, elastica, integra; sostituire se indurita/friabile/lacerata/deformata. Misto: verificare separatamente i due elementi. Se serve ricambio compatibile non disponibile, registrare sospensione e non avviare senza filtrazione montata correttamente. Lavaggio, oliatura e pulizia esclusi da P02. |
 | RASA-OP-03-P03 | Trattamento filtro in carta | **F15.18-R2 approvato; PR #12, CI e deployment Cloudflare confermati** | Carta o elemento carta del misto; saltare se solo spugna. Sostituire con ricambio compatibile oppure conservare elemento recente, integro e pulito. **Non lavare né oliare i filtri in carta**; unico metodo di pulizia eventualmente descritto: soffiaggio delicato con aria compressa, mai getti aggressivi. Pre-filtro in spugna gestito separatamente. Non montare ricambio non compatibile; registrare anomalia e non avviare senza filtro idoneo installato. **Eliminate su esplicita richiesta le eccezioni del costruttore al divieto di lavaggio/oliatura e la frase che suggeriva ulteriori metodi di pulizia.** |
 | RASA-OP-03-P04 | Lavaggio filtro spugna | **F15.19-R2 approvato; PR #15/#16/#17, CI e deployment Cloudflare bd3a380 confermati** | Solo spugna e prefiltro spugna dei filtri misti; salto per sola carta. Lavaggio in acqua tiepida con detergente **specifico per filtri aria**, compressione ripetuta durante l'immersione senza torsione, risciacquo e asciugatura completa; verifica integrità. Gasolio, benzine e idrocarburi come detergente **sconsigliati**; solventi (diluente/acetone/...) **assolutamente vietati**. Elemento carta protetto dall'acqua. Oliatura rinviata a P05. Arresto per spugna danneggiata/lavabilità non determinabile/ricambio compatibile mancante; no avvio senza filtro idoneo correttamente trattato e rimontato. |
-| RASA-OP-03-P05 | Oliatura filtro in spugna | **F15.20-R3 approvato; PR #20, CI e dry-run Wrangler superati; Cloudflare da confermare** | **Filtro in sola spugna:** oliare; **prefiltro in spugna con carta:** non oliare nella procedura standard. Configurazioni specifiche solo con conoscenza pregressa dell'operatore riferita al modello, senza supposizioni. Spugna asciutta dopo lavaggio; olio spray specifico per filtri aria oppure immersione in olio motore nuovo/pulito; comprimere senza torcere per distribuire e rimuovere eccesso. Nessun accumulo/gocciolamento; conservare pulito fino al rimontaggio. Se manca olio idoneo richiesto, registrare anomalia e sospendere; non avviare prima del corretto trattamento/rimontaggio. |
+| RASA-OP-03-P05 | Oliatura filtro in spugna | **F15.20-R3 approvato; PR #20, CI e deployment Cloudflare `613114b` confermati** | **Filtro in sola spugna:** oliare; **prefiltro in spugna con carta:** non oliare nella procedura standard. Configurazioni specifiche solo con conoscenza pregressa dell'operatore riferita al modello, senza supposizioni. Spugna asciutta dopo lavaggio; olio spray specifico per filtri aria oppure immersione in olio motore nuovo/pulito; comprimere senza torcere per distribuire e rimuovere eccesso. Nessun accumulo/gocciolamento; conservare pulito fino al rimontaggio. Se manca olio idoneo richiesto, registrare anomalia e sospendere; non avviare prima del corretto trattamento/rimontaggio. |
 
 **Nota di accuratezza:** i titoli e i punti riassuntivi derivano dallo storico disponibile e da riferimenti alla PWA; se nasce un conflitto con il testo canonico KB, consultare la KB e correggere il registro, non reinterpretare in autonomia il testo approvato.
 
@@ -109,7 +108,7 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 |---|---|---|---|
 | OPEN-01 | Nella PWA v0.12.1, `app.js` la segnalazione **manuale** di anomalia richiama `setStatus('stopped')`, che causa un avanzamento alla successiva operazione; `recordVoiceAnomaly()` non avanza. Verificato mediante lettura del codice GitHub 2026-11-08. | **Non modificare ora la PWA.** Integrare la correzione nella futura revisione della gestione stati/anomalie, evitando lavoro doppio se l'AI sostituisce la logica. | **Bloccante prima di uso operativo/rilascio**; non bloccante per validazione documentale KB. |
 | OPEN-02 | Verifica integrata dell'Operazione 2: **audit statico 20/20 superato in F15.15**; collaudo effettivo di percorsi, navigazione e stati ancora assente. | Testare T1–T8 quando esisterà il controllore di esecuzione della procedura; nessuna modifica alla PWA o alla KB ora. Vedi [relazione F15.15](docs/FASE15_15_VERIFICA_INTEGRATA.md). | **Bloccante prima del rilascio**, non per avviare revisione OP03. |
-| OPEN-03 | **35** passaggi pendenti nella KB 15.19.0 confermata su Cloudflare; **34** pendenti attesi nella 15.20.0 approvata e integrata, ma non ancora verificata su Cloudflare. AI disabilitata. | Continuare revisione per singolo passaggio, con approvazione tecnica, test e prova del deployment. | Prima di autorizzare risposte tecniche AI. |
+| OPEN-03 | **34** passaggi pendenti nella KB 15.20.0, confermata su Cloudflare con JSON Access-protetto. AI disabilitata. | Continuare revisione per singolo passaggio, con approvazione tecnica, test e prova del deployment. | Prima di autorizzare risposte tecniche AI. |
 | OPEN-04 | Testo completo delle revisioni precedenti non integralmente copiato in questo registro. | Fare riferimento alla KB 15.14.0 e all'archivio delle chat per le formulazioni esatte; aggiungere tracciabilità puntuale progressivamente senza inventare contenuti. | Miglioramento della tracciabilità. |
 | OPEN-05 | **Guardia P07→P02:** la coppia pertinente, la fonte e la dinamometrica devono essere dichiarate/verificate prima dello smontaggio benché il prerequisito sia documentato in P07. | In futuro il motore di esecuzione deve applicare la guardia preventiva (fail closed), con test positivo/negativo e verifica del salto sicuro. | **Bloccante prima del rilascio**; requisito già dichiarato nel ledger. |
 
@@ -132,10 +131,12 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 4. **Fase 15.18:** P03 trattamento carta **R2 approvato, integrato, CI Success e deployment Cloudflare 15.18.0 confermato dall'utente**.
 5. **Fase 15.19:** `RASA-OP-03-P04 — Lavaggio spugna` approvato con tre modifiche dall'esperto; integrazione in `dev/fase14-ai` e CI Success per commit `bd3a380`. **Deployment Cloudflare `bd3a380` e JSON di `/api/knowledge-status` confermati il 2026-11-09:** KB `15.19.0`, 18 condizionati, 35 pendenti, AI off. **Fase chiusa.**
 
-6. **Fase 15.20:** `RASA-OP-03-P05` approvato dall'esperto (R3), integrato e testato su `dev/fase14-ai` (commit `613114b`, CI Success). **Prossima azione:** confermare deployment Cloudflare e JSON `/api/knowledge-status` 15.20.0 / 19 con condizioni / 34 pendenti; AI ancora off.
+6. **Fase 15.20:** `RASA-OP-03-P05` approvato dall'esperto (R3), integrato e testato su `dev/fase14-ai` (commit `613114b`, CI Success). **Deployment Cloudflare `613114b` e JSON Access-protetto confermati dall'utente il 2026-11-09:** KB 15.20.0 / 19 con condizioni / 34 pendenti, AI disabilitata. **Fase chiusa.**
 
-7. Trattare `OPEN-01` e `OPEN-05` durante la progettazione del controllo stati e dei prerequisiti dell'AI, e comunque prima dell'utilizzo operativo.
-8. Non attivare `aiEnabled`, `canGenerate` o `readyForTechnicalAnswers` senza validazione e collaudo espliciti.
+7. **Fase 15.21 — prossima azione:** proporre `RASA-OP-03-P06 — Pulizia scatola filtro` per valutazione tecnica dell'esperto, senza integrare contenuti non approvati.
+
+8. Trattare `OPEN-01` e `OPEN-05` durante la progettazione del controllo stati e dei prerequisiti dell'AI, e comunque prima dell'utilizzo operativo.
+9. Non attivare `aiEnabled`, `canGenerate` o `readyForTechnicalAnswers` senza validazione e collaudo espliciti.
 
 ## G. Protocollo di gestione del registro e cambio chat
 
@@ -174,4 +175,5 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 | 2026-11-08 | Aggiornata la scheda di ripresa per il cambio chat, secondo GOV-09/GOV-10. | [Scheda di ripresa F15.18](docs/RIPRESA_CHAT_F15_18.md); prossima attività: **F15.19 / RASA-OP-03-P04**, senza nuova verifica di F15.18. |
 | 2026-11-09 | F15.19-R2: lavaggio filtro spugna approvato con tre modifiche. | Detergente specifico filtri aria; compressione durante immersione; gasolio/benzine/idrocarburi sconsigliati e solventi assolutamente vietati. PR #15, #16 e #17 integrate in `dev/fase14-ai`; commit `bd3a380`; [CI Success](https://github.com/Lupus227/tagliando/actions/runs/42619147181). **Deployment Cloudflare e risposta Access-protetta confermati dall'utente il 2026-11-09.** |
 | 2026-11-09 | F15.19 deployment confermato e fase conclusa. | `bd3a380` Success dichiarato dall'utente; JSON Access: `15.19.0`, 18 revisioni condizionate, 35 pendenti, ultimo `RASA-OP-03-P04`, AI disabilitata. Prossima revisione `RASA-OP-03-P05` ancora da valutare. |
-| 2026-11-09 | F15.20-R3: oliatura spugna approvata e integrata. | L'esperto conferma R3: filtro sola spugna oliato, prefiltro spugna+carta non oliato nella guida standard, configurazioni particolari soltanto con conoscenza pregressa riferita al modello. PR #20 integrata su `dev/fase14-ai`, commit `613114b`, [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42622646240) (regressioni e Wrangler dry-run). KB `15.20.0` attesa, 19 condizionati, 34 pendenti, AI off. **Deployment Cloudflare e JSON Access non ancora verificati.** |
+| 2026-11-09 | F15.20-R3: oliatura spugna approvata e integrata. | L'esperto conferma R3: filtro sola spugna oliato, prefiltro spugna+carta non oliato nella guida standard, configurazioni particolari soltanto con conoscenza pregressa riferita al modello. PR #20 integrata su `dev/fase14-ai`, commit `613114b`, [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42622646240) (regressioni e Wrangler dry-run). KB `15.20.0` attesa, 19 condizionati, 34 pendenti, AI off. **Deployment Cloudflare `613114b` e JSON Access successivamente confermati dall'utente il 2026-11-09.** |
+| 2026-11-09 | F15.20 deployment verificato e fase chiusa. | L'utente conferma `613114b` Success e JSON Access: KB `15.20.0`, 19 revisioni condizionate, 34 pendenti, ultimo `RASA-OP-03-P05`; `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. Prossima proposta F15.21 / `RASA-OP-03-P06` (ancora DA_VALIDARE). |
