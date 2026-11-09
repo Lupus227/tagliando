@@ -443,3 +443,12 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Arresto e registrazione anomalia se scatola danneggiata, guarnizioni compromesse o sospetta contaminazione del condotto di aspirazione; non proseguire con il rimontaggio fino a verifica.
 - Overlay revisionale condizionato separato dal catalogo canonico originale, PWA pubblica e `voice.js` invariati.
 - Stato atteso: KB `15.21.0`, 20/53 condizionati, 33 pendenti; `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. Test e dry-run non attestano il deployment Cloudflare.
+
+### Fase 15.22 — Rimontaggio filtro aria (F15.22-R1)
+- L'esperto approva senza modifiche la proposta R1 del passaggio `RASA-OP-03-P07` il 2026-11-09.
+- Dopo i trattamenti necessari, scatola filtro pulita e asciutta. Montare il filtro nel verso corretto: elemento carta in sede con superficie di tenuta aderente; sola spugna già trattata non deformata; misto carta + prefiltro rispettando la configurazione originaria.
+- Assicurare l'appoggio senza pieghe, schiacciamenti o spostamenti. Riposizionare coperchio su guide/linguette/incastri e chiudere ganci o serrare viti esistenti senza forzare o deformare.
+- Verifica finale di chiusura stabile, assenza di aperture involontarie e assenza di fessure che facciano bypassare l'elemento filtrante all'aria.
+- Se filtro fuori sede, coperchio non chiudibile, fissaggi danneggiati o tenuta non garantita: registrare anomalia e sospendere il completamento. Non avviare senza filtro correttamente installato.
+- Revisione condizionata nell'overlay separato; catalogo canonico, PWA pubblica e `voice.js` invariati. Tutte le funzioni AI restano disabilitate.
+- Stato atteso nel codice: KB `15.22.0`, 21/53 revisioni condizionate e 32 passaggi pendenti; `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. Conferma deployment Cloudflare richiesta separatamente.
