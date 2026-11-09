@@ -1325,14 +1325,14 @@ export function canonicalKnowledgeStatus(){
   const reviewed=REVIEW_LEDGER.length;
   return Object.freeze({
     schema:CANONICAL_KNOWLEDGE.schema,
-    version:'15.23.0',
+    version:'15.24.0',
     sourceAppVersion:CANONICAL_KNOWLEDGE.sourceAppVersion,
     procedureCount:EXPECTED_PROCEDURES,
     stepCount:EXPECTED_STEPS,
     pendingSteps:EXPECTED_STEPS-reviewed,
     validatedSteps:reviewed,
     conditionalValidatedSteps:reviewed,
-    reviewScope:'pulizia_completa_e_sicurezza_smontaggio_mozzo_ispezione_affilatura_equilibratura_rimontaggio_verifica_condizionati_e_filtro_aria_preparazione_apertura_valutazione_trattamento_carta_lavaggio_spugna_oliatura_spugna_pulizia_scatola_filtro_rimontaggio_filtro_e_candela_verifica_ricambio_condizionati',
+    reviewScope:'pulizia_completa_e_sicurezza_smontaggio_mozzo_ispezione_affilatura_equilibratura_rimontaggio_verifica_condizionati_e_filtro_aria_preparazione_apertura_valutazione_trattamento_carta_lavaggio_spugna_oliatura_spugna_pulizia_scatola_filtro_rimontaggio_filtro_e_candela_verifica_ricambio_e_rimozione_condizionati',
     latestReviewedStepId:REVIEW_LEDGER.at(-1)?.stepId||null,
     readyForTechnicalAnswers:false,
     aiEnabled:false,
