@@ -923,7 +923,7 @@ test('15.19 foam-only and mixed-filter washing uses dedicated cleaner, immersion
  assert.match(r.content.instruction,/detergente specifico per filtri aria/);
  assert.match(r.content.instruction,/Durante l'immersione comprimila ripetutamente/);
  assert.match(r.content.instruction,/gasolio, benzine o idrocarburi come detergente è sconsigliato/);
- assert.match(r.content.instruction,/solventi \\(diluente\\/acetone\\/\\.\\.\\.\\) è assolutamente vietato/);
+ assert.ok(r.content.instruction.includes("L'utilizzo di solventi (diluente/acetone/...) è assolutamente vietato"));
  assert.doesNotMatch(r.content.instruction,/detergente liquido delicato/);
  assert.match(r.content.instruction,/L'eventuale oliatura viene gestita nel passaggio successivo/);
  assert.match(r.content.stopCondition,/registra l'anomalia e sospendi il trattamento/);
