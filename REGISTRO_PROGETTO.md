@@ -1,6 +1,6 @@
 # REGISTRO DI PROGETTO — APP TAGLIANDO
 
-**Versione del registro:** 1.16 · **Aggiornato:** 2026-11-09  
+**Versione del registro:** 1.17 · **Aggiornato:** 2026-11-09  
 **Responsabile approvazioni tecniche:** titolare del progetto (utente).  
 **Ambito:** MVP PWA per manutenzione preventiva guidata dei rasaerba a motore; estensibile ad altre macchine.  
 **Repository PWA:** `Lupus227/tagliando`.  
@@ -39,21 +39,21 @@
 
 ## C. Stato ufficiale noto al 2026-11-09
 
-**Ultimo deployment Cloudflare verificato:** `ca738c9` sul ramo `dev/fase14-ai`, confermato dall'utente come **Success** con risposta JSON dell'endpoint Access-protetto `/api/knowledge-status`.
+**Ultimo deployment Cloudflare verificato:** `fa2d486` sul ramo `dev/fase14-ai`, confermato dall'utente come **Success** con risposta JSON dell'endpoint Access-protetto `/api/knowledge-status`.
 
 ```json
 {
   "ok": true,
   "schema": "tagliando.knowledge.v1",
-  "version": "15.22.0",
+  "version": "15.23.0",
   "sourceAppVersion": "0.12.1",
   "procedureCount": 8,
   "stepCount": 53,
-  "pendingSteps": 32,
-  "validatedSteps": 21,
-  "conditionalValidatedSteps": 21,
-  "reviewScope": "pulizia_completa_e_sicurezza_smontaggio_mozzo_ispezione_affilatura_equilibratura_rimontaggio_verifica_condizionati_e_filtro_aria_preparazione_apertura_valutazione_trattamento_carta_lavaggio_spugna_oliatura_spugna_pulizia_scatola_filtro_e_rimontaggio_filtro_condizionati",
-  "latestReviewedStepId": "RASA-OP-03-P07",
+  "pendingSteps": 31,
+  "validatedSteps": 22,
+  "conditionalValidatedSteps": 22,
+  "reviewScope": "pulizia_completa_e_sicurezza_smontaggio_mozzo_ispezione_affilatura_equilibratura_rimontaggio_verifica_condizionati_e_filtro_aria_preparazione_apertura_valutazione_trattamento_carta_lavaggio_spugna_oliatura_spugna_pulizia_scatola_filtro_rimontaggio_filtro_e_candela_verifica_ricambio_condizionati",
+  "latestReviewedStepId": "RASA-OP-04-P01",
   "readyForTechnicalAnswers": false,
   "aiEnabled": false,
   "canGenerate": false,
@@ -61,13 +61,12 @@
 }
 ```
 
-**Interpretazione:** 21/53 passaggi validati **con condizioni** (circa 39,6%), 32 pendenti. **AI, retrieval tecnico e generazione disabilitati.** L'utente ha confermato il 2026-11-09 il deployment Cloudflare `ca738c9` **Success** e comunicato il JSON dell'endpoint Access-protetto `/api/knowledge-status`, coerente con KB `15.22.0`. La verifica Cloudflare è basata sulla risposta dell'utente, non su un'interrogazione diretta indipendente. [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42628921922): test di regressione e compilazione di controllo Wrangler superati. Le PR [#26](https://github.com/Lupus227/tagliando/pull/26) e [#27](https://github.com/Lupus227/tagliando/pull/27) hanno integrato F15.22-R1 e allineato una sola asserzione testuale senza modificare il testo tecnico.
+**Interpretazione:** 22/53 passaggi validati **con condizioni** (circa 41,5%), 31 pendenti. **AI, retrieval tecnico e generazione restano disabilitati.** L'utente ha confermato il 2026-11-09 il deployment Cloudflare `fa2d486` come **Success** e fornito il JSON dell'endpoint Access-protetto `/api/knowledge-status`, coerente con KB `15.23.0`. La conferma proviene dall'utente, non da interrogazione indipendente di Cloudflare. [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42633253455): regressioni e Wrangler dry-run superati dopo [PR #30](https://github.com/Lupus227/tagliando/pull/30) e [PR #31](https://github.com/Lupus227/tagliando/pull/31), con correzione del solo test metadata, contenuto tecnico immutato.
 
-**Fase 15.22 chiusa:** `RASA-OP-03-P07 — Rimontaggio filtro aria` approvato e distribuito. **Operazione 03 (filtro aria) completa: sette passaggi condizionatamente validati.** P06 riguarda la pulizia del vano e dei condotti senza contaminazione; P07 riguarda il posizionamento degli elementi, la chiusura e la tenuta all'aria non filtrata: sono passaggi distinti. La struttura JSON resta identica per contratto; avanzano versione, conteggi, scope e ultimo ID revisionato. **La Fase 15.23-R1 è stata successivamente approvata dall'esperto e integrata**, con deployment Cloudflare ancora da confermare. Catalogo canonico di origine, PWA v0.12.1 e `voice.js` invariati.
-
-**Fase 15.23-R1 approvata, integrata e testata; Cloudflare da confermare:** `RASA-OP-04-P01 — Verifica della candela di ricambio`. L'esperto ha approvato senza modifiche il 2026-11-09. [PR #30](https://github.com/Lupus227/tagliando/pull/30) integrata in `dev/fase14-ai`, commit iniziale `b3ab21c`. Un test di riservatezza è stato corretto per distinguere i metadata `reviewScope` dalle istruzioni tecniche (PR [#31](https://github.com/Lupus227/tagliando/pull/31)), senza modifiche al contenuto tecnico approvato. Commit backend finale **`fa2d486`**; [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42633253455), regressioni e dry-run Wrangler superati. **Stato atteso nel codice:** KB `15.23.0`, 22/53 revisioni condizionate, 31 pendenti, ultimo `RASA-OP-04-P01`, AI disabilitata (`readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`). **Il deployment Cloudflare KB 15.23.0 non è ancora confermato:** ultimo confermato `ca738c9` / KB `15.22.0`.
+**Fase 15.23 chiusa:** `RASA-OP-04-P01 — Verifica della candela di ricambio`, approvata senza modifiche (R1), integrata, testata e confermata su Cloudflare. **Prossima attività:** Fase 15.24 / `RASA-OP-04-P02 — Rimozione candela`, da sottoporre a revisione tecnica; P02 resta `DA_VALIDARE` fino ad approvazione esplicita dell'esperto. Catalogo canonico, PWA v0.12.1 e `voice.js` invariati.
 
 **Versioni precedenti confermate:**
+- `15.22.0`: commit `ca738c9`, 21 con condizioni, 32 pendenti, ultimo `RASA-OP-03-P07`.
 - `15.21.0`: commit `8224ac1`, 20 validati con condizioni, 33 pendenti, ultimo `RASA-OP-03-P06`.
 - `15.20.0`: commit `613114b`, 19 revisioni condizionate, 34 pendenti, ultimo `RASA-OP-03-P05`.
 - `15.19.0`: commit `bd3a380`, 18 condizionati, 35 pendenti, ultimo `RASA-OP-03-P04`.
@@ -105,7 +104,7 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 | RASA-OP-03-P05 | Oliatura filtro in spugna | **F15.20-R3 approvato; PR #20, CI e deployment Cloudflare `613114b` confermati** | **Filtro in sola spugna:** oliare; **prefiltro in spugna con carta:** non oliare nella procedura standard. Configurazioni specifiche solo con conoscenza pregressa dell'operatore riferita al modello, senza supposizioni. Spugna asciutta dopo lavaggio; olio spray specifico per filtri aria oppure immersione in olio motore nuovo/pulito; comprimere senza torcere per distribuire e rimuovere eccesso. Nessun accumulo/gocciolamento; conservare pulito fino al rimontaggio. Se manca olio idoneo richiesto, registrare anomalia e sospendere; non avviare prima del corretto trattamento/rimontaggio. |
 | RASA-OP-03-P06 | Pulizia della scatola filtro aria | **F15.21-R1 approvato; PR #23, CI e deployment Cloudflare `8224ac1` confermati** | Con filtro rimosso, pulire vano e coperchio con panno asciutto o leggermente inumidito. Per residui oleosi, detergente compatibile con plastica/guarnizioni ed eliminazione residui; pulire superfici di tenuta del filtro. Evitare ingresso polvere/liquidi/oggetti nel condotto carburatore, non dirigere getti d'aria/acqua all'ingresso e non introdurre utensili/panni nel condotto. Verificare pulizia e assenza di umidità. Rimontaggio gestito in P07 (successivamente approvato come F15.22-R1). Se scatola o guarnizioni danneggiate o sospetta contaminazione aspirazione, registrare anomalia e sospendere rimontaggio fino a verifica. |
 | RASA-OP-03-P07 | Rimontaggio filtro aria | **F15.22-R1 approvato; PR #26/#27, CI e deployment Cloudflare `ca738c9` confermati** | Dopo i trattamenti previsti, scatola asciutta e pulita. Inserire filtro carta, spugna precedentemente trattata o sistema misto nel giusto orientamento rispettando guide e superfici di tenuta, senza pieghe/deformazioni. Chiudere coperchio su guide, linguette e ganci/viti senza forzare; verificare stabilità e assenza di fessure che permettono bypass d'aria non filtrata. Arresto e registrazione anomalia per filtro fuori sede, coperchio non chiudibile, fissaggi danneggiati o tenuta incerta; nessun avviamento senza filtrazione correttamente installata. |
-| RASA-OP-04-P01 | Verifica della candela di ricambio | **F15.23-R1 approvato; PR #30/#31, CI e Wrangler dry-run Success; Cloudflare da confermare** | Prima dello smontaggio identificare marca/modello motore, codice candela prescritto o equivalenza verificata su manuale/catalogo ricambi affidabile. Equivalenza: diametro/passo/lunghezza filettatura, sede rondella o conica, grado termico, elettrodi/terminale e resistenza antidisturbo. Somiglianza esteriore e codice della candela già montata non sono prova sufficiente. Ricambio nuovo, integro e compatibile; P02 rimozione, P03 elettrodi e P05 serraggio separati. Arresto, registrazione e non montaggio con identificazione incerta o ricambio non disponibile. |
+| RASA-OP-04-P01 | Verifica della candela di ricambio | **F15.23-R1 approvato; PR #30/#31, CI e deployment Cloudflare `fa2d486` confermati** | Prima dello smontaggio identificare marca/modello motore, codice candela prescritto o equivalenza verificata su manuale/catalogo ricambi affidabile. Equivalenza: diametro/passo/lunghezza filettatura, sede rondella o conica, grado termico, elettrodi/terminale e resistenza antidisturbo. Somiglianza esteriore e codice della candela già montata non sono prova sufficiente. Ricambio nuovo, integro e compatibile; P02 rimozione, P03 elettrodi e P05 serraggio separati. Arresto, registrazione e non montaggio con identificazione incerta o ricambio non disponibile. |
 
 **Nota di accuratezza:** i titoli e i punti riassuntivi derivano dallo storico disponibile e da riferimenti alla PWA; se nasce un conflitto con il testo canonico KB, consultare la KB e correggere il registro, non reinterpretare in autonomia il testo approvato.
 
@@ -115,7 +114,7 @@ Le denominazioni qui servono per orientamento. Il **testo completo approvato** �
 |---|---|---|---|
 | OPEN-01 | Nella PWA v0.12.1, `app.js` la segnalazione **manuale** di anomalia richiama `setStatus('stopped')`, che causa un avanzamento alla successiva operazione; `recordVoiceAnomaly()` non avanza. Verificato mediante lettura del codice GitHub 2026-11-08. | **Non modificare ora la PWA.** Integrare la correzione nella futura revisione della gestione stati/anomalie, evitando lavoro doppio se l'AI sostituisce la logica. | **Bloccante prima di uso operativo/rilascio**; non bloccante per validazione documentale KB. |
 | OPEN-02 | Verifica integrata dell'Operazione 2: **audit statico 20/20 superato in F15.15**; collaudo effettivo di percorsi, navigazione e stati ancora assente. | Testare T1–T8 quando esisterà il controllore di esecuzione della procedura; nessuna modifica alla PWA o alla KB ora. Vedi [relazione F15.15](docs/FASE15_15_VERIFICA_INTEGRATA.md). | **Bloccante prima del rilascio**, non per avviare revisione OP03. |
-| OPEN-03 | **32** passaggi pendenti nella KB 15.22.0 confermata su Cloudflare; **31** pendenti attesi nella KB 15.23.0 integrata e testata, ma non ancora confermata su Cloudflare. AI disabilitata. | Continuare revisione per singolo passaggio, con approvazione tecnica, test e prova del deployment. | Prima di autorizzare risposte tecniche AI. |
+| OPEN-03 | **31** passaggi pendenti nella KB 15.23.0 confermata su Cloudflare con JSON Access-protetto. AI disabilitata. | Continuare revisione per singolo passaggio, con approvazione tecnica, test e prova del deployment. | Prima di autorizzare risposte tecniche AI. |
 | OPEN-04 | Testo completo delle revisioni precedenti non integralmente copiato in questo registro. | Fare riferimento alla KB 15.14.0 e all'archivio delle chat per le formulazioni esatte; aggiungere tracciabilità puntuale progressivamente senza inventare contenuti. | Miglioramento della tracciabilità. |
 | OPEN-05 | **Guardia P07→P02:** la coppia pertinente, la fonte e la dinamometrica devono essere dichiarate/verificate prima dello smontaggio benché il prerequisito sia documentato in P07. | In futuro il motore di esecuzione deve applicare la guardia preventiva (fail closed), con test positivo/negativo e verifica del salto sicuro. | **Bloccante prima del rilascio**; requisito già dichiarato nel ledger. |
 
@@ -144,10 +143,12 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 
 8. **Fase 15.22:** `RASA-OP-03-P07` approvato senza modifiche (R1), integrato e testato su `dev/fase14-ai` (commit finale `ca738c9`, CI Success). **Deployment Cloudflare `ca738c9` e JSON Access confermati dall'utente il 2026-11-09:** KB 15.22.0, 21 validati con condizioni, 32 pendenti, ultimo `RASA-OP-03-P07`, AI disabilitata. **Fase chiusa.**
 
-9. **Fase 15.23:** `RASA-OP-04-P01 — Verifica candela di ricambio` approvata senza modifiche (R1), integrata e testata nel backend su `dev/fase14-ai` (commit finale `fa2d486`, CI Success). **Prossima azione:** confermare deployment Cloudflare e JSON `/api/knowledge-status` KB `15.23.0`, 22 validati con condizioni, 31 pendenti, ultimo `RASA-OP-04-P01`, AI off.
+9. **Fase 15.23:** `RASA-OP-04-P01 — Verifica candela di ricambio` approvata senza modifiche (R1), integrata e testata nel backend su `dev/fase14-ai` (commit finale `fa2d486`, CI Success). **Deployment Cloudflare `fa2d486` e JSON Access-protetto confermati dall'utente il 2026-11-09:** KB `15.23.0`, 22 validati con condizioni, 31 pendenti, ultimo `RASA-OP-04-P01`, AI disabilitata. **Fase chiusa.**
 
-10. Trattare `OPEN-01` e `OPEN-05` durante la progettazione del controllo stati e dei prerequisiti dell'AI, e comunque prima dell'utilizzo operativo.
-11. Non attivare `aiEnabled`, `canGenerate` o `readyForTechnicalAnswers` senza validazione e collaudo espliciti.
+10. **Fase 15.24 — prossima azione:** proporre `RASA-OP-04-P02 — Rimozione candela` per validazione tecnica, senza integrare prima dell'approvazione.
+
+11. Trattare `OPEN-01` e `OPEN-05` durante la progettazione del controllo stati e dei prerequisiti dell'AI, e comunque prima dell'utilizzo operativo.
+12. Non attivare `aiEnabled`, `canGenerate` o `readyForTechnicalAnswers` senza validazione e collaudo espliciti.
 
 ## G. Protocollo di gestione del registro e cambio chat
 
@@ -192,4 +193,5 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 | 2026-11-09 | F15.21 — deployment Cloudflare confermato e fase chiusa. | L'utente riporta `8224ac1` Success e JSON `/api/knowledge-status`: KB `15.21.0`, 20 revisioni condizionate, 33 pendenti, ultimo `RASA-OP-03-P06`, AI disabilitata. Prossimo passaggio `RASA-OP-03-P07` ancora da validare. |
 | 2026-11-09 | F15.22-R1: rimontaggio filtro aria approvato, integrato e testato. | L'esperto approva R1 senza modifiche. [PR #26](https://github.com/Lupus227/tagliando/pull/26) integrata, poi correzione esclusiva del test tramite [PR #27](https://github.com/Lupus227/tagliando/pull/27) senza toccare contenuto tecnico. Commit finale `ca738c9`; [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42628921922) (regressioni e Wrangler dry-run). KB attesa `15.22.0`, 21 condizionati, 32 pendenti, AI off. **Deployment Cloudflare `ca738c9` e JSON Access successivamente confermati dall'utente il 2026-11-09.** |
 | 2026-11-09 | F15.22 — deployment 15.22.0 confermato e operazione filtro aria completa. | L'utente conferma `ca738c9` Success, KB `15.22.0`, 21 validati con condizioni, 32 pendenti, ultimo `RASA-OP-03-P07`, AI off. P06 pulizia scatola e P07 rimontaggio sono fasi tecnicamente distinte benché lo schema JSON sia uguale. Prossima proposta F15.23 / `RASA-OP-04-P01`, ancora `DA_VALIDARE`. |
-| 2026-11-09 | F15.23-R1: verifica ricambio candela approvata, integrata e testata. | Approvata senza modifiche. PR [#30](https://github.com/Lupus227/tagliando/pull/30) backend + [#31](https://github.com/Lupus227/tagliando/pull/31) correzione esclusiva del test sull'esposizione di `reviewScope`. Commit definitivo `fa2d486`; [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42633253455) (regressioni e Wrangler dry-run). KB 15.23.0 attesa, 22 condizionati, 31 pendenti, AI off. **Deployment Cloudflare e JSON Access non ancora verificati.** |
+| 2026-11-09 | F15.23-R1: verifica ricambio candela approvata, integrata e testata. | Approvata senza modifiche. PR [#30](https://github.com/Lupus227/tagliando/pull/30) backend + [#31](https://github.com/Lupus227/tagliando/pull/31) correzione esclusiva del test sull'esposizione di `reviewScope`. Commit definitivo `fa2d486`; [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42633253455) (regressioni e Wrangler dry-run). KB 15.23.0 attesa, 22 condizionati, 31 pendenti, AI off. **Deployment Cloudflare `fa2d486` e JSON Access successivamente confermati dall'utente il 2026-11-09.** |
+| 2026-11-09 | F15.23 deployment 15.23.0 confermato e fase chiusa. | L'utente conferma `fa2d486` Success e JSON Access: KB 15.23.0, 22 revisioni condizionate, 31 pendenti, ultimo `RASA-OP-04-P01`; `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. Successivo P02 candela ancora da validare. |
