@@ -149,8 +149,15 @@ test('15.1 technical approval is never auto-exposed to client through knowledge 
   assert.equal(s.validatedSteps,22);
   assert.equal(s.readyForTechnicalAnswers,false);
   assert.equal(s.canGenerate,false);
+  // reviewScope e latestReviewedStepId sono metadata pubblici: possono nominare il tema
+  // della revisione (per esempio "candela") senza divulgare istruzioni operative.
+  const allowedStatusFields=['ok','schema','version','sourceAppVersion','procedureCount',
+    'stepCount','pendingSteps','validatedSteps','conditionalValidatedSteps','reviewScope',
+    'latestReviewedStepId','readyForTechnicalAnswers','aiEnabled','canGenerate','sessionChanged'];
+  assert.deepEqual(Object.keys(s).sort(),allowedStatusFields.sort());
   const payload=JSON.stringify(s);
-  assert.doesNotMatch(payload,/pipetta|candela|sottoscocca|contenitore|guanti/);
+  assert.doesNotMatch(payload,/"instruction"|"stopCondition"|"warning"|"content"|"procedures"|"steps"/);
+  assert.ok(Object.values(s).every(v=>v===null || ['boolean','string','number'].includes(typeof v)));
 });
 
 test('15.2 approved conditional inclination is recorded verbatim and no AI use is allowed',async()=>{
