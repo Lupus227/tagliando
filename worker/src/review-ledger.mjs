@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.23 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.24 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05/P06/P07 e RASA-OP-04-P01, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05/P06/P07 e RASA-OP-04-P01/P02, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -1068,6 +1068,59 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-04-P02",
+    "revision": "F15.24-R2",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "rimozione_candela_motore_freddo_pulizia_sede_chiave_candele_o_bussola_profonda_protezione_filetti",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_DOPO_REVISIONE_R2",
+      "approvedOn": "2026-11-09",
+      "evidence": "utente_conferma_f15_24_r2_bussola_esagonale_profonda_alternativa_a_chiave_candele_restante_testo_r1_approvato"
+    },
+    "content": {
+      "title": "Rimozione della candela",
+      "instruction": "Preparazione alla rimozione\n\nCon il motore spento e freddo, individua la candela e scollega la pipetta afferrandola dal corpo, senza tirare il cavo.\n\nPrima di svitare la candela, rimuovi polvere, residui d'erba e altre impurità presenti intorno alla sua sede, utilizzando un pennello o, se disponibile, aria compressa.\n\nQuesta pulizia serve a evitare che lo sporco cada nel cilindro durante la rimozione.\n\nSvitamento della candela\n\nUtilizza una chiave per candele oppure una bussola esagonale profonda (a collo lungo), della misura corretta.\n\nAssicurati che l'utensile si inserisca completamente sull'esagono della candela, senza esercitare pressione sull'isolatore ceramico.\n\nSvita la candela in senso antiorario.\n\nQuando la candela è sufficientemente allentata, termina lo svitamento a mano, se accessibile.\n\nEstrai la candela facendo attenzione a non urtare gli elettrodi.\n\nDopo la rimozione\n\nConserva la candela rimossa per i controlli successivi.\n\nMantieni il foro della candela protetto dall'ingresso di sporco e corpi estranei fino al rimontaggio.",
+      "stopCondition": "Se la candela oppone una resistenza anomala allo svitamento, la chiave non riesce a fare presa correttamente oppure riscontri danni che possono compromettere la filettatura della testata, non forzare.\n\nRegistra l'anomalia e sospendi la rimozione fino alla verifica del problema."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "requiresEngineStoppedAndCold": true,
+      "gripSparkPlugBootNotWire": true,
+      "cleanBeforeRemoval": true,
+      "allowedCleaningTools": [
+        "pennello",
+        "aria_compressa_se_disponibile"
+      ],
+      "preventDebrisFallingIntoCylinder": true,
+      "allowSparkPlugWrench": true,
+      "allowCorrectSizeDeepHexSocket": true,
+      "toolMustFullyEngageHex": true,
+      "avoidPressureOnCeramicInsulator": true,
+      "unscrewCounterclockwise": true,
+      "finishUnscrewingByHandIfAccessible": true,
+      "avoidElectrodeImpacts": true,
+      "keepRemovedPlugForLaterInspection": true,
+      "protectPlugHoleFromForeignMaterial": true,
+      "inspectionHandledByStepId": "RASA-OP-04-P03",
+      "stopOnAbnormalUnscrewingResistance": true,
+      "stopOnIncorrectToolGrip": true,
+      "stopOnPotentialCylinderHeadThreadDamage": true,
+      "neverForceWhenAbnormal": true,
+      "recordAnomalyAndSuspendRemoval": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "L'esperto conferma la proposta R2: ammessa bussola esagonale profonda a collo lungo come alternativa alla chiave per candele purché della misura corretta e senza pressione sull'isolatore ceramico. Tutte le altre istruzioni R1 rimangono approvate e invariate.",
+        "approvedOn": "2026-11-09"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -1085,7 +1138,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==22)
+  if(!Array.isArray(candidate) || candidate.length!==23)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -1101,7 +1154,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (['RASA-OP-03-P04','RASA-OP-03-P05','RASA-OP-03-P06','RASA-OP-03-P07','RASA-OP-04-P01'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-09')) &&
+       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (['RASA-OP-03-P04','RASA-OP-03-P05','RASA-OP-03-P06','RASA-OP-03-P07','RASA-OP-04-P01','RASA-OP-04-P02'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-09')) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -1727,7 +1780,51 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes('registra il problema e sospendi la sostituzione') &&
        entry.content.stopCondition.includes('Non montare una candela di compatibilità incerta') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04 || approvedOP03P05 || approvedOP03P06 || approvedOP03P07 || approvedOP04P01))
+
+    const approvedOP04P02=entry.stepId==='RASA-OP-04-P02' &&
+       entry.revision==='F15.24-R2' &&
+       entry.scope==='rimozione_candela_motore_freddo_pulizia_sede_chiave_candele_o_bussola_profonda_protezione_filetti' &&
+       entry.approval?.decision==='APPROVATO_DOPO_REVISIONE_R2' &&
+       entry.approval?.evidence==='utente_conferma_f15_24_r2_bussola_esagonale_profonda_alternativa_a_chiave_candele_restante_testo_r1_approvato' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.requiresEngineStoppedAndCold===true &&
+       entry.applicability?.gripSparkPlugBootNotWire===true &&
+       entry.applicability?.cleanBeforeRemoval===true &&
+       JSON.stringify(entry.applicability?.allowedCleaningTools)==='["pennello","aria_compressa_se_disponibile"]' &&
+       entry.applicability?.preventDebrisFallingIntoCylinder===true &&
+       entry.applicability?.allowSparkPlugWrench===true &&
+       entry.applicability?.allowCorrectSizeDeepHexSocket===true &&
+       entry.applicability?.toolMustFullyEngageHex===true &&
+       entry.applicability?.avoidPressureOnCeramicInsulator===true &&
+       entry.applicability?.unscrewCounterclockwise===true &&
+       entry.applicability?.finishUnscrewingByHandIfAccessible===true &&
+       entry.applicability?.avoidElectrodeImpacts===true &&
+       entry.applicability?.keepRemovedPlugForLaterInspection===true &&
+       entry.applicability?.protectPlugHoleFromForeignMaterial===true &&
+       entry.applicability?.inspectionHandledByStepId==='RASA-OP-04-P03' &&
+       entry.applicability?.stopOnAbnormalUnscrewingResistance===true &&
+       entry.applicability?.stopOnIncorrectToolGrip===true &&
+       entry.applicability?.stopOnPotentialCylinderHeadThreadDamage===true &&
+       entry.applicability?.neverForceWhenAbnormal===true &&
+       entry.applicability?.recordAnomalyAndSuspendRemoval===true &&
+       entry.content.title==='Rimozione della candela' &&
+       entry.content.instruction.includes('Con il motore spento e freddo') &&
+       entry.content.instruction.includes('scollega la pipetta afferrandola dal corpo, senza tirare il cavo') &&
+       entry.content.instruction.includes("utilizzando un pennello o, se disponibile, aria compressa") &&
+       entry.content.instruction.includes('lo sporco cada nel cilindro durante la rimozione') &&
+       entry.content.instruction.includes('Utilizza una chiave per candele oppure una bussola esagonale profonda (a collo lungo), della misura corretta') &&
+       entry.content.instruction.includes("si inserisca completamente sull'esagono della candela, senza esercitare pressione sull'isolatore ceramico") &&
+       entry.content.instruction.includes('Svita la candela in senso antiorario') &&
+       entry.content.instruction.includes('termina lo svitamento a mano, se accessibile') &&
+       entry.content.instruction.includes('non urtare gli elettrodi') &&
+       entry.content.instruction.includes('Conserva la candela rimossa per i controlli successivi') &&
+       entry.content.instruction.includes("foro della candela protetto dall'ingresso di sporco e corpi estranei") &&
+       entry.content.stopCondition.includes('resistenza anomala allo svitamento') &&
+       entry.content.stopCondition.includes('la chiave non riesce a fare presa correttamente') &&
+       entry.content.stopCondition.includes('filettatura della testata, non forzare') &&
+       entry.content.stopCondition.includes("Registra l'anomalia e sospendi la rimozione") &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04 || approvedOP03P05 || approvedOP03P06 || approvedOP03P07 || approvedOP04P01 || approvedOP04P02))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
