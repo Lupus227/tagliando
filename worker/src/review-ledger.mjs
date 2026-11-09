@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.25 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.25.1 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05/P06/P07 e RASA-OP-04-P01/P02/P03, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05/P06/P07 e RASA-OP-04-P01/P02/P03, con validazione condizionata. P01 è stato riapprovato come F15.25-G1-R1 (revisione correttiva, non nuovo step).
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -1022,25 +1022,48 @@ const RAW_REVISIONS = [
   },
   {
     "stepId": "RASA-OP-04-P01",
-    "revision": "F15.23-R1",
+    "revision": "F15.25-G1-R1",
     "status": "VALIDATO_CONDIZIONATO",
-    "scope": "candela_ricambio_identificazione_codice_equivalenza_verificata_caratteristiche_modello_specifiche",
+    "scope": "candela_domanda_iniziale_seminuova_riutilizzo_condizionato_e_ricambio_verificato",
     "approval": {
       "reviewerRole": "esperto_di_dominio",
-      "decision": "APPROVATO_SENZA_MODIFICHE",
+      "decision": "APPROVATO_REVISIONE_P01_R1",
       "approvedOn": "2026-11-09",
-      "evidence": "utente_approva_f15_23_r1_verifica_candela_di_ricambio_senza_modifiche"
+      "evidence": "utente_approva_domanda_iniziale_candela_seminuova_e_percorsi_si_no_non_so_senza_modifiche"
     },
     "content": {
-      "title": "Verifica della candela di ricambio",
-      "instruction": "Identificazione della candela corretta\n\nPrima di smontare la candela esistente, verifica di avere a disposizione il ricambio adatto al motore.\n\nIdentifica la marca e il modello del motore, quindi individua il codice della candela previsto dal costruttore.\n\nPuoi utilizzare il manuale del motore oppure un catalogo ricambi affidabile.\n\nVerifica della compatibilità\n\nLa candela nuova deve avere il codice originale prescritto oppure un codice equivalente di cui sia stata verificata la compatibilità.\n\nPer valutare un'eventuale equivalenza, considera:\n\n- Diametro, passo e lunghezza della filettatura.\n- Tipo di sede di tenuta, con rondella oppure conica.\n- Grado termico della candela.\n- Configurazione degli elettrodi e caratteristiche del terminale superiore.\n- Eventuale presenza di resistenza antidisturbo.\n\nNon basarti soltanto sulla somiglianza esteriore delle due candele.\n\nUtilizzo della candela esistente come riferimento\n\nSe riesci a leggere il codice della candela attualmente installata, puoi utilizzarlo per individuare il ricambio.\n\nTuttavia, verifica che tale codice sia effettivamente adatto al motore: una candela montata in precedenza potrebbe essere di tipo errato.\n\nVerifica finale\n\nPrima di proseguire, assicurati di avere una candela nuova corretta e integra, con caratteristiche compatibili con quelle richieste dal motore.\n\nLa rimozione della candela esistente viene effettuata nel passaggio successivo, RASA-OP-04-P02.",
-      "stopCondition": "Se non riesci a identificare con sufficiente certezza la candela corretta oppure non disponi di un ricambio compatibile, registra il problema e sospendi la sostituzione.\n\nNon montare una candela di compatibilità incerta."
+      "title": "Valutazione della candela e verifica del ricambio",
+      "instruction": "Domanda iniziale dell'operazione candela\n\nLa candela è stata sostituita nel corso dell'anno oppure ha poche ore di funzionamento?\n\nRisposte disponibili: «Sì, è seminuova», «No, è da sostituire», «Non lo so».\n\nSe rispondi «Sì, è seminuova»: segui P02 per rimuovere la candela e P03 per controllarla. Se la candela è integra e idonea, può essere riutilizzata senza acquistarne una nuova. Se presenta anomalie significative, occorre una candela nuova compatibile prima del rimontaggio.\n\nSe rispondi «No, è da sostituire» oppure «Non lo so»: segui il percorso di sostituzione standard. Prima dello smontaggio, procura una candela nuova compatibile con il motore.\n\nVerifica della compatibilità del ricambio, quando occorre una candela nuova\n\nIdentifica la marca e il modello del motore, quindi individua il codice della candela previsto dal costruttore. Puoi utilizzare il manuale del motore oppure un catalogo ricambi affidabile.\n\nLa candela nuova deve avere il codice originale prescritto oppure un codice equivalente di cui sia stata verificata la compatibilità.\n\nPer valutare un'eventuale equivalenza, considera:\n- Diametro, passo e lunghezza della filettatura.\n- Tipo di sede di tenuta, con rondella oppure conica.\n- Grado termico della candela.\n- Configurazione degli elettrodi e caratteristiche del terminale superiore.\n- Eventuale presenza di resistenza antidisturbo.\n\nNon basarti soltanto sulla somiglianza esteriore delle due candele.\n\nSe riesci a leggere il codice della candela attualmente installata, puoi utilizzarlo per individuare il ricambio. Tuttavia, verifica che tale codice sia effettivamente adatto al motore: una candela montata in precedenza potrebbe essere di tipo errato.\n\nPrima del montaggio, assicurati che l'eventuale candela nuova sia corretta, integra e compatibile.\n\nIl successivo P02 riguarda la rimozione della candela; P03 ne determina l'idoneità al possibile riutilizzo.",
+      "stopCondition": "Nel percorso «No» o «Non lo so», se non disponi di una candela nuova di compatibilità verificata, registra il problema e sospendi la sostituzione prima dello smontaggio.\n\nNel percorso «Sì», se dopo P03 emergono anomalie significative nella candela rimossa, non riutilizzarla. Se manca una candela nuova compatibile, registra il problema e sospendi il rimontaggio.\n\nNon montare una candela danneggiata o di compatibilità incerta."
     },
     "applicability": {
       "machineFamily": "rasaerba_a_benzina",
       "audience": "utilizzatore_tagliando_gratuito",
-      "beforeOldSparkPlugRemoval": true,
-      "motorMakeAndModelMustBeIdentified": true,
+      "requiresInitialQuestionBeforeP01AndP02": true,
+      "initialQuestion": "La candela è stata sostituita nel corso dell'anno oppure ha poche ore di funzionamento?",
+      "initialAnswerOptions": [
+        "si",
+        "no",
+        "non_so"
+      ],
+      "answerLabels": [
+        "Sì, è seminuova",
+        "No, è da sostituire",
+        "Non lo so"
+      ],
+      "askOnlyOncePerOperation": true,
+      "preserveAnswerThroughSession": true,
+      "branchYesInspectThenReuseOnlyIfSuitable": true,
+      "branchYesFollowSteps": [
+        "RASA-OP-04-P02",
+        "RASA-OP-04-P03"
+      ],
+      "branchYesDoesNotRequireNewPlugBeforeRemoval": true,
+      "branchYesStopIfAnomalyAndNoVerifiedReplacement": true,
+      "branchNoReplacementBeforeRemoval": true,
+      "branchUnknownReplacementBeforeRemoval": true,
+      "branchNoOrUnknownRequiresVerifiedNewPlug": true,
+      "motorMakeAndModelMustBeIdentifiedWhenReplacement": true,
       "useManufacturerManualOrReliablePartsCatalog": true,
       "originalPartCodeOrVerifiedEquivalentRequired": true,
       "threadDiameterPitchAndReachChecked": true,
@@ -1051,23 +1074,42 @@ const RAW_REVISIONS = [
       "visualSimilarityNotSufficient": true,
       "existingPlugCodeReferenceOnlyNotProof": true,
       "replacementMustBeNewUndamagedAndCompatible": true,
+      "noGapMeasurementOrAdjustmentForPrivateUser": true,
       "oldPlugRemovalHandledByStepId": "RASA-OP-04-P02",
-      "electrodeGapDeferredToStepId": "RASA-OP-04-P03",
+      "reuseSuitabilityDeterminedByStepId": "RASA-OP-04-P03",
       "installationTorqueDeferredToStepId": "RASA-OP-04-P05",
-      "stopIfSpecificationUncertain": true,
-      "stopIfCompatibleReplacementUnavailable": true,
       "recordAnomalyOnStop": true,
       "doNotInstallUnverifiedPlug": true,
+      "runtimeQuestionImplemented": false,
+      "sessionPersistenceImplemented": false,
+      "runtimeBranchTested": false,
+      "issueToCloseAfterRuntimeTests": 37,
       "universalAuthorization": false
     },
     "evidence": [
       {
         "kind": "expert_review",
-        "description": "L'esperto approva senza modifiche la F15.23-R1 per identificazione preventiva del ricambio candela da codice prescritto o equivalenza verificata, controllo di filettatura/sede/grado termico/elettrodi/terminale/resistenza, stop per incertezza.",
+        "description": "Approvata la nuova logica P01: una sola domanda iniziale sull'età/ore della candela con tre opzioni Sì/No/Non so. Sì -> P02 e P03, riutilizzo solo se integra/idonea; se anomala stop fino al ricambio verificato. No/Non so -> disponibilità di nuova candela verificata prima dello smontaggio. Restano i controlli di compatibilità e il divieto di procedere con parti incerte. La PWA e i test runtime sono ancora da realizzare.",
         "approvedOn": "2026-11-09"
       }
     ],
-    "aiUseAllowed": false
+    "aiUseAllowed": false,
+    "previousApprovedRevision": {
+      "revision": "F15.23-R1",
+      "approval": {
+        "reviewerRole": "esperto_di_dominio",
+        "decision": "APPROVATO_SENZA_MODIFICHE",
+        "approvedOn": "2026-11-09",
+        "evidence": "utente_approva_f15_23_r1_verifica_candela_di_ricambio_senza_modifiche"
+      },
+      "content": {
+        "title": "Verifica della candela di ricambio",
+        "instruction": "Identificazione della candela corretta\n\nPrima di smontare la candela esistente, verifica di avere a disposizione il ricambio adatto al motore.\n\nIdentifica la marca e il modello del motore, quindi individua il codice della candela previsto dal costruttore.\n\nPuoi utilizzare il manuale del motore oppure un catalogo ricambi affidabile.\n\nVerifica della compatibilità\n\nLa candela nuova deve avere il codice originale prescritto oppure un codice equivalente di cui sia stata verificata la compatibilità.\n\nPer valutare un'eventuale equivalenza, considera:\n\n- Diametro, passo e lunghezza della filettatura.\n- Tipo di sede di tenuta, con rondella oppure conica.\n- Grado termico della candela.\n- Configurazione degli elettrodi e caratteristiche del terminale superiore.\n- Eventuale presenza di resistenza antidisturbo.\n\nNon basarti soltanto sulla somiglianza esteriore delle due candele.\n\nUtilizzo della candela esistente come riferimento\n\nSe riesci a leggere il codice della candela attualmente installata, puoi utilizzarlo per individuare il ricambio.\n\nTuttavia, verifica che tale codice sia effettivamente adatto al motore: una candela montata in precedenza potrebbe essere di tipo errato.\n\nVerifica finale\n\nPrima di proseguire, assicurati di avere una candela nuova corretta e integra, con caratteristiche compatibili con quelle richieste dal motore.\n\nLa rimozione della candela esistente viene effettuata nel passaggio successivo, RASA-OP-04-P02.",
+        "stopCondition": "Se non riesci a identificare con sufficiente certezza la candela corretta oppure non disponi di un ricambio compatibile, registra il problema e sospendi la sostituzione.\n\nNon montare una candela di compatibilità incerta."
+      },
+      "scope": "candela_ricambio_identificazione_codice_equivalenza_verificata_caratteristiche_modello_specifiche",
+      "note": "Tracciabilità della revisione originale P01: superata dalla proposta sulla domanda iniziale approvata dall'esperto il 2026-11-09."
+    }
   },
   {
     "stepId": "RASA-OP-04-P02",
@@ -1793,13 +1835,25 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
 
     const approvedOP04P01=entry.stepId==='RASA-OP-04-P01' &&
-       entry.revision==='F15.23-R1' &&
-       entry.scope==='candela_ricambio_identificazione_codice_equivalenza_verificata_caratteristiche_modello_specifiche' &&
-       entry.approval?.decision==='APPROVATO_SENZA_MODIFICHE' &&
-       entry.approval?.evidence==='utente_approva_f15_23_r1_verifica_candela_di_ricambio_senza_modifiche' &&
+       entry.revision==='F15.25-G1-R1' &&
+       entry.scope==='candela_domanda_iniziale_seminuova_riutilizzo_condizionato_e_ricambio_verificato' &&
+       entry.approval?.decision==='APPROVATO_REVISIONE_P01_R1' &&
+       entry.approval?.evidence==='utente_approva_domanda_iniziale_candela_seminuova_e_percorsi_si_no_non_so_senza_modifiche' &&
        entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
-       entry.applicability?.beforeOldSparkPlugRemoval===true &&
-       entry.applicability?.motorMakeAndModelMustBeIdentified===true &&
+       entry.applicability?.requiresInitialQuestionBeforeP01AndP02===true &&
+       entry.applicability?.initialQuestion==="La candela è stata sostituita nel corso dell'anno oppure ha poche ore di funzionamento?" &&
+       JSON.stringify(entry.applicability?.initialAnswerOptions)==='["si","no","non_so"]' &&
+       JSON.stringify(entry.applicability?.answerLabels)==='["Sì, è seminuova","No, è da sostituire","Non lo so"]' &&
+       entry.applicability?.askOnlyOncePerOperation===true &&
+       entry.applicability?.preserveAnswerThroughSession===true &&
+       entry.applicability?.branchYesInspectThenReuseOnlyIfSuitable===true &&
+       JSON.stringify(entry.applicability?.branchYesFollowSteps)==='["RASA-OP-04-P02","RASA-OP-04-P03"]' &&
+       entry.applicability?.branchYesDoesNotRequireNewPlugBeforeRemoval===true &&
+       entry.applicability?.branchYesStopIfAnomalyAndNoVerifiedReplacement===true &&
+       entry.applicability?.branchNoReplacementBeforeRemoval===true &&
+       entry.applicability?.branchUnknownReplacementBeforeRemoval===true &&
+       entry.applicability?.branchNoOrUnknownRequiresVerifiedNewPlug===true &&
+       entry.applicability?.motorMakeAndModelMustBeIdentifiedWhenReplacement===true &&
        entry.applicability?.useManufacturerManualOrReliablePartsCatalog===true &&
        entry.applicability?.originalPartCodeOrVerifiedEquivalentRequired===true &&
        entry.applicability?.threadDiameterPitchAndReachChecked===true &&
@@ -1810,29 +1864,33 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.applicability?.visualSimilarityNotSufficient===true &&
        entry.applicability?.existingPlugCodeReferenceOnlyNotProof===true &&
        entry.applicability?.replacementMustBeNewUndamagedAndCompatible===true &&
+       entry.applicability?.noGapMeasurementOrAdjustmentForPrivateUser===true &&
        entry.applicability?.oldPlugRemovalHandledByStepId==='RASA-OP-04-P02' &&
-       entry.applicability?.electrodeGapDeferredToStepId==='RASA-OP-04-P03' &&
+       entry.applicability?.reuseSuitabilityDeterminedByStepId==='RASA-OP-04-P03' &&
        entry.applicability?.installationTorqueDeferredToStepId==='RASA-OP-04-P05' &&
-       entry.applicability?.stopIfSpecificationUncertain===true &&
-       entry.applicability?.stopIfCompatibleReplacementUnavailable===true &&
        entry.applicability?.recordAnomalyOnStop===true &&
        entry.applicability?.doNotInstallUnverifiedPlug===true &&
-       entry.content.instruction.includes('Prima di smontare la candela esistente') &&
-       entry.content.instruction.includes('Identifica la marca e il modello del motore') &&
-       entry.content.instruction.includes('manuale del motore oppure un catalogo ricambi affidabile') &&
-       entry.content.instruction.includes('un codice equivalente di cui sia stata verificata la compatibilità') &&
+       entry.applicability?.runtimeQuestionImplemented===false &&
+       entry.applicability?.sessionPersistenceImplemented===false &&
+       entry.applicability?.runtimeBranchTested===false &&
+       entry.applicability?.issueToCloseAfterRuntimeTests===37 &&
+       entry.previousApprovedRevision?.revision==='F15.23-R1' &&
+       entry.previousApprovedRevision?.approval?.decision==='APPROVATO_SENZA_MODIFICHE' &&
+       entry.previousApprovedRevision?.content?.instruction.includes('Prima di smontare la candela esistente') &&
+       entry.content.title==='Valutazione della candela e verifica del ricambio' &&
+       entry.content.instruction.includes("La candela è stata sostituita nel corso dell'anno oppure ha poche ore di funzionamento?") &&
+       entry.content.instruction.includes('Sì, è seminuova') &&
+       entry.content.instruction.includes('No, è da sostituire') &&
+       entry.content.instruction.includes('Non lo so') &&
+       entry.content.instruction.includes('può essere riutilizzata senza acquistarne una nuova') &&
+       entry.content.instruction.includes('prima dello smontaggio, procura una candela nuova compatibile') &&
        entry.content.instruction.includes('Diametro, passo e lunghezza della filettatura') &&
-       entry.content.instruction.includes('sede di tenuta, con rondella oppure conica') &&
        entry.content.instruction.includes('Grado termico della candela') &&
-       entry.content.instruction.includes('Configurazione degli elettrodi e caratteristiche del terminale superiore') &&
        entry.content.instruction.includes('resistenza antidisturbo') &&
        entry.content.instruction.includes('Non basarti soltanto sulla somiglianza esteriore') &&
-       entry.content.instruction.includes('una candela montata in precedenza potrebbe essere di tipo errato') &&
-       entry.content.instruction.includes('candela nuova corretta e integra') &&
-       entry.content.instruction.includes('RASA-OP-04-P02') &&
-       entry.content.stopCondition.includes('non disponi di un ricambio compatibile') &&
-       entry.content.stopCondition.includes('registra il problema e sospendi la sostituzione') &&
-       entry.content.stopCondition.includes('Non montare una candela di compatibilità incerta') &&
+       entry.content.stopCondition.includes('sospendi la sostituzione prima dello smontaggio') &&
+       entry.content.stopCondition.includes('sospendi il rimontaggio') &&
+       entry.content.stopCondition.includes('Non montare una candela danneggiata o di compatibilità incerta') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
 
     const approvedOP04P02=entry.stepId==='RASA-OP-04-P02' &&
