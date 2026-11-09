@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.24 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.25 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05/P06/P07 e RASA-OP-04-P01/P02, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05/P06/P07 e RASA-OP-04-P01/P02/P03, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -1121,6 +1121,60 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-04-P03",
+    "revision": "F15.25-R3",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "candela_controllo_sede_integrita_e_riutilizzo_condizionato_senza_regolazione_elettrodi",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_DOPO_REVISIONE_R3",
+      "approvedOn": "2026-11-09",
+      "evidence": "utente_conferma_f15_25_r3_esclusione_controllo_distanza_elettrodi_e_obbligo_domanda_iniziale_candela_seminuova"
+    },
+    "content": {
+      "title": "Controllo della sede e della candela",
+      "instruction": "Controllo della sede nella testata\n\nCon la candela già rimossa, osserva il foro filettato nella testata e la superficie sulla quale appoggia la candela.\n\nVerifica che non siano presenti danni evidenti alla filettatura, deformazioni, residui o corpi estranei che potrebbero compromettere il montaggio e la tenuta.\n\nNon introdurre utensili o altri oggetti nel foro della candela.\n\nControllo della candela rimossa\n\nSe la candela è stata sostituita nel corso dell'anno oppure presenta poche ore di funzionamento, potrebbe non essere necessario sostituirla nuovamente.\n\nIn questo caso, osserva la candela smontata, prestando attenzione a:\n\n- Stato degli elettrodi: eventuale usura, erosione o danneggiamenti.\n- Presenza di depositi carboniosi, residui oleosi o altre anomalie evidenti.\n- Condizioni dell'isolatore ceramico: assenza di crepe o rotture.\n- Stato della filettatura.\n\nSe noti anomalie significative, sostituisci la candela con una nuova compatibile con il motore.\n\nL'eventuale diagnosi delle cause sarà trattata separatamente dalla normale sostituzione.\n\nSe la candela esistente risulta integra e in condizioni adeguate, può essere riutilizzata.\n\nControllo della candela nuova\n\nSe è prevista la sostituzione, prima del montaggio verifica che la candela nuova sia integra, con filettatura ed elettrodi non danneggiati durante il trasporto.\n\nControlla inoltre che il terminale superiore sia compatibile con la pipetta del cavo di accensione.",
+      "stopCondition": "Se individui filettature danneggiate nella testata, difetti che impediscono il corretto montaggio oppure una candela nuova danneggiata, registra l'anomalia e sospendi il montaggio."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "requiresSparkPlugAlreadyRemoved": true,
+      "inspectCylinderHeadThreadsAndSeatingSurface": true,
+      "forbidToolsOrObjectsIntoPlugHole": true,
+      "reuseCandidateIfReplacedWithinYearOrFewHours": true,
+      "inspectRemovedPlugElectrodeWearAndErosion": true,
+      "inspectRemovedPlugCarbonOilDeposits": true,
+      "inspectRemovedPlugCeramicCracks": true,
+      "inspectRemovedPlugThreadCondition": true,
+      "replaceWithCompatibleNewPlugIfSignificantAnomalies": true,
+      "mayReuseRemovedPlugOnlyIfIntactAndSuitable": true,
+      "diagnosisDeferredToAdvancedWorkflow": true,
+      "inspectNewPlugTransportDamageToThreadAndElectrodes": true,
+      "verifyTerminalCompatibleWithIgnitionBoot": true,
+      "noElectrodeGapMeasurementForPrivateUser": true,
+      "noElectrodeGapAdjustmentForPrivateUser": true,
+      "stopIfHeadThreadDamaged": true,
+      "stopIfMountingImpaired": true,
+      "stopIfReplacementPlugDamaged": true,
+      "recordAnomalyAndSuspendAssembly": true,
+      "priorP01NewPlugRequirementInconsistentWithReuseBranch": true,
+      "pendingPreOperationSemiNewQuestionIssue": 37,
+      "preOperationQuestionImplemented": false,
+      "runtimeBranchTested": false,
+      "harmonizationRequiredBeforeNextTechnicalStepReview": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "Approvata F15.25-R3: ispezione sede, candela rimossa riutilizzabile se recente/pochissime ore e integra, sostituzione se anomalie significative, candela nuova integra. Eliminazione totale misura/regolazione gap elettrodi; richiesta domanda iniziale obbligatoria sulla candela seminuova e revisione P01 tracciata in GitHub Issue #37.",
+        "approvedOn": "2026-11-09"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -1138,7 +1192,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==23)
+  if(!Array.isArray(candidate) || candidate.length!==24)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -1154,7 +1208,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (['RASA-OP-03-P04','RASA-OP-03-P05','RASA-OP-03-P06','RASA-OP-03-P07','RASA-OP-04-P01','RASA-OP-04-P02'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-09')) &&
+       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (['RASA-OP-03-P04','RASA-OP-03-P05','RASA-OP-03-P06','RASA-OP-03-P07','RASA-OP-04-P01','RASA-OP-04-P02','RASA-OP-04-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-09')) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -1824,7 +1878,58 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes('filettatura della testata, non forzare') &&
        entry.content.stopCondition.includes("Registra l'anomalia e sospendi la rimozione") &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04 || approvedOP03P05 || approvedOP03P06 || approvedOP03P07 || approvedOP04P01 || approvedOP04P02))
+
+    const approvedOP04P03=entry.stepId==='RASA-OP-04-P03' &&
+       entry.revision==='F15.25-R3' &&
+       entry.scope==='candela_controllo_sede_integrita_e_riutilizzo_condizionato_senza_regolazione_elettrodi' &&
+       entry.approval?.decision==='APPROVATO_DOPO_REVISIONE_R3' &&
+       entry.approval?.evidence==='utente_conferma_f15_25_r3_esclusione_controllo_distanza_elettrodi_e_obbligo_domanda_iniziale_candela_seminuova' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.requiresSparkPlugAlreadyRemoved===true &&
+       entry.applicability?.inspectCylinderHeadThreadsAndSeatingSurface===true &&
+       entry.applicability?.forbidToolsOrObjectsIntoPlugHole===true &&
+       entry.applicability?.reuseCandidateIfReplacedWithinYearOrFewHours===true &&
+       entry.applicability?.inspectRemovedPlugElectrodeWearAndErosion===true &&
+       entry.applicability?.inspectRemovedPlugCarbonOilDeposits===true &&
+       entry.applicability?.inspectRemovedPlugCeramicCracks===true &&
+       entry.applicability?.inspectRemovedPlugThreadCondition===true &&
+       entry.applicability?.replaceWithCompatibleNewPlugIfSignificantAnomalies===true &&
+       entry.applicability?.mayReuseRemovedPlugOnlyIfIntactAndSuitable===true &&
+       entry.applicability?.diagnosisDeferredToAdvancedWorkflow===true &&
+       entry.applicability?.inspectNewPlugTransportDamageToThreadAndElectrodes===true &&
+       entry.applicability?.verifyTerminalCompatibleWithIgnitionBoot===true &&
+       entry.applicability?.noElectrodeGapMeasurementForPrivateUser===true &&
+       entry.applicability?.noElectrodeGapAdjustmentForPrivateUser===true &&
+       entry.applicability?.stopIfHeadThreadDamaged===true &&
+       entry.applicability?.stopIfMountingImpaired===true &&
+       entry.applicability?.stopIfReplacementPlugDamaged===true &&
+       entry.applicability?.recordAnomalyAndSuspendAssembly===true &&
+       entry.applicability?.priorP01NewPlugRequirementInconsistentWithReuseBranch===true &&
+       entry.applicability?.pendingPreOperationSemiNewQuestionIssue===37 &&
+       entry.applicability?.preOperationQuestionImplemented===false &&
+       entry.applicability?.runtimeBranchTested===false &&
+       entry.applicability?.harmonizationRequiredBeforeNextTechnicalStepReview===true &&
+       entry.content.title==='Controllo della sede e della candela' &&
+       entry.content.instruction.includes('Con la candela già rimossa') &&
+       entry.content.instruction.includes('Verifica che non siano presenti danni evidenti alla filettatura') &&
+       entry.content.instruction.includes('Non introdurre utensili o altri oggetti nel foro della candela') &&
+       entry.content.instruction.includes("sostituita nel corso dell'anno oppure presenta poche ore di funzionamento") &&
+       entry.content.instruction.includes('Stato degli elettrodi: eventuale usura, erosione o danneggiamenti') &&
+       entry.content.instruction.includes('Presenza di depositi carboniosi, residui oleosi') &&
+       entry.content.instruction.includes("Condizioni dell'isolatore ceramico: assenza di crepe o rotture") &&
+       entry.content.instruction.includes('Stato della filettatura') &&
+       entry.content.instruction.includes('Se noti anomalie significative, sostituisci la candela con una nuova compatibile con il motore') &&
+       entry.content.instruction.includes("L'eventuale diagnosi delle cause sarà trattata separatamente") &&
+       entry.content.instruction.includes('può essere riutilizzata') &&
+       entry.content.instruction.includes('filettatura ed elettrodi non danneggiati durante il trasporto') &&
+       entry.content.instruction.includes('terminale superiore sia compatibile con la pipetta') &&
+       !/misura la distanza|spessimetro|regolazione della distanza|non piegare.*elettrodi/i.test(entry.content.instruction) &&
+       entry.content.stopCondition.includes('filettature danneggiate nella testata') &&
+       entry.content.stopCondition.includes('una candela nuova danneggiata') &&
+       entry.content.stopCondition.includes("registra l'anomalia e sospendi il montaggio") &&
+       !/distanza degli elettrodi/i.test(entry.content.stopCondition) &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04 || approvedOP03P05 || approvedOP03P06 || approvedOP03P07 || approvedOP04P01 || approvedOP04P02 || approvedOP04P03))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
