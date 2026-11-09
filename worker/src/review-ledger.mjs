@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.19 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.20 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -865,6 +865,58 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-03-P05",
+    "revision": "F15.20-R3",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "filtro_sola_spugna_oliatura_prefiltro_misto_asciutto_configurazioni_modello_operatore_competente",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_DOPO_REVISIONE_R3",
+      "approvedOn": "2026-11-09",
+      "evidence": "utente_conferma_proposta_f15_20_r3_sola_spugna_oliare_prefiltro_non_oliare_standard_e_casi_specifici_solo_con_conoscenza_modello_operatore"
+    },
+    "content": {
+      "title": "Oliatura filtro in spugna",
+      "instruction": "Questo passaggio riguarda i filtri interamente in spugna e i prefiltro in spugna dei sistemi misti. Se è presente soltanto un filtro in carta, salta il passaggio.\n\nCampo di applicazione\n\nFiltro in sola spugna: eseguire l'oliatura.\n\nPrefiltro in spugna abbinato a filtro in carta: non oliare nella procedura standard dell'app.\n\nConfigurazioni particolari: utilizzare la conoscenza tecnica pregressa dell'operatore, purché riferita allo specifico modello. Se non si conosce il trattamento corretto, non procedere per supposizione.\n\nProcedura di oliatura\n\nPrima di procedere, assicurati che il filtro in spugna sia completamente asciutto dopo il lavaggio.\n\nMetodo A — Olio spray per filtri aria\n\nDistribuisci uniformemente sulla spugna l'olio spray specifico per filtri aria.\n\nComprimi delicatamente la spugna per distribuire l'olio nel materiale, evitando accumuli e quantità eccessive.\n\nMetodo B — Olio motore\n\nImmergi la spugna in olio motore nuovo e pulito.\n\nEstraila e comprimila ripetutamente, senza torcerla, per eliminare l'olio in eccesso. Se necessario, utilizza un panno pulito per assorbire ulteriori residui.\n\nControllo finale\n\nVerifica che l'olio sia distribuito uniformemente e che il filtro non presenti accumuli o gocciolamenti.\n\nConserva il filtro pulito e protetto fino al rimontaggio.",
+      "stopCondition": "Se il filtro in sola spugna richiede l'oliatura ma non disponi di olio idoneo, sospendi il trattamento e registra l'anomalia.\n\nNon avviare il motore senza il sistema filtrante correttamente trattato e rimontato."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "requiresApprovedFilterAssessmentStep": "RASA-OP-03-P02",
+      "requiresApprovedFoamWashingStepIfPerformed": "RASA-OP-03-P04",
+      "allowedFilterTypes": [
+        "spugna",
+        "misto"
+      ],
+      "skipForPaperOnly": true,
+      "oilFoamOnlyFilter": true,
+      "noPrefilterOilingInStandardApp": true,
+      "modelSpecificExceptionOnlyWithOperatorPriorKnowledge": true,
+      "unknownConfigurationMustNotBeGuessed": true,
+      "foamMustBeCompletelyDryAfterWashing": true,
+      "allowAirFilterOilSpray": true,
+      "allowNewCleanMotorOil": true,
+      "distributeOilByGentleCompression": true,
+      "avoidTwisting": true,
+      "removeExcessOil": true,
+      "noAccumulationOrDrips": true,
+      "keepPreparedFilterProtected": true,
+      "stopIfRequiredOilUnavailable": true,
+      "recordAnomalyOnStop": true,
+      "noEngineStartWithoutCorrectlyTreatedAndReassembledFilter": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "Dopo le revisioni R1/R2, l'esperto stabilisce che nella procedura standard i prefiltro spugna associati a carta non si oliano, mentre il filtro in sola spugna si olia; per configurazioni particolari la scelta dipende dalla conoscenza pregressa riferita al modello. Conferma espressamente R3 senza ulteriori modifiche.",
+        "approvedOn": "2026-11-09"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -882,7 +934,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==18)
+  if(!Array.isArray(candidate) || candidate.length!==19)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -898,7 +950,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (entry.stepId==='RASA-OP-03-P04' && entry.approval?.approvedOn==='2026-11-09')) &&
+       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (['RASA-OP-03-P04','RASA-OP-03-P05'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-09')) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -1364,7 +1416,47 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes("registra l'anomalia e sospendi") &&
        entry.content.stopCondition.includes('Non avviare il motore') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04))
+
+    const approvedOP03P05=entry.stepId==='RASA-OP-03-P05' &&
+       entry.revision==='F15.20-R3' &&
+       entry.scope==='filtro_sola_spugna_oliatura_prefiltro_misto_asciutto_configurazioni_modello_operatore_competente' &&
+       entry.approval?.decision==='APPROVATO_DOPO_REVISIONE_R3' &&
+       entry.approval?.evidence==='utente_conferma_proposta_f15_20_r3_sola_spugna_oliare_prefiltro_non_oliare_standard_e_casi_specifici_solo_con_conoscenza_modello_operatore' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.requiresApprovedFilterAssessmentStep==='RASA-OP-03-P02' &&
+       entry.applicability?.requiresApprovedFoamWashingStepIfPerformed==='RASA-OP-03-P04' &&
+       JSON.stringify(entry.applicability?.allowedFilterTypes)==='["spugna","misto"]' &&
+       entry.applicability?.skipForPaperOnly===true &&
+       entry.applicability?.oilFoamOnlyFilter===true &&
+       entry.applicability?.noPrefilterOilingInStandardApp===true &&
+       entry.applicability?.modelSpecificExceptionOnlyWithOperatorPriorKnowledge===true &&
+       entry.applicability?.unknownConfigurationMustNotBeGuessed===true &&
+       entry.applicability?.foamMustBeCompletelyDryAfterWashing===true &&
+       entry.applicability?.allowAirFilterOilSpray===true &&
+       entry.applicability?.allowNewCleanMotorOil===true &&
+       entry.applicability?.distributeOilByGentleCompression===true &&
+       entry.applicability?.avoidTwisting===true &&
+       entry.applicability?.removeExcessOil===true &&
+       entry.applicability?.noAccumulationOrDrips===true &&
+       entry.applicability?.keepPreparedFilterProtected===true &&
+       entry.applicability?.stopIfRequiredOilUnavailable===true &&
+       entry.applicability?.recordAnomalyOnStop===true &&
+       entry.applicability?.noEngineStartWithoutCorrectlyTreatedAndReassembledFilter===true &&
+       entry.content.instruction.includes('soltanto un filtro in carta, salta il passaggio') &&
+       entry.content.instruction.includes("Filtro in sola spugna: eseguire l'oliatura") &&
+       entry.content.instruction.includes("Prefiltro in spugna abbinato a filtro in carta: non oliare nella procedura standard dell'app") &&
+       entry.content.instruction.includes('conoscenza tecnica pregressa dell\'operatore') &&
+       entry.content.instruction.includes('non procedere per supposizione') &&
+       entry.content.instruction.includes('completamente asciutto dopo il lavaggio') &&
+       entry.content.instruction.includes('olio spray specifico per filtri aria') &&
+       entry.content.instruction.includes('olio motore nuovo e pulito') &&
+       entry.content.instruction.includes('senza torcerla') &&
+       entry.content.instruction.includes('accumuli o gocciolamenti') &&
+       entry.content.stopCondition.includes('non disponi di olio idoneo') &&
+       entry.content.stopCondition.includes("registra l'anomalia") &&
+       entry.content.stopCondition.includes('Non avviare il motore') &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04 || approvedOP03P05))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
