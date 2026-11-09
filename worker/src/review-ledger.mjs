@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.18 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.19 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -813,6 +813,58 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-03-P04",
+    "revision": "F15.19-R2",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "lavaggio_spugna_detergente_specifico_risciacquo_asciugatura_divieto_solventi",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_CON_TRE_MODIFICHE_ESPLICITE",
+      "approvedOn": "2026-11-09",
+      "evidence": "utente_richiede_detergente_specifico_compressione_durante_immersione_e_precauzioni_su_idrocarburi_solventi_con_restante_testo_approvato"
+    },
+    "content": {
+      "title": "Lavaggio del filtro in spugna",
+      "instruction": "Questo passaggio riguarda i filtri interamente in spugna e il prefiltro in spugna dei filtri misti. Se il rasaerba monta soltanto un filtro in carta, salta questo passaggio.\n\nSe la spugna è stata giudicata riutilizzabile nel controllo precedente e può essere lavata, procedi nel seguente modo.\n\nLavaggio\n\nImmergi la spugna in acqua tiepida con una piccola quantità di detergente specifico per filtri aria. Durante l'immersione comprimila ripetutamente con le mani, senza torcerla, per rimuovere lo sporco e gli eventuali residui d'olio.\n\nRisciacquo\n\nRisciacqua accuratamente con acqua pulita, comprimendo delicatamente la spugna fino a eliminare il detergente e lo sporco residuo.\n\nAsciugatura\n\nElimina l'acqua in eccesso premendo delicatamente la spugna all'interno di un panno pulito, senza torcerla.\n\nLasciala asciugare completamente all'aria, evitando fonti di calore diretto.\n\nVerifica finale\n\nControlla nuovamente che la spugna sia integra, morbida ed elastica. Se presenta lacerazioni, parti friabili, irrigidimenti o deformazioni, sostituiscila con un elemento compatibile.\n\nNei filtri misti, mantieni separato e protetto dall'acqua l'elemento in carta.\n\nPrecauzioni\n\nL'utilizzo di gasolio, benzine o idrocarburi come detergente è sconsigliato. L'utilizzo di solventi (diluente/acetone/...) è assolutamente vietato.\n\nEvita getti aggressivi di aria compressa che potrebbero danneggiare il materiale.\n\nL'eventuale oliatura viene gestita nel passaggio successivo, RASA-OP-03-P05.",
+      "stopCondition": "Se la spugna è danneggiata, non è possibile stabilire se sia lavabile, oppure non è disponibile un ricambio compatibile quando necessario, registra l'anomalia e sospendi il trattamento.\n\nNon avviare il motore senza il sistema filtrante idoneo, completamente trattato e correttamente rimontato."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "requiresApprovedFilterEvaluationStep": "RASA-OP-03-P02",
+      "allowedFilterTypes": [
+        "spugna",
+        "misto"
+      ],
+      "skipForPaperOnly": true,
+      "foamMustBeReusableAndWashable": true,
+      "useAirFilterSpecificCleaner": true,
+      "squeezeDuringImmersion": true,
+      "avoidTwisting": true,
+      "rinseThoroughly": true,
+      "dryCompletelyBeforeOiling": true,
+      "avoidDirectHeat": true,
+      "paperElementMustStayDryInMixedFilter": true,
+      "fuelAndHydrocarbonCleanersDiscouraged": true,
+      "solventsProhibited": true,
+      "noAggressiveCompressedAir": true,
+      "oilingHandledByStepId": "RASA-OP-03-P05",
+      "stopIfFoamDamagedOrWashabilityUnknown": true,
+      "stopIfCompatibleReplacementUnavailable": true,
+      "recordAnomalyOnStop": true,
+      "noEngineStartWithoutSuitableCorrectlyTreatedAndInstalledFilter": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "L'esperto approva la proposta F15.19 dopo tre modifiche: detergente specifico per filtri aria, compressione durante l'immersione, idrocarburi sconsigliati e solventi assolutamente vietati; resto confermato.",
+        "approvedOn": "2026-11-09"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -830,7 +882,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==17)
+  if(!Array.isArray(candidate) || candidate.length!==18)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -846,7 +898,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       ((entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05' || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08')))) &&
+       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (entry.stepId==='RASA-OP-03-P04' && entry.approval?.approvedOn==='2026-11-09')) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -1273,7 +1325,46 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes('Registra l\'anomalia') &&
        entry.content.stopCondition.includes('non avviare il motore') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03))
+
+    const approvedOP03P04=entry.stepId==='RASA-OP-03-P04' &&
+       entry.revision==='F15.19-R2' &&
+       entry.scope==='lavaggio_spugna_detergente_specifico_risciacquo_asciugatura_divieto_solventi' &&
+       entry.approval?.decision==='APPROVATO_CON_TRE_MODIFICHE_ESPLICITE' &&
+       entry.approval?.evidence==='utente_richiede_detergente_specifico_compressione_durante_immersione_e_precauzioni_su_idrocarburi_solventi_con_restante_testo_approvato' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.requiresApprovedFilterEvaluationStep==='RASA-OP-03-P02' &&
+       JSON.stringify(entry.applicability?.allowedFilterTypes)==='["spugna","misto"]' &&
+       entry.applicability?.skipForPaperOnly===true &&
+       entry.applicability?.foamMustBeReusableAndWashable===true &&
+       entry.applicability?.useAirFilterSpecificCleaner===true &&
+       entry.applicability?.squeezeDuringImmersion===true &&
+       entry.applicability?.avoidTwisting===true &&
+       entry.applicability?.rinseThoroughly===true &&
+       entry.applicability?.dryCompletelyBeforeOiling===true &&
+       entry.applicability?.avoidDirectHeat===true &&
+       entry.applicability?.paperElementMustStayDryInMixedFilter===true &&
+       entry.applicability?.fuelAndHydrocarbonCleanersDiscouraged===true &&
+       entry.applicability?.solventsProhibited===true &&
+       entry.applicability?.noAggressiveCompressedAir===true &&
+       entry.applicability?.oilingHandledByStepId==='RASA-OP-03-P05' &&
+       entry.applicability?.stopIfFoamDamagedOrWashabilityUnknown===true &&
+       entry.applicability?.stopIfCompatibleReplacementUnavailable===true &&
+       entry.applicability?.recordAnomalyOnStop===true &&
+       entry.applicability?.noEngineStartWithoutSuitableCorrectlyTreatedAndInstalledFilter===true &&
+       entry.content.instruction.includes('soltanto un filtro in carta, salta questo passaggio') &&
+       entry.content.instruction.includes('detergente specifico per filtri aria') &&
+       entry.content.instruction.includes("Durante l'immersione comprimila ripetutamente") &&
+       entry.content.instruction.includes('Risciacqua accuratamente') &&
+       entry.content.instruction.includes('asciugare completamente') &&
+       entry.content.instruction.includes("L'utilizzo di gasolio, benzine o idrocarburi come detergente è sconsigliato") &&
+       entry.content.instruction.includes("L'utilizzo di solventi (diluente/acetone/...) è assolutamente vietato") &&
+       !entry.content.instruction.includes('detergente liquido delicato') &&
+       entry.content.stopCondition.includes('non è possibile stabilire se sia lavabile') &&
+       entry.content.stopCondition.includes('ricambio compatibile') &&
+       entry.content.stopCondition.includes("registra l'anomalia e sospendi") &&
+       entry.content.stopCondition.includes('Non avviare il motore') &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});

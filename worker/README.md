@@ -411,3 +411,14 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Filtro sostitutivo non compatibile: non montare, segnalare anomalia e non avviare senza elemento idoneo installato.
 - Revisione condizionata nell'overlay di staging; catalogo canonico originale, PWA pubblica, `voice.js` invariati.
 - Stato previsto 15.18.0: 17/53 revisioni condizionate, 36 in attesa. `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`.
+
+
+### Fase 15.19 — Lavaggio del filtro in spugna (F15.19-R2)
+- Approvazione tecnica dell'esperto del 2026-11-09: tre modifiche esplicite alla proposta R1; nessuna riapprovazione richiesta per P01–P03.
+- Il passaggio `RASA-OP-03-P04` si applica solo a spugna e prefiltro spugna dei filtri misti; non alla carta.
+- Per la spugna riutilizzabile e lavabile: acqua tiepida con detergente specifico per filtri aria, compressioni ripetute durante l'immersione senza torsione, risciacquo accurato, asciugatura completa e controllo di integrità.
+- Gasolio, benzine e idrocarburi come detergente: utilizzo sconsigliato. Solventi (diluente/acetone/...): assolutamente vietati nel testo approvato.
+- Proteggere l'elemento in carta nei filtri misti; rimandare l'oliatura a `RASA-OP-03-P05` (non approvato in questa fase).
+- Fail closed su spugna danneggiata, lavabilità non verificabile, ricambio compatibile mancante o sistema filtrante non correttamente reinstallato.
+- Stato previsto dopo integrazione: KB `15.19.0`, 18/53 revisioni condizionate, 35 pendenti; `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`.
+- Catalogo canonico, PWA pubblica e `voice.js` invariati. I test non equivalgono a collaudo runtime o conferma del deployment Cloudflare.
