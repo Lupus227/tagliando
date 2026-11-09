@@ -422,3 +422,13 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - Fail closed su spugna danneggiata, lavabilità non verificabile, ricambio compatibile mancante o sistema filtrante non correttamente reinstallato.
 - Stato previsto dopo integrazione: KB `15.19.0`, 18/53 revisioni condizionate, 35 pendenti; `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`.
 - Catalogo canonico, PWA pubblica e `voice.js` invariati. I test non equivalgono a collaudo runtime o conferma del deployment Cloudflare.
+
+### Fase 15.20 — Oliatura filtro in spugna (F15.20-R3)
+- L'esperto ha confermato integralmente la proposta R3 il 2026-11-09, dopo le revisioni R1/R2.
+- Nel percorso standard dell'app: **filtro in sola spugna da oliare**, **prefiltro in spugna abbinato a carta da non oliare**; soltanto la conoscenza tecnica pregressa dell'operatore riferita al modello consente la gestione di configurazioni particolari. Non procedere per supposizione.
+- Se presente soltanto carta, il passaggio si salta. L'elemento in spugna lavato deve essere completamente asciutto.
+- Metodo A: olio spray specifico per filtri aria distribuito con compressione delicata. Metodo B: immersione in olio motore nuovo e pulito e compressione ripetuta senza torsione per eliminare l'eccesso.
+- Controllo finale: distribuzione uniforme senza accumuli o gocciolamenti, filtro protetto fino al rimontaggio.
+- Arresto registrato in assenza di olio idoneo quando richiesto; motore non avviabile prima del corretto trattamento e rimontaggio.
+- Revisione condizionata nell'overlay del Worker, senza alterare catalogo originale, PWA pubblica, pilot o `voice.js`.
+- Stato atteso dopo integrazione: KB `15.20.0`, 19/53 condizionati, 34 pendenti; `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. Conferma separata deployment Cloudflare necessaria dopo CI.
