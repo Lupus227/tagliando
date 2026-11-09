@@ -1,9 +1,9 @@
 /*
- * Fasi 15.1–15.20 — Registro di revisione tecnica separato dal catalogo originale.
+ * Fasi 15.1–15.21 — Registro di revisione tecnica separato dal catalogo originale.
  *
  * Il catalogo resta una copia byte-per-byte di app.js/knowledge.js e ogni sua
  * voce conserva DA_VALIDARE. Le revisioni esplicite riguardano soltanto
- * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05, con validazione condizionata.
+ * RASA-OP-01-P01 fino a RASA-OP-01-P06, RASA-OP-02-P01 fino a P08 e RASA-OP-03-P01/P02/P03/P04/P05/P06, con validazione condizionata.
  *
  * La validazione CONDIZIONATA non sblocca API di istruzioni né AI.
  * Nessuna approvazione deriva dai dati inseriti nella PWA.
@@ -917,6 +917,55 @@ const RAW_REVISIONS = [
       }
     ],
     "aiUseAllowed": false
+  },
+  {
+    "stepId": "RASA-OP-03-P06",
+    "revision": "F15.21-R1",
+    "status": "VALIDATO_CONDIZIONATO",
+    "scope": "pulizia_scatola_e_coperchio_filtro_aria_protezione_condotto_aspirazione_verifica_tenuta",
+    "approval": {
+      "reviewerRole": "esperto_di_dominio",
+      "decision": "APPROVATO_SENZA_MODIFICHE",
+      "approvedOn": "2026-11-09",
+      "evidence": "utente_conferma_integralmente_proposta_f15_21_r1_con_va_bene"
+    },
+    "content": {
+      "title": "Pulizia della scatola del filtro aria",
+      "instruction": "Con l'elemento filtrante rimosso, controlla l'interno della scatola, il coperchio e la zona vicina al condotto di aspirazione.\n\nRimozione dello sporco\n\nUtilizza un panno pulito, asciutto o leggermente inumidito, per rimuovere polvere, residui d'erba e depositi presenti nella scatola e nel coperchio.\n\nSe sono presenti residui oleosi, utilizza un panno con una piccola quantità di detergente compatibile con plastica e guarnizioni, eliminando successivamente gli eventuali residui di detergente.\n\nPulisci anche le superfici sulle quali appoggia il filtro, così da evitare che lo sporco comprometta la tenuta.\n\nPrecauzioni\n\nEvita che polvere, residui, liquidi o altri corpi estranei entrino nel condotto di aspirazione diretto al carburatore.\n\nNon dirigere getti di aria compressa o acqua verso l'ingresso del carburatore.\n\nNon introdurre utensili o panni all'interno del condotto di aspirazione.\n\nVerifica finale\n\nControlla che l'interno della scatola e il coperchio siano puliti, senza residui o umidità.\n\nIl rimontaggio del filtro sarà effettuato nel passaggio successivo, RASA-OP-03-P07.",
+      "stopCondition": "Se trovi la scatola danneggiata, guarnizioni compromesse oppure sospetti che siano entrati corpi estranei nel condotto di aspirazione, registra l'anomalia e sospendi il rimontaggio fino alla verifica del problema."
+    },
+    "applicability": {
+      "machineFamily": "rasaerba_a_benzina",
+      "audience": "utilizzatore_tagliando_gratuito",
+      "requiresFilterRemoved": true,
+      "allowedFilterTypes": [
+        "carta",
+        "spugna",
+        "misto"
+      ],
+      "wipeWithCleanDryOrSlightlyDampCloth": true,
+      "removeGrassDustAndDeposits": true,
+      "compatibleCleanerForOilResidueOnly": true,
+      "removeCleanerResidue": true,
+      "cleanFilterSealingSurfaces": true,
+      "protectCarburetorIntakeFromDebrisAndLiquids": true,
+      "noCompressedAirOrWaterJetsTowardIntake": true,
+      "noToolsOrClothsInsertedIntoIntake": true,
+      "housingAndCoverDryAndFreeOfResidues": true,
+      "reassemblyHandledByStepId": "RASA-OP-03-P07",
+      "stopIfDamagedHousingOrSeals": true,
+      "stopIfSuspectedIntakeContamination": true,
+      "recordAnomalyAndSuspendReassembly": true,
+      "universalAuthorization": false
+    },
+    "evidence": [
+      {
+        "kind": "expert_review",
+        "description": "L'esperto approva senza modifiche la proposta F15.21-R1 sulla pulizia con panno di scatola e coperchio, detergente compatibile per residui oleosi, protezione condotto di aspirazione, controllo sede filtro e condizioni di arresto.",
+        "approvedOn": "2026-11-09"
+      }
+    ],
+    "aiUseAllowed": false
   }
 ];
 
@@ -934,7 +983,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
   const errors=[];
   if(!catalog || !Array.isArray(catalog.procedures) || catalog.procedures.length!==8)
     errors.push('INVALID_SOURCE_CATALOG');
-  if(!Array.isArray(candidate) || candidate.length!==19)
+  if(!Array.isArray(candidate) || candidate.length!==20)
     errors.push('UNEXPECTED_REVIEW_COUNT');
   if(JSON.stringify(candidate)!==pinnedSnapshot)
     errors.push('REVIEW_SNAPSHOT_MISMATCH');
@@ -950,7 +999,7 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
       errors.push('SOURCE_STEP_MISSING_OR_NOT_PENDING');
     const common=entry.status==='VALIDATO_CONDIZIONATO' &&
        entry.approval?.reviewerRole==='esperto_di_dominio' &&
-       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (['RASA-OP-03-P04','RASA-OP-03-P05'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-09')) &&
+       (entry.approval?.approvedOn==='2026-11-04' || (['RASA-OP-01-P04','RASA-OP-01-P05','RASA-OP-01-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-05') || (['RASA-OP-02-P01','RASA-OP-02-P02','RASA-OP-02-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-06') || (['RASA-OP-02-P04','RASA-OP-02-P05','RASA-OP-02-P06','RASA-OP-02-P07'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-07') || (['RASA-OP-02-P08','RASA-OP-03-P01','RASA-OP-03-P02','RASA-OP-03-P03'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-08') || (['RASA-OP-03-P04','RASA-OP-03-P05','RASA-OP-03-P06'].includes(entry.stepId) && entry.approval?.approvedOn==='2026-11-09')) &&
        entry.applicability?.universalAuthorization===false &&
        entry.aiUseAllowed===false &&
        typeof entry.content?.instruction==='string' &&
@@ -1456,7 +1505,43 @@ export function auditReviewLedger(catalog, candidate=REVIEW_LEDGER){
        entry.content.stopCondition.includes("registra l'anomalia") &&
        entry.content.stopCondition.includes('Non avviare il motore') &&
        entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
-    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04 || approvedOP03P05))
+
+    const approvedOP03P06=entry.stepId==='RASA-OP-03-P06' &&
+       entry.revision==='F15.21-R1' &&
+       entry.scope==='pulizia_scatola_e_coperchio_filtro_aria_protezione_condotto_aspirazione_verifica_tenuta' &&
+       entry.approval?.decision==='APPROVATO_SENZA_MODIFICHE' &&
+       entry.approval?.evidence==='utente_conferma_integralmente_proposta_f15_21_r1_con_va_bene' &&
+       entry.applicability?.audience==='utilizzatore_tagliando_gratuito' &&
+       entry.applicability?.requiresFilterRemoved===true &&
+       JSON.stringify(entry.applicability?.allowedFilterTypes)==='["carta","spugna","misto"]' &&
+       entry.applicability?.wipeWithCleanDryOrSlightlyDampCloth===true &&
+       entry.applicability?.removeGrassDustAndDeposits===true &&
+       entry.applicability?.compatibleCleanerForOilResidueOnly===true &&
+       entry.applicability?.removeCleanerResidue===true &&
+       entry.applicability?.cleanFilterSealingSurfaces===true &&
+       entry.applicability?.protectCarburetorIntakeFromDebrisAndLiquids===true &&
+       entry.applicability?.noCompressedAirOrWaterJetsTowardIntake===true &&
+       entry.applicability?.noToolsOrClothsInsertedIntoIntake===true &&
+       entry.applicability?.housingAndCoverDryAndFreeOfResidues===true &&
+       entry.applicability?.reassemblyHandledByStepId==='RASA-OP-03-P07' &&
+       entry.applicability?.stopIfDamagedHousingOrSeals===true &&
+       entry.applicability?.stopIfSuspectedIntakeContamination===true &&
+       entry.applicability?.recordAnomalyAndSuspendReassembly===true &&
+       entry.content.instruction.includes("Con l'elemento filtrante rimosso") &&
+       entry.content.instruction.includes('un panno pulito, asciutto o leggermente inumidito') &&
+       entry.content.instruction.includes('detergente compatibile con plastica e guarnizioni') &&
+       entry.content.instruction.includes('eliminando successivamente gli eventuali residui di detergente') &&
+       entry.content.instruction.includes('superfici sulle quali appoggia il filtro') &&
+       entry.content.instruction.includes('Evita che polvere, residui, liquidi') &&
+       entry.content.instruction.includes("Non dirigere getti di aria compressa o acqua verso l'ingresso del carburatore") &&
+       entry.content.instruction.includes("Non introdurre utensili o panni all'interno del condotto di aspirazione") &&
+       entry.content.instruction.includes('senza residui o umidità') &&
+       entry.content.instruction.includes('RASA-OP-03-P07') &&
+       entry.content.stopCondition.includes('scatola danneggiata, guarnizioni compromesse') &&
+       entry.content.stopCondition.includes('corpi estranei nel condotto di aspirazione') &&
+       entry.content.stopCondition.includes("registra l'anomalia e sospendi il rimontaggio") &&
+       entry.evidence.length===1 && entry.evidence[0].kind==='expert_review';
+    if(!common || !(approvedP01 || approvedP02 || approvedP03 || approvedP04 || approvedP05 || approvedP06 || approvedOP02P01 || approvedOP02P02 || approvedOP02P03 || approvedOP02P04 || approvedOP02P05 || approvedOP02P06 || approvedOP02P07 || approvedOP02P08 || approvedOP03P01 || approvedOP03P02 || approvedOP03P03 || approvedOP03P04 || approvedOP03P05 || approvedOP03P06))
       errors.push('INVALID_REVIEW_SCOPE_OR_APPROVAL');
   }
   return Object.freeze({ok:errors.length===0,errors});
