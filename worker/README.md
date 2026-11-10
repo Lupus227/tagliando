@@ -503,3 +503,7 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - `/api/assist`, `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`, KB `15.25.1`, PWA v0.12.1 e il registro canonico non cambiano.
 - **Limite intenzionale:** le domande libere non sono ancora comprese semanticamente da un modello. Il laboratorio applica solo controlli conservativi e restituisce la fonte approvata del passo corrente. Questo è il **primo test d'integrazione della sorgente tecnica** per un futuro modulo AI, non il completamento del progetto e non è idoneo per manutenzione reale.
 - Collaudo prima del passaggio successivo: CI Node, Wrangler dry-run, deployment Cloudflare confermato, accesso alla pagina, prova su PC e iPhone e verifica dei casi di blocco. Non dichiarare eseguite prove che non sono state svolte.
+
+### TEST TRIGGER CLOUDFLARE — 2026-11-10
+
+Commit diagnostico esclusivamente **documentale**, autorizzato dal titolare per verificare se un nuovo commit direttamente su `dev/fase14-ai` attiva il sistema di build GitHub → Cloudflare. Nessuna modifica alle procedure, alla PWA, alla sicurezza, alla configurazione Wrangler o all'AI. L'esito del deployment va verificato nella cronologia Cloudflare: questo testo non certifica un deployment avvenuto.
