@@ -489,3 +489,17 @@ Verificare il risultato nella scheda Deployments > View build history del Worker
 - **Issue [#37](https://github.com/Lupus227/tagliando/issues/37) rimane aperta e bloccante** per la chiusura dell'operazione: l'interfaccia, la persistenza della scelta, la ramificazione nel motore di esecuzione e i relativi test runtime restano non implementati/non collaudati. I test aggiunti validano i metadata, non simulano un funzionamento utente PWA.
 - In `RASA-OP-04-P03` la precedente annotazione sulla contraddizione P01 conserva valore **storico** (si riferisce alla formulazione originaria); il gate runtime non è ancora superato. Nessuna variazione al testo tecnico approvato di P02/P03. Catalogo canonico originale, PWA v0.12.1 e `voice.js` invariati.
 - `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`. Test e compilazione in CI non equivalgono a un deployment Cloudflare.
+
+### M3 — Laboratorio filtro aria (primo collegamento KB ↔ console, NON un modello AI)
+
+**Obiettivo:** rendere osservabile il recupero dei 7 passaggi di `RASA-OP-03`, validati con condizioni, in un ambiente di prova isolato, senza introdurre una seconda copia dei testi né sbloccare AI.
+
+- Pagina protetta: `https://tagliando-ai-staging.maico-gua.workers.dev/lab/filtro-aria` (richiede Cloudflare Access e `SERVICE_MODE=guarded`). I file JS sono serviti dallo stesso Worker con CSP restrittiva.
+- API solo laboratorio: `POST /api/lab/filtro-aria`, input JSON `{stepId,filterType,question}`, **solo stessa origine, Access verificato con identità, rate limiter e massimo 1700 byte**. Origini esterne non sono ammesse; nessuna connessione al provider AI.
+- Dati forniti dalla **`REVIEW_LEDGER`**, con audit del catalogo originale e delle revisioni prima di ogni risposta. Soltanto i 7 passaggi già approvati dell'Operazione 03; fonte e revisione riportate insieme al testo esatto, senza generare nuove istruzioni.
+- Modalità filtro carta: P01/P02/P03/P06/P07; spugna: P01/P02/P04/P05/P06/P07; misto: P01/P02/P03/P04/P06/P07 (prefiltro misto non oliato nel percorso standard).
+- Se manca la tipologia del filtro, un passaggio non si applica, una domanda implica danno/stop o richiede valori non verificati, il laboratorio **non restituisce istruzioni operative aggiuntive né autorizza avanzamento**. Comandi `Fatto` non modificano lo stato del motore reale.
+- La console mantiene **soltanto** la posizione di consultazione e il tipo filtro in `localStorage` del dominio staging. Il pulsante «Passaggio successivo» riguarda la **consultazione**, **non** registra un'operazione meccanica svolta, **non** modifica la PWA pubblica.
+- `/api/assist`, `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`, KB `15.25.1`, PWA v0.12.1 e il registro canonico non cambiano.
+- **Limite intenzionale:** le domande libere non sono ancora comprese semanticamente da un modello. Il laboratorio applica solo controlli conservativi e restituisce la fonte approvata del passo corrente. Questo è il **primo test d'integrazione della sorgente tecnica** per un futuro modulo AI, non il completamento del progetto e non è idoneo per manutenzione reale.
+- Collaudo prima del passaggio successivo: CI Node, Wrangler dry-run, deployment Cloudflare confermato, accesso alla pagina, prova su PC e iPhone e verifica dei casi di blocco. Non dichiarare eseguite prove che non sono state svolte.
