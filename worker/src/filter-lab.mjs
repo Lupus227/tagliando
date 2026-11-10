@@ -67,6 +67,12 @@ export function filterLabAnswer(payload){
     return {...base,ok:false,decision:'OPERATOR_STOP',httpStatus:200,
       message:STOP_MESSAGE,allowCompletion:false,references:[]};
   }
+  // A keyword-only laboratory must not answer unrelated prompts by returning
+  // an arbitrary technical step. "Show current step" is an explicit exception.
+  const inScope=/\b(filtro|filtrante|filtri|aria|coperchio|scatola|spugna|carta|prefiltro|carburatore|puliz|lavare|lavaggio|asciug|olio|oliare|oliatura|rimont|sostitu|sporco|sporchi|polvere|sede|motore|guarnizion|passaggio|procedura|aprire|apertura|chiudere|chiusura|soffiare|compressa)\w*\b/.test(q);
+  if(!inScope)return {...base,ok:false,decision:'QUESTION_NOT_COVERED',httpStatus:200,
+    message:'Non trovo una risposta verificabile per questa domanda nella procedura del filtro aria. Nessuna istruzione aggiuntiva viene fornita.',
+    allowCompletion:false,references:[]};
   if(id!=='RASA-OP-03-P01' && !types.has(type))
     return {...base,ok:false,decision:'FILTER_TYPE_REQUIRED',httpStatus:200,
       message:'Indica prima se il filtro è in carta, in spugna o misto. Se non riesci a identificarlo, non procedere.',
