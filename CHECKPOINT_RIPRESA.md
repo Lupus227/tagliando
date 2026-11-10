@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-10 (stato tecnico riscontrato dopo l'ultima conferma dell'utente del 2026-11-09).  
+**Checkpoint:** 2026-11-10, aggiornato dopo merge PR #45 e CI Success. Ultimo deployment Cloudflare effettivamente confermato dall'utente: 2026-11-09 KB 15.25.1 / commit 90283d4.  
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -39,9 +39,14 @@
 | Ultimo step *revisionato* | **`RASA-OP-04-P01`** (ri-revisione P01; non un 25º passaggio) |
 | Gate AI | `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false` |
 | Ultima CI verificata per KB | [GitHub Actions #42711458895 — Success](https://github.com/Lupus227/tagliando/actions/runs/42711458895) |
+| Nuovo laboratorio M3 solo staging | [PR #45](https://github.com/Lupus227/tagliando/pull/45), commit **`5687f30`** su `dev/fase14-ai` |
+| CI nuova prova M3 | [GitHub Actions #42898433457 — Success](https://github.com/Lupus227/tagliando/actions/runs/42898433457) (test + Wrangler dry-run) |
+| Deployment Cloudflare nuovo codice M3 | **DA CONFERMARE**; il solo merge o CI Success non prova che sia raggiungibile |
+| Console protetta da provare | `https://tagliando-ai-staging.maico-gua.workers.dev/lab/filtro-aria` |
+| Comprensione libera con AI | **NON implementata**; la console restituisce esclusivamente testi validati dopo controlli deterministici |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **Mettere in sicurezza la continuità/roadmap; NON scegliere ancora i prossimi step operativi** |
+| Compito immediato di questa conversazione | **Collaudare il laboratorio M3 appena integrato; mantenere Emergent in standby.** |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -70,6 +75,17 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - La KB validata vive nel Worker: `worker/src/review-ledger.mjs`, con catalogo di origine in `worker/src/canonical-knowledge.mjs` e test in `tests/canonical-knowledge.test.cjs`.
 - L'overlay contiene i testi approvati. Il catalogo sorgente dell'app (PWA `app.js`/`knowledge.js`) resta un prototipo storico; **non assumere che mostri le revisioni KB**.
 - **Il prossimo step non è stato ancora scelto per questa roadmap.** Le guardie già concordate e le issue rimangono vincolanti finché non vengono cambiate esplicitamente.
+
+### M3 — Vertical slice filtro aria: stato e limiti della consegna
+
+**Decisione di prodotto 2026-11-10:** il titolare concorda che il percorso più utile è rendere effettivamente sfruttabile una procedura già validata, senza completare subito i restanti 29 passaggi e senza cambiare stack. **Emergent messo da parte**, da non riproporre durante questa fase.
+
+- [PR #45](https://github.com/Lupus227/tagliando/pull/45), commit `5687f30` su `dev/fase14-ai`; [CI Success](https://github.com/Lupus227/tagliando/actions/runs/42898433457).
+- Laboratorio su Worker: `worker/src/filter-lab.mjs`, `worker/src/filter-lab-ui.mjs`; route Access-protetta `/lab/filtro-aria`, API `POST /api/lab/filtro-aria`.
+- Dati tecnici: **solo** i sette step P01–P07 di OP03 già revisionati nel ledger, con selezione materiale (carta/spugna/misto), controllo delle condizioni non applicabili, arresto per anomalie o richieste non verificate.
+- L'API restituisce la fonte approvata del passo corrente; **non è un modello AI** e non permette dialogo libero intelligente. Non certifica lavorazioni. `/api/assist` e flags AI rimangono disabilitati, KB 15.25.1, PWA pubblica v0.12.1 immutata.
+- **Stato effettivo:** code merge + test automatici + Wrangler dry-run completati; **deployment Cloudflare del nuovo commit e collaudi UI/iPhone ancora non confermati**.
+- **Prossimo intervento verificabile**: controllare nella dashboard Cloudflare il deploy di `5687f30`; aprire la console protetta, controllare carta/spugna/misto, domanda «Non riesco ad aprire il coperchio», richiesta «Fatto», domanda estranea, recupero del tipo filtro e del passaggio. Riportare esito e URL/ID deploy; solo allora valutare l'integrazione LLM sotto policy e costi.
 
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
@@ -149,8 +165,8 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 ## I. PUNTO DI RIPRESA ATTUALE (AGGIORNARE SEMPRE)
 
-**Decisione finale della sessione:** fissare questa roadmap e una procedura affidabile di continuità fra chat. Il titolare ha specificato: **«Poi decidiamo quali saranno i prossimi step»**.
+**Decisione aggiornata:** per la prima volta si sta rendendo consultabile una procedura validata dentro un laboratorio Access-protetto, come preparazione all'assistente AI target. **Emergent in standby** su scelta del titolare.
 
-**Quindi ora non scegliere né eseguire automaticamente:** completamento dei 29 passaggi, sviluppo OPEN-07, attivazione AI o variazione di architettura. La discussione sui prossimi interventi deve avvenire **dopo** aver letto e confermato la visione condivisa, tenendo conto dei vincoli già vigenti.
+**Lavoro già integrato:** [PR #45](https://github.com/Lupus227/tagliando/pull/45), commit `5687f30` su `dev/fase14-ai`, [CI Success](https://github.com/Lupus227/tagliando/actions/runs/42898433457). Console `/lab/filtro-aria`, nessuna AI generativa, nessuna modifica alla PWA pubblica. KB `15.25.1`, 24/53 con condizioni, AI off.
 
-**Ultima modifica funzionale al checkpoint:** KB `15.25.1` distribuita con commit `90283d4`, PWA v0.12.1 invariata. I file roadmap/checkpoint e registro aggiornato sono modifiche **documentali**, non funzionalità implementate.
+**NEXT:** verificare il nuovo deployment su Cloudflare e collaudare su PC e poi iPhone le condizioni dei tre tipi di filtro e gli arresti. **Non dichiarare prodotto AI pronto**: il collegamento a un modello LLM e il controller generale sono ancora futuri. **OPEN-07** rimane aperta per OP04.
