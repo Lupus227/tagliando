@@ -83,7 +83,7 @@ Questa è una **mappa di dipendenze e risultati**, non una decisione automatica 
 | **M0 — Visione e perimetro** | Pubblico, freemium, primo caso d'uso, sicurezza, limiti di costo e definizione dell'assistente AI | **Decisioni di prodotto definite** |
 | **M1 — Prototipo di interazione** | PWA con guida sequenziale, TTS/ASR, comandi base, segnalazioni, registrazione e ripresa | **PWA v0.12.1 esistente**, non ancora l'AI target; test su iPhone/Safari con limiti noti |
 | **M2 — Fondazione tecnica per l'AI** | Gateway sicuro, KB strutturata, revisioni esplicite, test, fail-closed, tracciabilità | **Fase 14 svolta**, Fase 15 **in corso**: 24/53 validati con condizioni, 29 da validare |
-| **M3 — Integrazione dell'esecuzione** | Il controller usa la KB validata, gestisce stato e percorsi senza duplicare regole in codice/UI; test di sicurezza e continuità | **Non completato**. OP04 / Issue #37 è caso esemplare, non architettura generale |
+| **M3 — Integrazione dell'esecuzione** | Il controller usa la KB validata, gestisce stato e percorsi senza duplicare regole in codice/UI; test di sicurezza e continuità | **Avviato laboratorio M3 filtro aria** [PR #45](https://github.com/Lupus227/tagliando/pull/45), CI Success e nuova console Access; **Cloudflare/UI da collaudare**. Nessun controller generale né AI già attivi; Issue #37 ancora aperta |
 | **M4 — Assistente AI conversazionale** | Domande libere, chiarimenti situati, tool/KB retrieval controllati, ragionamento linguistico non autorizzativo, stop su incertezza | **Non attivo**; Worker non eroga risposte tecniche generate; abilitazione solo dopo gate esplicito e prove |
 | **M5 — Validazione end-to-end** | Sessione tagliando sicura con voce e schermo, test su iPhone/Safari, rumore/interruzioni, rami, ripresa, anomalie, utenti pilota | **Non ancora superata come prodotto completo**; collaudi parziali disponibili |
 | **M6 — Estensione e modello commerciale** | Altre macchine, moduli diagnosi/riparazioni e sperimentazione della monetizzazione freemium | **Visione definita, sviluppo futuro** |
@@ -124,9 +124,14 @@ Ogni attività deve dichiarare: **milestone servita**, risultato misurabile, pre
 
 Questi sono **criteri di prodotto**, non una dichiarazione che siano già soddisfatti.
 
-## 6. Decisioni NON ancora prese
+## 6. Decisioni di priorità aggiornate il 2026-11-10
 
-**Non scegliere automaticamente i prossimi step.** Al prossimo incontro vanno discussi esplicitamente: modalità e ordine della validazione dei 29 passaggi; architettura generale per unire PWA e KB; ordine fra completamento del gate OP04 e progettazione del motore di esecuzione riutilizzabile; definizione della prima prova AI e dei criteri di sicurezza; strategia dei test sull'utente. Conservare nel frattempo gli impegni già approvati, senza interpretarli come un'autorizzazione indefinita a modificare il runtime.
+Il titolare ha scelto di **mettere temporaneamente da parte Emergent** e proseguire con lo stack attuale. Prima di completare i restanti 29 passi, si verifica una **piccola integrazione reale** della KB validata, usando la procedura filtro aria OP03; la CI del laboratorio in staging è passata ([PR #45](https://github.com/Lupus227/tagliando/pull/45)), ma manca il collaudo Cloudflare/browser. **Questa è una prova di accesso ai contenuti approvati, non un LLM attivo.** Dopo il collaudo, progettare e scegliere esplicitamente la prima integrazione AI conversazionale con controllore deterministico, mantenendo la sicurezza fail-closed e i costi bassi.
+
+### Decisioni che rimangono aperte
+
+
+**Non procedere automaticamente con nuove funzioni oltre al laboratorio scelto.** Al prossimo incontro vanno discussi esplicitamente: modalità e ordine della validazione dei 29 passaggi; architettura generale per unire PWA e KB; ordine fra completamento del gate OP04 e progettazione del motore di esecuzione riutilizzabile; definizione della prima prova AI e dei criteri di sicurezza; strategia dei test sull'utente. Conservare nel frattempo gli impegni già approvati, senza interpretarli come un'autorizzazione indefinita a modificare il runtime.
 
 ## 7. Governance della continuità
 

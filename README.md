@@ -31,6 +31,12 @@
 | Gate aperto | [Issue #37 / OPEN-07](https://github.com/Lupus227/tagliando/issues/37), domanda iniziale candela presente nel ledger ma non nel runtime PWA |
 | Prossima decisione | **da concordare** in funzione della Roadmap Master |
 
+## Primo laboratorio M3 — filtro aria (2026-11-10)
+
+Su decisione del titolare si procede con lo stack GitHub / Cloudflare / PWA; **Emergent è in standby**. [PR #45](https://github.com/Lupus227/tagliando/pull/45), commit `5687f30` su `dev/fase14-ai`, [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42898433457). È stata aggiunta la pagina protetta `/lab/filtro-aria` che consulta i sette passaggi revisionati dell'Operazione 03 dal backend.
+
+**La console non usa un LLM e non è idonea per manutenzione reale**. Il deploy Cloudflare del nuovo commit e i test browser/iPhone sono ancora da confermare. Il Worker mantiene `aiEnabled=false`, la KB `15.25.1` e la PWA pubblica `v0.12.1`. Per il protocollo di collaudo vedi [CHECKPOINT_RIPRESA.md](CHECKPOINT_RIPRESA.md).
+
 ## Architettura e sorgenti tecniche
 
 - **PWA:** `app.js`, `voice.js`, `index.html`, `knowledge.js`, `support.js`, `retrieval.js` — codice del prototipo. **Non confondere i testi locali con la KB revisionata**.
