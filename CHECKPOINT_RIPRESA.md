@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-10, aggiornato dopo deployment diagnostico `232e473` confermato dall'utente e prime 3 prove browser positive. Il Worker include PR #45; KB 15.25.1 invariata.  
+**Checkpoint:** 2026-11-10; confermati deployment Cloudflare `232e473` e **7/7 prove funzionali browser previste per la prima tranche**. Worker include PR #45; KB 15.25.1 invariata.  
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **NON implementata**; la console restituisce esclusivamente testi validati dopo controlli deterministici |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **Tre prove di laboratorio M3 superate**; completare test mancanti, poi progettare primo dialogo AI controllato |
+| Compito immediato di questa conversazione | **7/7 test previsti della prima tranche M3 superati dall'utente**; definire contratto minimo M4 AI/KB/controllore, senza attivare AI |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -84,8 +84,8 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - Laboratorio su Worker: `worker/src/filter-lab.mjs`, `worker/src/filter-lab-ui.mjs`; route Access-protetta `/lab/filtro-aria`, API `POST /api/lab/filtro-aria`.
 - Dati tecnici: **solo** i sette step P01–P07 di OP03 già revisionati nel ledger, con selezione materiale (carta/spugna/misto), controllo delle condizioni non applicabili, arresto per anomalie o richieste non verificate.
 - L'API restituisce la fonte approvata del passo corrente; **non è un modello AI** e non permette dialogo libero intelligente. Non certifica lavorazioni. `/api/assist` e flags AI rimangono disabilitati, KB 15.25.1, PWA pubblica v0.12.1 immutata.
-- **Stato effettivo:** PR #45 / `5687f30` integrata e CI Success; la build automatica iniziale non compariva su Cloudflare. Un nuovo commit diagnostico esclusivamente documentale `232e473` su `dev/fase14-ai` ha attivato il deployment, confermato Success. Browser: **OK** accesso console, **OK** istruzioni filtro carta, **OK** arresto P01 per «Non riesco ad aprire il coperchio». Altri percorsi e iPhone non ancora collaudati.
-- **Prossimo intervento verificabile**: completare collaudo di carta/spugna/misto, comando «Fatto», domanda estranea e ripresa sessione (anche su iPhone). Preparare quindi il contratto di interazione AI/KB/controllore con autorizzazione separata prima di usare un provider generativo.
+- **Stato effettivo:** PR #45 / `5687f30` integrata e CI Success; la build automatica iniziale non compariva su Cloudflare. Un nuovo commit diagnostico esclusivamente documentale `232e473` su `dev/fase14-ai` ha attivato il deployment, confermato Success. Browser: **OK** accesso console, **OK** istruzioni filtro carta, **OK** arresto P01 per «Non riesco ad aprire il coperchio», **OK** percorso spugna, **OK** percorso misto, **OK** «Fatto» senza conferma automatica, **OK** ripresa di tipo filtro/passaggio dopo ricarica. **Non collaudati in questa tranche:** richiesta totalmente fuori ambito e prova Safari iPhone.
+- **Prossimo intervento verificabile**: contratto minimo del dialogo AI controllato con il filtro aria (fonte tecnica, condizioni, stato, risposte, no autorizzazioni AI); quindi test fuori ambito e Safari iPhone e selezione provider/costi. Attivazione LLM solo dopo approvazione specifica.
 
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
@@ -165,19 +165,22 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 ## I. PUNTO DI RIPRESA ATTUALE (AGGIORNARE SEMPRE)
 
-**Priorità approvata:** rendere utilizzabile l'integrazione KB → laboratorio filtro aria, senza Emergent né cambio piattaforma. Non confondere recupero deterministico con AI.
+**Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato:** Cloudflare `232e473` Success confermato dall'utente (contiene PR #45, commit `5687f30`); GitHub Actions #42909580827 Success; KB 15.25.1, 24/53 validati con condizioni, 29 pendenti, AI off, PWA 0.12.1 immutata.
+**Stato confermato:** Cloudflare `232e473` Success, che include PR #45 (`5687f30`); GitHub Actions #42909580827 Success. KB 15.25.1, 24/53 con condizioni, 29 pendenti. AI off; `/api/assist` ancora non generativo. Issue #37/OPEN-07 resta aperta.
 
-**Collaudo browser dichiarato dall'utente il 2026-11-10:**
-- [x] Apertura pagina del laboratorio protetto: **OK**.
-- [x] Recupero delle istruzioni validate per filtro in carta: **OK**.
-- [x] Blocco su P01 alla domanda «Non riesco ad aprire il coperchio»: **OK**.
-- [ ] Percorsi filtro spugna e misto: non verificati.
-- [ ] Comando «Fatto», fuori ambito, ripresa sessione: non verificati.
-- [ ] Safari iPhone: non verificato.
-- [ ] Dialogo AI con modello reale: non implementato.
+**Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
+- [x] Apertura laboratorio protetto.
+- [x] Visualizzazione istruzioni validate filtro carta.
+- [x] Anomalia P01 «Non riesco ad aprire il coperchio» → blocco.
+- [x] Selezione spugna → passaggi lavaggio e oliatura.
+- [x] Selezione misto → nessuna oliatura prefiltro nella guida standard.
+- [x] Comando «Fatto» → nessuna conferma automatica.
+- [x] Ricarica pagina → mantenuti tipo filtro e passaggio selezionato.
+- [ ] Domanda totalmente fuori ambito: non provata dall'utente.
+- [ ] Test esplicito su iPhone Safari: non confermato.
+- [ ] AI libera e conversazionale: non implementata.
 
-**Diagnosi:** il recupero dei testi revisionati funziona in un caso reale e la condizione di arresto P01 è stata osservata, ma non è prova di capacità conversazionale AI né di copertura completa della sicurezza.
+**Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT:** completare i test mancanti e definire il primo contratto AI ↔ KB ↔ controllore deterministico, senza attivare un modello o assumere costi prima di una decisione esplicita. Issue #37 / OPEN-07 ancora aperta.
+**NEXT (M4 progettazione):** formalizzare contratto `contesto operazione + stepId + tipo filtro + domanda + stato attestato dal controller` → prevalidazione sicurezza/ambito → contenuti autorizzati recuperati dal ledger → risposta linguistica con riferimento alla fonte e indicazione esplicita di incertezza, **senza autorizzazione di completamento o cambio step dall'AI**. Provider, credenziali server-side, limite costi, logging minimizzato e test negativi da approvare prima di ogni chiamata LLM. Mantenere disattivate le risposte generative fino a verifica della copertura dei rischi.
