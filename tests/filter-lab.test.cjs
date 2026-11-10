@@ -70,6 +70,7 @@ test('fail closed on damage, scope, command, malicious payload or non-reviewed s
  assert.equal(stop.allowCompletion,false);
  assert.equal(m.filterLabAnswer(question('RASA-OP-03-P01',null,'La lama è crepata')).decision,'SAFETY_STOP');
  assert.equal(m.filterLabAnswer(question('RASA-OP-03-P01',null,'Fatto')).decision,'COMMAND');
+ assert.equal(m.filterLabAnswer(question('RASA-OP-03-P01',null,'Che film esce al cinema?')).decision,'QUESTION_NOT_COVERED');
  assert.equal(m.filterLabAnswer(question('RASA-OP-03-P01',null,'Come riparare il cambio di una automobile?')).decision,'OUT_OF_SCOPE');
  assert.equal(m.filterLabAnswer(question('RASA-OP-04-P01','carta')).decision,'INVALID_INPUT');
  assert.equal(m.filterLabAnswer({...question(),role:'admin'}).decision,'INVALID_INPUT');
