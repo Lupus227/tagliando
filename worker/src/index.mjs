@@ -10,6 +10,8 @@ import {servePilot} from './pilot.mjs';
 import {auditCanonicalKnowledge,canonicalKnowledgeStatus} from './canonical-knowledge.mjs';
 import {auditReviewLedger} from './review-ledger.mjs';
 import {CANONICAL_KNOWLEDGE} from './canonical-knowledge.mjs';
+import {filterLabAnswer,filterLabReady} from './filter-lab.mjs';
+import {filterLabPage,filterLabClient} from './filter-lab-ui.mjs';
 
 const MAX_BODY_BYTES = 2048;
 const MAX_QUESTION_CHARS = 500;
@@ -98,6 +100,65 @@ const worker = {
       try { return respond(200,{ok:true,...canonicalKnowledgeStatus()}); }
       catch (_) { return error(503,'KNOWLEDGE_INVALID'); }
     }
+    // M3 — laboratorio filtro aria, Access-protetto e NON collegato ad AI.
+    // Non altera /api/assist né la PWA pubblica, non espone dati senza Access.
+    if (url.pathname === '/lab/filtro-aria' ||
+        url.pathname === '/lab/filtro-aria/' ||
+        url.pathname === '/lab/filtro-aria/client.js') {
+      if(request.method!=='GET')return error(405,'METHOD_NOT_ALLOWED');
+      if(env.SERVICE_MODE!=='guarded')return error(503,'SERVICE_DISABLED');
+      if(url.origin!=='https://tagliando-ai-staging.maico-gua.workers.dev' ||
+         env.SELF_TEST_ORIGIN!==url.origin)return error(403,'TEST_ORIGIN_DENIED');
+      try{await verifyWorkerAccess(request,env,ctx);}catch(_){return error(401,'UNAUTHORIZED');}
+      if(!filterLabReady())return error(503,'KNOWLEDGE_INVALID');
+      const js=url.pathname.endsWith('client.js');
+      return new Response(js?filterLabClient:filterLabPage,{status:200,headers:{
+        ...baseHeaders,'Content-Type':js?'application/javascript; charset=utf-8':'text/html; charset=utf-8',
+        'X-Frame-Options':'DENY',
+        'Content-Security-Policy':"default-src 'none'; script-src 'self'; connect-src 'self'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+      }});
+    }
+    if(url.pathname==='/api/lab/filtro-aria'){
+      if(request.method!=='POST')return error(405,'METHOD_NOT_ALLOWED');
+      if(env.SERVICE_MODE!=='guarded')return error(503,'SERVICE_DISABLED');
+      if(url.origin!=='https://tagliando-ai-staging.maico-gua.workers.dev' ||
+         env.SELF_TEST_ORIGIN!==url.origin ||
+         request.headers.get('origin')!==url.origin)return error(403,'TEST_ORIGIN_DENIED');
+      let actor;
+      try{actor=await verifyWorkerAccess(request,env,ctx,true);}catch(_){return error(401,'UNAUTHORIZED');}
+      if(!env.API_LIMITER || typeof env.API_LIMITER.limit!=='function')
+        return error(503,'RATE_LIMITER_REQUIRED');
+      let limit;
+      try{limit=await env.API_LIMITER.limit({key:'filterlab:'+actor.sub});}
+      catch(_){return error(503,'RATE_LIMITER_UNAVAILABLE');}
+      if(limit?.success!==true)return error(429,'RATE_LIMITED');
+      if(!/^application\/json(?:\s*;.*)?$/i.test(request.headers.get('content-type')||''))
+        return error(415,'UNSUPPORTED_CONTENT_TYPE');
+      // Stream-guard: never allocate arbitrary-sized user input.
+      const reader=request.body?.getReader();
+      if(!reader)return error(400,'BAD_BODY');
+      const chunks=[];let total=0;
+      try{
+        while(true){
+          const next=await reader.read();
+          if(next.done)break;
+          total+=next.value.byteLength;
+          if(total>1700){await reader.cancel();return error(413,'BODY_TOO_LARGE');}
+          chunks.push(next.value);
+        }
+      }catch(_){return error(400,'BAD_BODY');}
+      finally{try{reader.releaseLock();}catch(_){}}
+      let payload;
+      try{
+        const bytes=new Uint8Array(total);let offset=0;
+        for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+        payload=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));
+      }catch(_){return error(400,'BAD_BODY');}
+      const answer=filterLabAnswer(payload);
+      const {httpStatus,...result}=answer;
+      return respond(httpStatus??503,result);
+    }
+
     // Fase 14.7 — PWA snapshot isolated behind Access on the same origin.
     // No changes to the public PWA, existing API, or voice command handlers.
     if (url.pathname === '/pilot' || url.pathname.startsWith('/pilot/'))
