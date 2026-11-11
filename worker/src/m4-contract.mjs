@@ -8,7 +8,7 @@
  * Only the server may assemble technical output from the current reviewed
  * ledger; generated technical prose is never forwarded to an operator.
  */
-import {filterLabAnswer,filterLabReady} from './filter-lab.mjs';
+import {filterLabAnswer,filterLabReady,FILTER_LAB_STEPS} from './filter-lab.mjs';
 
 export const M4_CONTRACT_VERSION='tagliando.m4.read-only.v1';
 const MAX_QUESTION_CHARS=450;
@@ -60,7 +60,7 @@ function preflightInput(input,state){
     ['operationId','stepId','filterType','question'],
     ['operationId','stepId','filterType','question']) ||
     input.operationId!==3 ||
-    typeof input.stepId!=='string' ||
+    typeof input.stepId!=='string' || !FILTER_LAB_STEPS.includes(input.stepId) ||
     (input.filterType!==null && !FILTER_TYPES.has(input.filterType)) ||
     !validQuestion(input.question))
     return deny('INVALID_INPUT','Richiesta non valida per il contratto M4.');
