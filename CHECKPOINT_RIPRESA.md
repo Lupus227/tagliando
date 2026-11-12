@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-10; confermati deployment Cloudflare `232e473` e **7/7 prove funzionali browser previste per la prima tranche**. Worker include PR #45; KB 15.25.1 invariata.  
+**Checkpoint:** 2026-11-12; **M4.1 integrata** sul branch `dev/fase14-ai` con [PR #49](https://github.com/Lupus227/tagliando/pull/49), merge `8e746d0`, [CI di PR #43185510940 Success](https://github.com/Lupus227/tagliando/actions/runs/43185510940). Ultimo deployment Cloudflare **confermato dall'utente**: `232e473` (M3). KB 15.25.1; PWA 0.12.1; AI ancora disabilitata.  
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **NON implementata**; la console restituisce esclusivamente testi validati dopo controlli deterministici |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **7/7 test previsti della prima tranche M3 superati dall'utente**; definire contratto minimo M4 AI/KB/controllore, senza attivare AI |
+| Compito immediato di questa conversazione | **M4.1 integrata su `dev/fase14-ai`**, test di PR superati; progettare il perimetro M4.2 (provider, quote, accesso AI ai contenuti autorizzati, controller e verifiche), senza attivare ancora LLM |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -86,6 +86,17 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - L'API restituisce la fonte approvata del passo corrente; **non è un modello AI** e non permette dialogo libero intelligente. Non certifica lavorazioni. `/api/assist` e flags AI rimangono disabilitati, KB 15.25.1, PWA pubblica v0.12.1 immutata.
 - **Stato effettivo:** PR #45 / `5687f30` integrata e CI Success; la build automatica iniziale non compariva su Cloudflare. Un nuovo commit diagnostico esclusivamente documentale `232e473` su `dev/fase14-ai` ha attivato il deployment, confermato Success. Browser: **OK** accesso console, **OK** istruzioni filtro carta, **OK** arresto P01 per «Non riesco ad aprire il coperchio», **OK** percorso spugna, **OK** percorso misto, **OK** «Fatto» senza conferma automatica, **OK** ripresa di tipo filtro/passaggio dopo ricarica. **Non collaudati in questa tranche:** richiesta totalmente fuori ambito e prova Safari iPhone.
 - **Prossimo intervento verificabile**: contratto minimo del dialogo AI controllato con il filtro aria (fonte tecnica, condizioni, stato, risposte, no autorizzazioni AI); quindi test fuori ambito e Safari iPhone e selezione provider/costi. Attivazione LLM solo dopo approvazione specifica.
+
+### M4.1 — Contratto di sicurezza per il futuro dialogo: integrazione 2026-11-12
+
+- [PR #49](https://github.com/Lupus227/tagliando/pull/49) **MERGED** in `dev/fase14-ai`; commit di merge `8e746d00f9f0640a84b6c5097c60a8673ecdb899`.
+- [GitHub Actions #43185510940](https://github.com/Lupus227/tagliando/actions/runs/43185510940): **Success** su commit PR `c4b1b17`, regressioni Node + Wrangler dry-run.
+- Moduli aggiunti: `worker/src/m4-contract.mjs`, `tests/m4-contract.test.cjs`, `docs/M4_1_CONTRATTO_DIALOGO.md`. Workflow `.github/workflows/fase14-tests.yml` ora verifica anche PR verso `dev/fase14-ai`.
+- `prepareM4Turn` / `reviewM4Candidate`: contratto di prova **non collegato ad alcuna route**; ritorna soltanto testo tecnico preapprovato dal ledger se la fonte/revisione è coerente. Nessuna parafrasi generativa verificata, nessun controller universale.
+- Tutti i flag AI restano spenti; `modelInputAllowed=false`; `aiUseAllowed=false` nel ledger. Nessuna chiamata/provider AI, nessun cambio a PWA v0.12.1.
+- **Cloudflare:** merge su branch di staging non implica deployment confermato. Ultimo deploy confermato dall'utente resta `232e473`; necessaria verifica separata se rilevante.
+- Il workflow #43095963218 è rimasto in `queued` senza job e senza poter essere cancellato; il commit successivo `c4b1b17` ha avviato nuova CI conclusa con successo. Non trattare il vecchio run come fallimento del codice.
+- **M4.2 da approvare separatamente:** Workers AI / AI Gateway, modello e quote, limiti economici fail-closed, gating per soli step OP03, protezione dell'input/output, prove negative. Vietata attivazione prima delle guardie e approvazione esplicita.
 
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
@@ -167,7 +178,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** Cloudflare `232e473` Success, che include PR #45 (`5687f30`); GitHub Actions #42909580827 Success. KB 15.25.1, 24/53 con condizioni, 29 pendenti. AI off; `/api/assist` ancora non generativo. Issue #37/OPEN-07 resta aperta.
+**Stato confermato:** ultimo Cloudflare attestato dall'utente `232e473` Success (M3); M4.1 PR #49 integrata in `dev/fase14-ai` con merge `8e746d0` e CI PR #43185510940 Success. Distribuzione Cloudflare successiva **non verificata**. KB 15.25.1, 24/53 con condizioni, 29 pendenti. AI off; `/api/assist` resta non generativo. Issue #37/OPEN-07 resta aperta.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -183,4 +194,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (M4 progettazione):** formalizzare contratto `contesto operazione + stepId + tipo filtro + domanda + stato attestato dal controller` → prevalidazione sicurezza/ambito → contenuti autorizzati recuperati dal ledger → risposta linguistica con riferimento alla fonte e indicazione esplicita di incertezza, **senza autorizzazione di completamento o cambio step dall'AI**. Provider, credenziali server-side, limite costi, logging minimizzato e test negativi da approvare prima di ogni chiamata LLM. Mantenere disattivate le risposte generative fino a verifica della copertura dei rischi.
+**NEXT (M4.2 valutazione e gate, NON ancora implementata):** definire e approvare primo provider/modello (Workers AI e possibile AI Gateway), quote free e limite di spesa, autorizzazione selettiva di OP03 per il solo laboratorio, verifiche server-side di sicurezza e fonti, stato controller attestato, gestione anomalie/prompt injection e test negativi. Mantenere `aiEnabled=false`, `canGenerate=false`, `modelInputAllowed=false` e `aiUseAllowed=false` fino all'autorizzazione esplicita. Poi integrare e collaudare il modello nel perimetro approvato.

@@ -1,6 +1,6 @@
 # REGISTRO DI PROGETTO — APP TAGLIANDO
 
-**Versione del registro:** 1.27 · **Aggiornato:** 2026-11-10  
+**Versione del registro:** 1.28 · **Aggiornato:** 2026-11-12  
 **Responsabile approvazioni tecniche:** titolare del progetto (utente).  
 **Ambito:** assistente AI tecnico conversazionale e prevalentemente vocale per manutenzione, diagnosi e riparazioni delle macchine da giardinaggio; il tagliando preventivo del rasaerba a benzina è il primo caso pilota, non il limite del prodotto.  
 **Repository PWA:** `Lupus227/tagliando`.  
@@ -43,7 +43,11 @@
 - **Affilatura lama:** operazione **facoltativa** nel tagliando gratuito; si salta se mancano competenza, strumenti o condizioni di sicurezza. Non compromettere le altre attività del tagliando, registrando l'omissione.
 - **Dati tecnici specifici:** quantità d'olio, coppie di serraggio, codici ricambi, geometrie e limiti di usura richiedono identificazione di macchina/motore e riferimento appropriato; non presentarli come universali.
 
-## C. Stato ufficiale noto al 2026-11-09
+## C. Stato ufficiale (storico e ultimo aggiornamento)
+
+**Aggiornamento 2026-11-12 — M4.1 integrata, NON generativa:** [PR #49](https://github.com/Lupus227/tagliando/pull/49) unita a `dev/fase14-ai` con commit `8e746d00f9f0640a84b6c5097c60a8673ecdb899`; [GitHub Actions #43185510940](https://github.com/Lupus227/tagliando/actions/runs/43185510940) **Success** (regressioni Node e Wrangler dry-run). Modulo `worker/src/m4-contract.mjs`, test e documento `docs/M4_1_CONTRATTO_DIALOGO.md` integrati. Modulo non collegato a route, provider non integrato, flag AI e `aiUseAllowed` non modificati. Workflow CI aggiornato per PR verso `dev/fase14-ai`. Cloudflare post-merge **non verificato**: ultimo deployment attestato dall'utente resta `232e473`, KB `15.25.1`. PWA pubblica `0.12.1` invariata. Nessuna nuova autorizzazione M4.2 implicita nel merge.
+
+**Storico di riferimento fino al 2026-11-10:**
 
 **Ultimo deployment Cloudflare verificato:** `90283d4` sul ramo `dev/fase14-ai`, confermato dall'utente come **Success** con risposta JSON dell'endpoint Access-protetto `/api/knowledge-status`.
 
@@ -239,3 +243,4 @@ Le Issue sono un **backlog di requisiti, problemi e proposte**. Il registro cost
 | 2026-11-10 | Prima integrazione verificabile della Knowledge Base — laboratorio M3 filtro aria. | Su richiesta del titolare, Emergent sospeso per evitare dispersioni; obiettivo: usare i 7 passaggi già validati di OP03. [PR #45](https://github.com/Lupus227/tagliando/pull/45) integrata sul branch `dev/fase14-ai`, commit `5687f30`, [GitHub Actions Success](https://github.com/Lupus227/tagliando/actions/runs/42898433457). Console `/lab/filtro-aria` e API Access-protetta non generativa; AI off, PWA v0.12.1 invariata. **Cloudflare `5687f30` e prove browser NON ANCORA confermati**. Prossimo passo: test del deployment e verifica UI/stop. GOV-18. |
 | 2026-11-10 | M3 laboratorio filtro aria: deployment e prime prove UI superate. | Build Cloudflare commit documentale `232e473` Success (contiene il codice PR #45 `5687f30`); [CI #42909580827 Success](https://github.com/Lupus227/tagliando/actions/runs/42909580827). L'utente conferma **OK** apertura console, visualizzazione istruzioni filtro carta, stop P01 con «Non riesco ad aprire il coperchio». Altri scenari e iPhone non testati. AI disabilitata, PWA 0.12.1 invariata, KB 15.25.1 invariata. Prossimo intervento: completare prove, definire contratto AI conversazionale controllato, non attivare ancora LLM. |
 | 2026-11-10 | M3 filtro aria — **7/7 verifiche browser previste superate**; pianificazione M4. | Dopo i primi tre esiti positivi, l'utente conferma anche spugna (lavaggio/oliatura), misto (prefiltro non oliato), «Fatto» senza conferma e recupero selezione dopo ricarica: tutti positivi. Restano non verificati prompt interamente fuori ambito e Safari iPhone. KB `15.25.1`, PWA `0.12.1`, AI off invariati. Prossimo intervento: contratto formale per dialogo AI limitato a OP03 con controller deterministico; provider/costi/attivazione richiedono decisione separata. |
+| 2026-11-12 | **M4.1 — contratto fail-closed integrato, senza AI**. | [PR #49](https://github.com/Lupus227/tagliando/pull/49) merged su `dev/fase14-ai`, commit `8e746d0`; [CI #43185510940 Success](https://github.com/Lupus227/tagliando/actions/runs/43185510940). Aggiunto modulo `m4-contract.mjs`, test dei rifiuti e della validazione delle fonti; aggiornato il workflow GitHub Actions per PR sul branch dev. Run precedente `#43095963218` rimasto queued senza job; la nuova CI è passata dopo commit `c4b1b17`. **AI OFF, nessun provider né deploy Cloudflare confermato per M4.1, KB 15.25.1 e PWA 0.12.1 invariati.** Prossima decisione: gate M4.2, costo, autorizzazione selettiva OP03, test negativi. |
