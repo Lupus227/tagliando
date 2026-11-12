@@ -12,6 +12,7 @@ import {auditReviewLedger} from './review-ledger.mjs';
 import {CANONICAL_KNOWLEDGE} from './canonical-knowledge.mjs';
 import {filterLabAnswer,filterLabReady} from './filter-lab.mjs';
 import {filterLabPage,filterLabClient} from './filter-lab-ui.mjs';
+import {serveM4Probe} from './m4-probe-route.mjs';
 
 const MAX_BODY_BYTES = 2048;
 const MAX_QUESTION_CHARS = 500;
@@ -158,6 +159,12 @@ const worker = {
       const {httpStatus,...result}=answer;
       return respond(httpStatus??503,result);
     }
+
+    // M4.2.2: fixed staged AI experiment, separately gated and read-only.
+    // No arbitrary user question; no changes to /api/assist or public PWA.
+    if (url.pathname==='/lab/ai-probe'||url.pathname==='/lab/ai-probe/'||
+        url.pathname==='/lab/ai-probe/client.js'||url.pathname==='/api/lab/ai-probe')
+      return serveM4Probe(request,env,ctx,verifyWorkerAccess);
 
     // Fase 14.7 — PWA snapshot isolated behind Access on the same origin.
     // No changes to the public PWA, existing API, or voice command handlers.
