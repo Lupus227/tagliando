@@ -22,7 +22,7 @@ Il contenuto estratto resta **non fidato**: `reviewM4Candidate` confronta esatta
 ## Verifiche automatiche
 
 - Test dedicati `tests/m4-selector-envelope.test.cjs`: fixture binding `response`, Chat Completions `choices`, `ABSTAIN`, conflitti e forme sconosciute, ragionamento troncato, campo `tool_calls`, riferimenti non validi e completamenti indesiderati.
-- Mock end-to-end della sola prova `paper-wash`: verifica che l'istruzione mostratra provenga dalla revisione del ledger, senza chiamare Cloudflare.
+- Mock end-to-end della sola prova `paper-wash`: verifica che l'istruzione mostrata provenga dalla revisione del ledger, senza chiamare Cloudflare.
 - CI: `node --test tests/*.test.cjs` + `wrangler deploy --dry-run` su PR. Nessuna inferenza nel processo.
 - Entrambi i file Wrangler conservano `AI_PROBE_MODE=disabled`, la guardia di scadenza e il limiter dedicato. La PWA `0.12.1`, la KB `15.25.1`, i flag AI globali e `aiUseAllowed=false` non cambiano.
 
