@@ -84,7 +84,7 @@ export const probeClient=String.raw`'use strict';
         body:JSON.stringify({caseId:$('case').value})
       });
       const data=await r.json();
-      const {instruction,stopCondition,title,references,decision,message}=data;
+      const {instruction,stopCondition,title,references,decision,message,diagnosticCode}=data;
       $('status').textContent=(r.ok?'Risposta laboratorio: ':'Controllo di arresto: ')+(decision||'ERRORE');
       // Only server-assembled reviewed text, never raw model output.
       $('result').textContent=[
@@ -93,6 +93,7 @@ export const probeClient=String.raw`'use strict';
         instruction||'',
         stopCondition?'Condizione di arresto: '+stopCondition:'',
         references?.[0]?.stepId?'Fonte: '+references[0].stepId+' · '+references[0].revision:'',
+        diagnosticCode?'Diagnostica strutturale: '+diagnosticCode:'',
         'Chiamate al modello: '+String(data.modelRequests??0)
       ].filter(Boolean).join('\n\n');
     }catch(_){$('status').textContent='Connessione non disponibile.';}
