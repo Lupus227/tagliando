@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-12; **M4.2.2 collaudo Cloudflare completato con gate AI OFF**. [PR #55](https://github.com/Lupus227/tagliando/pull/55) merged su `dev/fase14-ai`, commit `53a64a4`, [CI #43195514912 Success](https://github.com/Lupus227/tagliando/actions/runs/43195514912). L'utente conferma **Cloudflare deployment `53a64a4` Success**, `/api/knowledge-status` KB `15.25.1`, 8 procedure / 53 passaggi, 24 validati con condizioni, 29 pendenti, `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`, `sessionChanged=false`. Premendo «Avvia prova controllata», la pagina `/lab/ai-probe` ha restituito **`PROBE_DISABLED`**, come previsto con `AI_PROBE_MODE=disabled`. Questo è un test del blocco, **non una chiamata GPT-OSS 20B**. PWA `0.12.1` invariata.
+**Checkpoint:** 2026-11-12; **prima inferenza reale GPT-OSS 20B temporaneamente autorizzata e integrata nel ramo staging, ancora DA COLLAUDARE su Cloudflare**. [PR #58](https://github.com/Lupus227/tagliando/pull/58) merged su `dev/fase14-ai` commit `536f19c`, [CI #43200939648 Success](https://github.com/Lupus227/tagliando/actions/runs/43200939648). In entrambi i Wrangler `AI_PROBE_MODE=enabled` e scadenza server-side `AI_PROBE_EXPIRES_AT=2026-11-13T00:00:00Z` (01:00 CET); il Worker risponde `PROBE_EXPIRED` oltre scadenza senza chiamare il modello. L'ultimo deployment Cloudflare **confermato dall'utente** resta `53a64a4` (gate disabilitato). **Non dichiarare ancora né deployment `536f19c` né prima inferenza riuscita.** KB `15.25.1`, PWA `0.12.1`, flag AI globali OFF.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **NON implementata**; la console restituisce esclusivamente testi validati dopo controlli deterministici |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.2.2 codice/CI/Cloudflare/gate disabilitato verificati**. Prossima decisione separata: abilitare in staging una prima inferenza reale a input fisso su OP03 con Workers Free, preservando controllo su fonte, costi e stato; non abilitare AI senza assenso esplicito |
+| Compito immediato di questa conversazione | **Attivazione temporanea per la prima prova reale già autorizzata e merged**; confermare Cloudflare deployment `536f19c`, aprire laboratorio Access-protetto `/lab/ai-probe`, eseguire solo scenario P03 `paper-wash`, raccogliere esito/modelRequests, quindi ripristinare AI_PROBE_MODE=disabled e verificarne il nuovo deployment |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -119,6 +119,15 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - In due config Wrangler `AI_PROBE_MODE=disabled` e `AI_PROBE_LIMITER` 1/60 (approssimativo). **Nessuna inferenza reale effettuata e nessuna attivazione automatica.** Su Workers Free l'account dispone della quota giornaliera gratuita, non è un hard budget fornito dal limiter.
 - **Cloudflare deployment `53a64a4` confermato dall'utente come Success il 2026-11-12.** Endpoint `/api/knowledge-status`: KB 15.25.1, 24/53 validati con condizioni, 29 pendenti; flag AI OFF. Laboratorio `/lab/ai-probe`: `PROBE_DISABLED` dopo click, prova positiva del gate disabilitato, non di inferenza. PWA pubblica immutata.
 - **NEXT:** confermare build Cloudflare `53a64a4`, JSON API KB, apertura pagina protetta e blocco `PROBE_DISABLED`. Richiedere decisione separata prima di attivare il gate e consumare neurons.
+
+### M4.2.2 — Prima inferenza live temporaneamente abilitata nel codice (2026-11-12)
+
+- Il titolare ha approvato esplicitamente l'attivazione della **prima** prova GPT-OSS 20B sul piano Workers Free e solo in staging OP03.
+- [PR #58](https://github.com/Lupus227/tagliando/pull/58) **MERGED** su `dev/fase14-ai`, commit `536f19cf9e360e908fa76b00c29b6b200cc2a6c3`; [CI #43200939648](https://github.com/Lupus227/tagliando/actions/runs/43200939648) Success (regressioni e Wrangler dry-run).
+- Due Wrangler: `AI_PROBE_MODE=enabled` + `AI_PROBE_EXPIRES_AT=2026-11-13T00:00:00Z`. Verifica expiry sia in route sia in modello; oltre il termine nessuna inferenza. 01:00 CET del 13 novembre.
+- Scope e sicurezza invariati: Access, origin esatta, limiter ~1/min approssimato, solo casi server-side; P03 carta può interrogare modello; anomalia P01 e domande non pertinenti bloccate prima. Il modello non riceve istruzioni tecniche KB; propone fonte o si astiene, verifica server-side M4.1. PWA pubblica invariata; `aiUseAllowed=false` nel ledger; flag globali OFF.
+- **Non ancora verificato** deployment Cloudflare del commit `536f19c`; ultimo deploy certificato dall'utente è `53a64a4`, con `PROBE_DISABLED`. **Nessuna inferenza reale ancora attestata.**
+- **NEXT operativo:** conferma Cloudflare `536f19c` Success; prova browser una sola volta con P03, rileva decision e `modelRequests`; subito dopo ripristino su entrambi Wrangler `AI_PROBE_MODE=disabled` con nuovo commit/CI/deploy. Il tempo di scadenza blocca le chiamate ma non effettua rollback del config automaticamente.
 
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
@@ -216,4 +225,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (prima inferenza reale, NON ancora autorizzata):** il test del gate disabilitato è passato. Richiedere assenso specifico prima di cambiare `AI_PROBE_MODE` a `enabled`, verificare piano Workers Free (già dichiarato dall'utente) e disponibilità della quota; eseguire soltanto prova OP03 `paper-wash`, osservare costo/risposta, rifiuti/anomalie e poi disabilitare il gate. Nessuna PWA pubblica, nessun avanzamento, nessun contenuto tecnico inventato.
+**NEXT (collaudo prima inferenza reale autorizzata, e rollback):** verificare Cloudflare commit `536f19c` Success e metadata KB 15.25.1 AI OFF; su `/lab/ai-probe`, eseguire **una** prova `paper-wash` e riportare decision, `modelRequests` e testo visibile. Non confondere `modelRequests=1` con accettazione valida dell'output; può fallire chiuso. Dopo prova, commit di disattivazione `AI_PROBE_MODE=disabled` in entrambi i Wrangler, CI e deployment da confermare. Il gate a scadenza 2026-11-13T00:00:00Z assicura stop delle nuove inferenze anche senza rollback.
