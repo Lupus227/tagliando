@@ -2,7 +2,7 @@
  * Access-protected staging UI / API. No free-form requests or state mutation.
  * To enable: explicit AI_PROBE_MODE='enabled' after CI and human review.
  */
-import {runFixedM4Probe} from './m4-ai-probe.mjs';
+import {runFixedM4Probe,aiProbeWindowValid} from './m4-ai-probe.mjs';
 
 const STAGING='https://tagliando-ai-staging.maico-gua.workers.dev';
 const headers={
@@ -126,6 +126,8 @@ export async function serveM4Probe(request,env,ctx,verifyWorkerAccess){
  }
  if(env.AI_PROBE_MODE!=='enabled')
    return json(503,result('PROBE_DISABLED','Prima prova AI non ancora abilitata.'));
+ if(!aiProbeWindowValid(env))
+   return json(503,result('PROBE_EXPIRED','Finestra temporanea della prova AI terminata.'));
  // Rate limit is approximate; Workers Free quota is the account-level daily
  // ceiling. Do not claim this binding is a hard cost cap on Workers Paid.
  if(!env.AI_PROBE_LIMITER||typeof env.AI_PROBE_LIMITER.limit!=='function')
