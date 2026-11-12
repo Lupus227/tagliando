@@ -19,14 +19,45 @@ function result(decision,message,modelRequests=0,extra={}){
     canGenerate:false,allowCompletion:false,sessionChanged:false,
     probeInferenceExecuted:modelRequests===1,references:[],...extra};
 }
-function parseSelector(raw){
-  if(!raw||typeof raw!=='object'||Array.isArray(raw))return null;
-  let candidate=raw.response;
+/*
+ * M4.2.3 — Reject unknown model output envelopes instead of trying to extract
+ * a JSON object from arbitrary text. Supported:
+ *   (1) Workers AI binding: {response: jsonStringOrObject}
+ *   (2) Chat Completions: {choices:[{message:{role:'assistant',content:jsonString},
+ *                                    finish_reason:'stop'}]}
+ * The latter is documented for the compatible API; it is a conservative
+ * compatibility path, NOT evidence that the first live binding returned it.
+ * Never parse markdown fences, multiple choices, reasoning or tool calls.
+ */
+function record(value){
+  return value!==null&&typeof value==='object'&&!Array.isArray(value)&&
+    (Object.getPrototypeOf(value)===Object.prototype||
+     Object.getPrototypeOf(value)===null);
+}
+export function parseM4SelectorEnvelope(raw){
+  if(!record(raw))return null;
+  const hasResponse=Object.hasOwn(raw,'response');
+  const hasChoices=Object.hasOwn(raw,'choices');
+  if(hasResponse===hasChoices)return null; // ambiguous or unsupported envelope
+  let candidate;
+  if(hasResponse){
+    candidate=raw.response;
+  }else{
+    if(!Array.isArray(raw.choices)||raw.choices.length!==1)return null;
+    const choice=raw.choices[0];
+    if(!record(choice)||choice.finish_reason!=='stop'||
+      !record(choice.message)||choice.message.role!=='assistant'||
+      Object.hasOwn(choice.message,'tool_calls')||
+      Object.hasOwn(choice.message,'refusal')||
+      Object.hasOwn(choice.message,'function_call'))return null;
+    candidate=choice.message.content;
+  }
   if(typeof candidate==='string'){
-    if(candidate.length>512)return null;
+    if(!candidate.length||candidate.length>512)return null;
     try{candidate=JSON.parse(candidate);}catch(_){return null;}
   }
-  if(!candidate||typeof candidate!=='object'||Array.isArray(candidate))return null;
+  if(!record(candidate))return null;
+  // Final source/operation authorization is still performed by M4.1.
   return candidate;
 }
 // Trusted deploy-time expiry. A missing or malformed deadline FAILS CLOSED.
@@ -76,7 +107,7 @@ export async function runFixedM4Probe(caseId,env){
     return result('MODEL_UNAVAILABLE','Modello non disponibile; nessun avanzamento.',1);
   }
   // Model output is UNTRUSTED. Never forward a model-generated instruction.
-  const reviewed=reviewM4Candidate(prepared,parseSelector(output),state);
+  const reviewed=reviewM4Candidate(prepared,parseM4SelectorEnvelope(output),state);
   return {...reviewed,modelRequests:1,probeInferenceExecuted:true,
     testCase:caseId,mode:'fixed_read_only_probe',modelId:WORKERS_AI_MODEL_ID};
 }
