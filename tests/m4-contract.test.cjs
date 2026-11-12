@@ -116,6 +116,29 @@ test('M4.1 detects explicit instruction override attempts (defense in depth)',as
     assert.equal(prepareM4Turn(input({question}),state()).decision,'INSTRUCTION_OVERRIDE_ATTEMPT');
   }
 });
+test('M4.1 re-reads validated foam content and retains the mixed-filter exclusion',async()=>{
+  const {prepareM4Turn,reviewM4Candidate}=await getContract();
+  const q=input({stepId:'RASA-OP-03-P04',filterType:'spugna',
+    question:'Come devo lavare il filtro in spugna?'});
+  const s=state({stepId:'RASA-OP-03-P04',filterType:'spugna'});
+  const prepared=prepareM4Turn(q,s);
+  assert.equal(prepared.decision,'DRY_RUN_CONTEXT_READY');
+  const result=reviewM4Candidate(prepared,{
+    action:'SHOW_REVIEWED_STEP',sourceStepId:prepared.source.stepId,
+    sourceRevision:prepared.source.revision
+  },s);
+  assert.equal(result.decision,'REVIEWED_SOURCE_DRY_RUN');
+  assert.match(result.instruction,/detergente specifico per filtri aria/);
+  assert.equal(result.allowCompletion,false);
+  assert.equal(result.sessionChanged,false);
+  const excluded=input({stepId:'RASA-OP-03-P05',filterType:'misto',
+    question:'Devo oliare il prefiltro in spugna?'});
+  const excludedState=state({stepId:'RASA-OP-03-P05',filterType:'misto'});
+  const blocked=prepareM4Turn(excluded,excludedState);
+  assert.equal(blocked.decision,'NOT_APPLICABLE');
+  assert.equal(blocked.canGenerate,false);
+});
+
 test('M4.1 optionally allows P01 with unidentified material but only in read-only lab',async()=>{
   const {prepareM4Turn}=await getContract();
   const q=input({stepId:'RASA-OP-03-P01',filterType:null,question:'Mostra passaggio'});
