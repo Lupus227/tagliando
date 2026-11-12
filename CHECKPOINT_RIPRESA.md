@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-12; **M4.2.4 — diagnostica strutturale degli output AI integrata in staging, ancora da verificare su Cloudflare**. [PR #65](https://github.com/Lupus227/tagliando/pull/65) merged su `dev/fase14-ai` commit `56c0243`, [CI #43223021866 Success](https://github.com/Lupus227/tagliando/actions/runs/43223021866): nuova classificazione a codici statici di errori envelope/JSON/finish, azione, step e revisione; output della Knowledge Base sempre validato da M4.1 e nessun testo AI raw esposto. **Ultimo deployment Cloudflare confermato dall'utente: `e272138` Success con `/lab/ai-probe` → `PROBE_DISABLED`**. Il deployment del nuovo commit `56c0243` non è ancora attestato. Entrambi Wrangler con `AI_PROBE_MODE=disabled`, KB 15.25.1 e PWA 0.12.1 invariati.
+**Checkpoint:** 2026-11-12; **M4.2.4 distribuita su Cloudflare tramite nuovo trigger documentale; ultimo collaudo `PROBE_DISABLED` ancora da confermare**. [PR #65](https://github.com/Lupus227/tagliando/pull/65) merged su `dev/fase14-ai` commit `56c0243`, [CI #43223021866 Success](https://github.com/Lupus227/tagliando/actions/runs/43223021866). Il commit #65 non compariva nella cronologia Deployments nonostante GitHub e Settings → Builds mostrassero il branch di produzione corretto. [PR #67](https://github.com/Lupus227/tagliando/pull/67) solo documentale, merge `f374fdd`, [CI #43227403187 Success](https://github.com/Lupus227/tagliando/actions/runs/43227403187), ha prodotto un nuovo evento di push: **l'utente conferma che il relativo deployment Cloudflare compare con stato Success**. Il Worker distribuito comprende la diagnostica M4.2.4; **non è nota la causa del mancato evento precedente**. `AI_PROBE_MODE=disabled` nei due Wrangler; KB 15.25.1 e PWA 0.12.1 invariate. **Richiesto un ultimo test browser `/lab/ai-probe` → `PROBE_DISABLED`.**
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **NON implementata**; la console restituisce esclusivamente testi validati dopo controlli deterministici |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.2.4 codice/CI/merge completati; inferenza OFF**. Confermare Cloudflare deployment `56c0243` Success e `PROBE_DISABLED`; nessuna prova GPT-OSS live. Eventuale nuova inferenza richiederà consenso separato e nuova finestra temporale |
+| Compito immediato di questa conversazione | **Cloudflare deployment `f374fdd` Success attestato dall'utente dopo PR #67 di retrigger; contiene M4.2.4.** Verificare nel laboratorio la risposta `PROBE_DISABLED`. Non confondere il recupero del deploy con la causa accertata del trigger mancato. Nessuna nuova inferenza reale autorizzata |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -152,7 +152,7 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - Aggiunto `worker/src/m4-output-diagnostics.mjs`: codici statici per envelope sconosciuto/ambiguo, scelta non finale o troncata, JSON non valido, azione non ammessa, riferimento/revisione errati. Il modulo **non registra né restituisce testo grezzo**, prompt o dati personali. Parser di M4.2.3 rimane strict allowlist; M4.1 continua a autorizzare la sola fonte revisionata.
 - La console protetta può visualizzare `diagnosticCode` accanto alla decisione solo nelle future richieste; test verificano assenza di fuga di stringhe simulate e nessun avanzamento automatico. **Nessuna inferenza reale eseguita in questa tranche.**
 - Wrangler root/worker invariati con `AI_PROBE_MODE=disabled` e vecchia scadenza UTC. PWA 0.12.1, KB 15.25.1, `aiUseAllowed=false`, flag globali invariati.
-- **Cloudflare deploy commit `56c0243` NON ancora verificato**. Ultimo confermato dall'utente `e272138` Success e `PROBE_DISABLED`.
+- **Cloudflare deploy con PR #67 commit `f374fdd` confermato Success dall'utente**. Il commit è successivo a `56c0243` sul medesimo branch e ne include la diagnostica M4.2.4. Non verificata la causa per cui il precedente push non aveva prodotto una versione visibile. Test browser del nuovo deploy `PROBE_DISABLED` ancora pendente.
 - **NEXT:** verificare `56c0243` Success e `PROBE_DISABLED`; successiva chiamata al modello richiederà nuova autorizzazione. La causa reale della prima chiamata rifiutata non è stata accertata.
 
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
@@ -235,7 +235,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** Cloudflare `e272138` Success e laboratorio `PROBE_DISABLED` secondo l'utente (M4.2.3). M4.2.4 PR #65 merged su dev `56c0243`, CI #43223021866 Success, **Cloudflare del nuovo commit da confermare**. Il precedente `MODEL_OUTPUT_REJECTED` resta senza causa osservata; nessuna ulteriore inferenza effettuata o autorizzata. KB 15.25.1, 24/53 con condizioni, 29 pendenti. AI off; `/api/assist` resta non generativo. Issue #37/OPEN-07 resta aperta.
+**Stato confermato:** Cloudflare del retrigger documentale `f374fdd` Success secondo l'utente. M4.2.4 PR #65 merged su dev `56c0243`, CI #43223021866 Success; PR #67 merged, CI #43227403187 Success. Il codice M4.2.4 è incluso nel nuovo deploy, ma `/lab/ai-probe` → `PROBE_DISABLED` non è ancora stato verificato per questa versione. Il precedente `MODEL_OUTPUT_REJECTED` resta senza causa osservata; nessuna ulteriore inferenza effettuata o autorizzata. KB 15.25.1, 24/53 con condizioni, 29 pendenti. AI off; `/api/assist` resta non generativo. Issue #37/OPEN-07 resta aperta.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -251,4 +251,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (verifica deployment M4.2.4):** controllare Cloudflare `56c0243` Success, endpoint Access-protetto `/api/knowledge-status` KB 15.25.1 e AI OFF se necessario, e `/lab/ai-probe` → `PROBE_DISABLED` (nessuna inferenza o quota consumata). Le categorie diagnostiche si applicheranno soltanto a una futura prova espressamente autorizzata; **non** dimostrano retroattivamente la causa del primo `MODEL_OUTPUT_REJECTED`. Per futura attivazione occorrono consenso separato, piano Workers Free verificato e nuova scadenza. PWA 0.12.1, `aiUseAllowed=false`, flag AI globali invariati.
+**NEXT (ultimo collaudo gate M4.2.4):** utente deve aprire `/lab/ai-probe` dopo il deployment `f374fdd` confermato Success e ottenere `PROBE_DISABLED` (nessuna chiamata reale). Solo allora chiudere M4.2.4 nel perimetro codice/CI/deploy/gate. La diagnostica classifica le risposte future, ma non spiega retroattivamente `MODEL_OUTPUT_REJECTED`. Per una futura inferenza reale occorrono nuova autorizzazione, finestra UTC nuova e limite economico Workers Free. KB 15.25.1, PWA 0.12.1 e AI globale invariati.
