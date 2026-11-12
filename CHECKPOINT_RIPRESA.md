@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-12; **M4.2.1 completata nel perimetro codice, CI, deployment e verifica metadata**. [PR #52](https://github.com/Lupus227/tagliando/pull/52) unita a `dev/fase14-ai`, merge `8af75ee`, [CI #43192954169 Success](https://github.com/Lupus227/tagliando/actions/runs/43192954169). L'utente conferma **Cloudflare deployment `8af75ee` Success** e JSON `/api/knowledge-status`: schema `tagliando.knowledge.v1`, KB `15.25.1`, 8 procedure / 53 step, 24 validati con condizioni / 29 pendenti; `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`, `sessionChanged=false`. Binding Workers AI `AI` configurato, ma **zero inferenze e nessun LLM autorizzato**. PWA pubblica 0.12.1 invariata.  
+**Checkpoint:** 2026-11-12; **M4.2.2 prima prova AI a input fisso integrata, ma inferenza ancora OFF**. [PR #55](https://github.com/Lupus227/tagliando/pull/55), merge `53a64a4` su `dev/fase14-ai`; [CI #43195514912 Success](https://github.com/Lupus227/tagliando/actions/runs/43195514912). Modello `@cf/openai/gpt-oss-20b`, pagina Access-protetta `/lab/ai-probe`, API `/api/lab/ai-probe`, tre scenari fissi OP03; `AI_PROBE_MODE=disabled` in entrambe le config Wrangler. **Ultimo deployment confermato dall'utente: `8af75ee` (M4.2.1)**. Cloudflare di `53a64a4` e funzionamento browser M4.2.2 **da verificare**. KB 15.25.1; PWA 0.12.1; flag AI globali OFF.  
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **NON implementata**; la console restituisce esclusivamente testi validati dopo controlli deterministici |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.2.1 conclusa e verificata su Cloudflare**; il prossimo intervento è definire e approvare M4.2.2, prima inferenza isolata OP03 con modello GPT-OSS 20B, controlli di spesa/sicurezza e nessuna transizione PWA |
+| Compito immediato di questa conversazione | **M4.2.2 integrata con inferenza disabilitata**; verificare Cloudflare deployment `53a64a4` Success e JSON KB/AI OFF; aprire `/lab/ai-probe` protetto e verificare `PROBE_DISABLED`. Solo dopo approvazione distinta si abilita un'unica prima inferenza reale |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -109,6 +109,16 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - Nessuna nuova route, nessuna chiave API, nessun AI Gateway, nessun avanzamento della PWA. La presenza del binding non equivale ad autorizzare il modello.
 - **Deployment Cloudflare del merge `8af75ee` verificato dall'utente come Success il 2026-11-12**. `/api/knowledge-status` riporta KB `15.25.1`, contatori 24/53 validati e 29 pendenti, `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`, `sessionChanged=false`. Il test conferma la risposta metadata; non prova inferenza AI o una sicurezza semantica generativa.
 - **NEXT:** conferma build Cloudflare `8af75ee` e `/api/knowledge-status`; M4.2.2 richiede decisione dedicata sul gate scope OP03 e limite dei costi prima di qualunque inferenza.
+
+### M4.2.2 — Primo esperimento GPT-OSS 20B predisposto (2026-11-12)
+
+- [PR #55](https://github.com/Lupus227/tagliando/pull/55) **MERGED** su `dev/fase14-ai` commit `53a64a41dfd95927fa22c47b4410a7e5d08feb61`.
+- [CI #43195514912](https://github.com/Lupus227/tagliando/actions/runs/43195514912) **Success** (test Node, Wrangler dry-run, mock LLM).
+- Nuova pagina staging `/lab/ai-probe` con API `/api/lab/ai-probe`, Cloudflare Access + origin esatta + limiter dedicato. Tre scenari immutabili: P03 carta (selettore modello), P01 coperchio bloccato (arresto prima del modello), domanda fuori ambito (rifiuto prima del modello). Nessun input libero.
+- Il modello non riceve il contenuto tecnico della Knowledge Base (OP03 resta `aiUseAllowed=false`): propone solo riferimento P03/revisione oppure astensione. Il contratto M4.1 rilegge il testo revisionato e rifiuta testo tecnico libero, permessi e riferimenti inesistenti.
+- In due config Wrangler `AI_PROBE_MODE=disabled` e `AI_PROBE_LIMITER` 1/60 (approssimativo). **Nessuna inferenza reale effettuata e nessuna attivazione automatica.** Su Workers Free l'account dispone della quota giornaliera gratuita, non è un hard budget fornito dal limiter.
+- **Cloudflare deployment commit `53a64a4` non ancora confermato**; ultimo attestato dall'utente `8af75ee` Success e `/api/knowledge-status` KB 15.25.1 AI OFF. PWA pubblica immutata.
+- **NEXT:** confermare build Cloudflare `53a64a4`, JSON API KB, apertura pagina protetta e blocco `PROBE_DISABLED`. Richiedere decisione separata prima di attivare il gate e consumare neurons.
 
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
@@ -206,4 +216,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (M4.2.2 — gate autorizzativo prima di una chiamata reale):** proporre e approvare test isolato su OP03 e GPT-OSS 20B, con fonte AI-autorizzata soltanto per il laboratorio, controllore attestato, quote/piano Cloudflare e blocco spesa, pre/post-filtro delle risposte, limite input/output, test negativi e stop. Non chiamare `env.AI.run` né cambiare `aiUseAllowed`/flag globali senza autorizzazione esplicita e verifica. L'AI non dovrà decidere il completamento o cambiare step.
+**NEXT (M4.2.2 collaudo staging, inferenza non attiva):** verificare Cloudflare `53a64a4` Success; endpoint `/api/knowledge-status` KB 15.25.1 con `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`; pagina `/lab/ai-probe` protetta; premendo il pulsante la risposta deve essere `PROBE_DISABLED` e `modelRequests=0`. La successiva abilitazione richiede decisione separata e conferma Workers Free/quote. L'AI non ha permessi di avanzamento, nessuna istruzione libera.
