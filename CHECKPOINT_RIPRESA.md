@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-12; **M4.2.1 integrata nel ramo staging `dev/fase14-ai`** con [PR #52](https://github.com/Lupus227/tagliando/pull/52), merge `8af75ee`, [CI #43192954169 Success](https://github.com/Lupus227/tagliando/actions/runs/43192954169) (Node regression + Wrangler dry-run). Binding Workers AI `AI` configurato nei due file Wrangler, adapter **inerte** con zero chiamate. Ultimo deployment Cloudflare **confermato dall'utente** rimane `8e746d0` (M4.1), con KB `15.25.1` e flag AI OFF. **Deployment Cloudflare di `8af75ee` non ancora verificato.** PWA 0.12.1, KB e gate AI invariati.
+**Checkpoint:** 2026-11-12; **M4.2.1 completata nel perimetro codice, CI, deployment e verifica metadata**. [PR #52](https://github.com/Lupus227/tagliando/pull/52) unita a `dev/fase14-ai`, merge `8af75ee`, [CI #43192954169 Success](https://github.com/Lupus227/tagliando/actions/runs/43192954169). L'utente conferma **Cloudflare deployment `8af75ee` Success** e JSON `/api/knowledge-status`: schema `tagliando.knowledge.v1`, KB `15.25.1`, 8 procedure / 53 step, 24 validati con condizioni / 29 pendenti; `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`, `sessionChanged=false`. Binding Workers AI `AI` configurato, ma **zero inferenze e nessun LLM autorizzato**. PWA pubblica 0.12.1 invariata.  
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **NON implementata**; la console restituisce esclusivamente testi validati dopo controlli deterministici |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.2.1 codice/CI/merge completati**, inferenza OFF; ottenere conferma Cloudflare del commit `8af75ee` e JSON AI OFF, poi definire gate M4.2.2 per la prima chiamata reale, senza attivarla automaticamente |
+| Compito immediato di questa conversazione | **M4.2.1 conclusa e verificata su Cloudflare**; il prossimo intervento è definire e approvare M4.2.2, prima inferenza isolata OP03 con modello GPT-OSS 20B, controlli di spesa/sicurezza e nessuna transizione PWA |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -107,7 +107,7 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - [GitHub Actions #43192954169](https://github.com/Lupus227/tagliando/actions/runs/43192954169) **Success**, test Node e Wrangler dry-run. Modello candidato: `@cf/openai/gpt-oss-20b`.
 - Configurazioni allineate: `wrangler.jsonc` e `worker/wrangler.jsonc` ora includono `ai.binding=AI`. Modulo `worker/src/workers-ai-binding.mjs` soltanto di ispezione, non importato da `index.mjs`; test mock confermano zero chiamate. Contratto M4.1 e ledger restano non generativi, `aiUseAllowed=false` per OP03.
 - Nessuna nuova route, nessuna chiave API, nessun AI Gateway, nessun avanzamento della PWA. La presenza del binding non equivale ad autorizzare il modello.
-- **Non ancora verificato il deployment Cloudflare del merge `8af75ee`**. Ultimo confermato dall'utente: `8e746d0` e JSON KB `15.25.1` AI OFF.
+- **Deployment Cloudflare del merge `8af75ee` verificato dall'utente come Success il 2026-11-12**. `/api/knowledge-status` riporta KB `15.25.1`, contatori 24/53 validati e 29 pendenti, `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`, `sessionChanged=false`. Il test conferma la risposta metadata; non prova inferenza AI o una sicurezza semantica generativa.
 - **NEXT:** conferma build Cloudflare `8af75ee` e `/api/knowledge-status`; M4.2.2 richiede decisione dedicata sul gate scope OP03 e limite dei costi prima di qualunque inferenza.
 
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
@@ -190,7 +190,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** ultima build Cloudflare attestata `8e746d0` Success (M4.1), JSON KB `15.25.1` AI OFF; M4.2.1 PR #52 integrata in `dev/fase14-ai` con commit `8af75ee`, CI #43192954169 Success, deploy Cloudflare di `8af75ee` **da confermare**. KB 15.25.1, 24/53 con condizioni, 29 pendenti. AI off; `/api/assist` resta non generativo. Issue #37/OPEN-07 resta aperta.
+**Stato confermato:** Cloudflare `8af75ee` Success (M4.2.1, attestato dall'utente), `/api/knowledge-status` KB `15.25.1`, AI OFF; PR #52 integrata in `dev/fase14-ai`, CI #43192954169 Success. Nessuna inferenza eseguita. KB 15.25.1, 24/53 con condizioni, 29 pendenti. AI off; `/api/assist` resta non generativo. Issue #37/OPEN-07 resta aperta.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -206,4 +206,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (prima conferma deploy M4.2.1; poi gate M4.2.2):** verificare Cloudflare `8af75ee` Success e JSON `/api/knowledge-status` con KB `15.25.1`, `aiEnabled=false`, `canGenerate=false`, `readyForTechnicalAnswers=false`. Successivamente definire e approvare la prima inferenza reale **solo nel laboratorio OP03**: fonte AI-autorizzata esclusivamente per il perimetro, controllore attestato, limiti della quota gratuita e spesa massima, input/output non fidati, test negativi e stop. Nessuna chiamata AI fino a nuova autorizzazione esplicita.
+**NEXT (M4.2.2 — gate autorizzativo prima di una chiamata reale):** proporre e approvare test isolato su OP03 e GPT-OSS 20B, con fonte AI-autorizzata soltanto per il laboratorio, controllore attestato, quote/piano Cloudflare e blocco spesa, pre/post-filtro delle risposte, limite input/output, test negativi e stop. Non chiamare `env.AI.run` né cambiare `aiUseAllowed`/flag globali senza autorizzazione esplicita e verifica. L'AI non dovrà decidere il completamento o cambiare step.
