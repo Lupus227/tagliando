@@ -229,5 +229,5 @@ test('M4.1 keeps no public endpoint or activation even after inert M4.2.1 AI bin
   assert.equal(cfg.vars.SERVICE_MODE,'guarded');
   assert.deepEqual(cfg.ai,{binding:'AI'});
   assert.equal(Object.keys(cfg).some(x=>/^(model|gateway)$/i.test(x)),false);
-  assert.doesNotMatch(source,/env\\.AI\\.run\\s*\\(/);
+  assert.doesNotMatch(source,/env\.AI\.run\s*\(/);
 });
