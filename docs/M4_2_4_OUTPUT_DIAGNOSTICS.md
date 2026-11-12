@@ -41,3 +41,9 @@ I codici distinguono **il punto di rifiuto** ma non identificano automaticamente
 I due file Wrangler mantengono `AI_PROBE_MODE=disabled` e la data di scadenza `2026-11-13T00:00:00Z`. PWA `0.12.1`, KB `15.25.1`, `aiUseAllowed=false` e flag globali AI rimangono invariati.
 
 **Questa fase non autorizza un secondo test reale.** Dopo merge e CI si chiede soltanto di confermare il deployment Cloudflare e `PROBE_DISABLED`; per una futura inferenza serve nuova autorizzazione specifica e un nuovo intervallo di attivazione limitato. Il risultato di un test futuro potrebbe aiutare a spiegare il precedente `MODEL_OUTPUT_REJECTED`, ma non riscrive retroattivamente quanto accaduto.
+
+## Verifica trigger di deployment Cloudflare — 2026-11-12
+
+Il commit di merge M4.2.4 `56c0243` è presente su `dev/fase14-ai` e ha superato la CI GitHub, ma non compariva nella cronologia **Deployments** Cloudflare esaminata dall'utente. Le impostazioni **Settings → Builds** fornite dall'utente mostrano repository `Lupus227/tagliando`, ramo production `dev/fase14-ai`, build abilitate, include paths `*`, root `/` e deploy command `npx wrangler deploy --config worker/wrangler.jsonc`.
+
+Questa è una **modifica esclusivamente documentale** per generare un nuovo evento push verso il ramo production. Non prova quale componente abbia mancato l'evento precedente e non contiene correzioni al Worker, PWA, KB o configurazione. La nuova distribuzione su Cloudflare deve essere confermata separatamente dall'utente prima di dichiarare l'esito. L'inferenza GPT-OSS 20B resta `AI_PROBE_MODE=disabled`.
