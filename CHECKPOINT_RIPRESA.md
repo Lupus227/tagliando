@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-12; **M4.1 integrata** sul branch `dev/fase14-ai` con [PR #49](https://github.com/Lupus227/tagliando/pull/49), merge `8e746d0`, [CI di PR #43185510940 Success](https://github.com/Lupus227/tagliando/actions/runs/43185510940). Ultimo deployment Cloudflare **confermato dall'utente**: `232e473` (M3). KB 15.25.1; PWA 0.12.1; AI ancora disabilitata.  
+**Checkpoint:** 2026-11-12; **M4.1 integrata** sul branch `dev/fase14-ai` con [PR #49](https://github.com/Lupus227/tagliando/pull/49), merge `8e746d0`, [CI di PR #43185510940 Success](https://github.com/Lupus227/tagliando/actions/runs/43185510940). Ultimo deployment Cloudflare **confermato dall'utente**: `8e746d0` (M4.1), `Success`; `/api/knowledge-status` verificato con KB `15.25.1`, 24 validati con condizioni, 29 pendenti e flag AI tutti `false`. KB 15.25.1; PWA 0.12.1; AI ancora disabilitata.  
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -87,6 +87,9 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - **Stato effettivo:** PR #45 / `5687f30` integrata e CI Success; la build automatica iniziale non compariva su Cloudflare. Un nuovo commit diagnostico esclusivamente documentale `232e473` su `dev/fase14-ai` ha attivato il deployment, confermato Success. Browser: **OK** accesso console, **OK** istruzioni filtro carta, **OK** arresto P01 per «Non riesco ad aprire il coperchio», **OK** percorso spugna, **OK** percorso misto, **OK** «Fatto» senza conferma automatica, **OK** ripresa di tipo filtro/passaggio dopo ricarica. **Non collaudati in questa tranche:** richiesta totalmente fuori ambito e prova Safari iPhone.
 - **Prossimo intervento verificabile**: contratto minimo del dialogo AI controllato con il filtro aria (fonte tecnica, condizioni, stato, risposte, no autorizzazioni AI); quindi test fuori ambito e Safari iPhone e selezione provider/costi. Attivazione LLM solo dopo approvazione specifica.
 
+
+**Conferma specifica M4.1 2026-11-12:** l'utente ha verificato su Cloudflare deployment commit `8e746d0` `Success` e riportato JSON con `ok=true`, `schema=tagliando.knowledge.v1`, `version=15.25.1`, `procedureCount=8`, `stepCount=53`, `validatedSteps=24`, `conditionalValidatedSteps=24`, `pendingSteps=29`, `latestReviewedStepId=RASA-OP-04-P01`, `readyForTechnicalAnswers=false`, `aiEnabled=false`, `canGenerate=false`, `sessionChanged=false`. Stato M4.1 concluso nel perimetro codice/CI/deployment/metadati, non conversazione AI. Per M4.2 (prima inferenza reale) serve nuova decisione esplicita su binding, provider, quote e autorizzazione circoscritta dei sette step OP03; no pubblicazione PWA.
+
 ### M4.1 — Contratto di sicurezza per il futuro dialogo: integrazione 2026-11-12
 
 - [PR #49](https://github.com/Lupus227/tagliando/pull/49) **MERGED** in `dev/fase14-ai`; commit di merge `8e746d00f9f0640a84b6c5097c60a8673ecdb899`.
@@ -94,7 +97,7 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - Moduli aggiunti: `worker/src/m4-contract.mjs`, `tests/m4-contract.test.cjs`, `docs/M4_1_CONTRATTO_DIALOGO.md`. Workflow `.github/workflows/fase14-tests.yml` ora verifica anche PR verso `dev/fase14-ai`.
 - `prepareM4Turn` / `reviewM4Candidate`: contratto di prova **non collegato ad alcuna route**; ritorna soltanto testo tecnico preapprovato dal ledger se la fonte/revisione è coerente. Nessuna parafrasi generativa verificata, nessun controller universale.
 - Tutti i flag AI restano spenti; `modelInputAllowed=false`; `aiUseAllowed=false` nel ledger. Nessuna chiamata/provider AI, nessun cambio a PWA v0.12.1.
-- **Cloudflare:** merge su branch di staging non implica deployment confermato. Ultimo deploy confermato dall'utente resta `232e473`; necessaria verifica separata se rilevante.
+- **Cloudflare M4.1: deployment `8e746d0` dichiarato `Success` dall'utente il 2026-11-12**; il successivo `/api/knowledge-status` Access-protetto è coerente con KB `15.25.1` e flag AI OFF. Il risultato prova lo stato metadata del Worker, non una sessione AI né il funzionamento di un LLM.
 - Il workflow #43095963218 è rimasto in `queued` senza job e senza poter essere cancellato; il commit successivo `c4b1b17` ha avviato nuova CI conclusa con successo. Non trattare il vecchio run come fallimento del codice.
 - **M4.2 da approvare separatamente:** Workers AI / AI Gateway, modello e quote, limiti economici fail-closed, gating per soli step OP03, protezione dell'input/output, prove negative. Vietata attivazione prima delle guardie e approvazione esplicita.
 
@@ -178,7 +181,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** ultimo Cloudflare attestato dall'utente `232e473` Success (M3); M4.1 PR #49 integrata in `dev/fase14-ai` con merge `8e746d0` e CI PR #43185510940 Success. Distribuzione Cloudflare successiva **non verificata**. KB 15.25.1, 24/53 con condizioni, 29 pendenti. AI off; `/api/assist` resta non generativo. Issue #37/OPEN-07 resta aperta.
+**Stato confermato:** Cloudflare `8e746d0` Success dichiarato dall'utente (M4.1) e JSON `/api/knowledge-status` coerente con KB `15.25.1` e AI OFF; M4.1 PR #49 integrata in `dev/fase14-ai`, CI #43185510940 Success. KB 15.25.1, 24/53 con condizioni, 29 pendenti. AI off; `/api/assist` resta non generativo. Issue #37/OPEN-07 resta aperta.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
