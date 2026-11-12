@@ -214,7 +214,7 @@ test('output gate rechecks server state and source instead of trusting stale pre
   assert.equal(reviewM4Candidate({...prepared,sessionChanged:true},candidate(),state()).decision,'CONTEXT_NOT_READY');
   assert.equal(reviewM4Candidate({decision:'DRY_RUN_CONTEXT_READY',ok:true},candidate(),state()).decision,'CONTEXT_NOT_READY');
 });
-test('M4.1 adds no public endpoint, no provider binding, no AI activation',async()=>{
+test('M4.1 keeps no public endpoint or activation even after inert M4.2.1 AI binding',async()=>{
   const worker=(await import('../worker/src/index.mjs')).default;
   const res=await worker.fetch(new Request('https://test.invalid/api/m4',{
     method:'POST',headers:{'Content-Type':'application/json'},
@@ -227,5 +227,7 @@ test('M4.1 adds no public endpoint, no provider binding, no AI activation',async
   assert.doesNotMatch(source,/from ['"]\.\/m4-contract\.mjs['"]/);
   const cfg=JSON.parse(fs.readFileSync(path.join(__dirname,'../worker/wrangler.jsonc'),'utf8'));
   assert.equal(cfg.vars.SERVICE_MODE,'guarded');
-  assert.equal(Object.keys(cfg).some(x=>/^(ai|model|gateway)$/i.test(x)),false);
+  assert.deepEqual(cfg.ai,{binding:'AI'});
+  assert.equal(Object.keys(cfg).some(x=>/^(model|gateway)$/i.test(x)),false);
+  assert.doesNotMatch(source,/env\\.AI\\.run\\s*\\(/);
 });
