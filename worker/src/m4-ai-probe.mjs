@@ -29,6 +29,14 @@ function parseSelector(raw){
   if(!candidate||typeof candidate!=='object'||Array.isArray(candidate))return null;
   return candidate;
 }
+// Trusted deploy-time expiry. A missing or malformed deadline FAILS CLOSED.
+export function aiProbeWindowValid(env,nowMs=Date.now()){
+  const expiry=env?.AI_PROBE_EXPIRES_AT;
+  if(typeof expiry!=='string' ||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(expiry))return false;
+  const deadline=Date.parse(expiry);
+  return Number.isFinite(deadline)&&Number.isFinite(nowMs)&&nowMs<deadline;
+}
 export const M4_PROBE_MODEL_ID=WORKERS_AI_MODEL_ID;
 
 export async function runFixedM4Probe(caseId,env){
@@ -38,6 +46,8 @@ export async function runFixedM4Probe(caseId,env){
   // not explicitly enabled. Binding presence alone cannot activate the model.
   if(env?.AI_PROBE_MODE!=='enabled')
     return result('PROBE_DISABLED','La prova AI è disabilitata.');
+  if(!aiProbeWindowValid(env))
+    return result('PROBE_EXPIRED','La finestra della prova AI è terminata.');
   const question=SCENARIOS[caseId];
   const state={mode:'READ_ONLY_LAB',operationId:3,stepId:question.stepId,
     filterType:question.filterType,blocked:false};
