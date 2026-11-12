@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-12; **prima prova GPT-OSS 20B eseguita sullo staging, risposta rifiutata correttamente dal gate di sicurezza**. L'utente conferma Cloudflare deploy `536f19c` Success e scenario `paper-wash` con esito `MODEL_OUTPUT_REJECTED`. Il modello **non ha prodotto istruzioni mostrate all'utente** e non ha potuto avanzare la sessione. La richiesta al provider è verosimilmente avvenuta, ma il valore `modelRequests` non è stato riportato e l'output grezzo non è disponibile. **Rollback su GitHub:** [PR #60](https://github.com/Lupus227/tagliando/pull/60) merged in `dev/fase14-ai` commit `c4d6fff`, [CI #43202354800 Success](https://github.com/Lupus227/tagliando/actions/runs/43202354800); entrambi Wrangler tornati a `AI_PROBE_MODE=disabled`, finestra di scadenza mantenuta. **Deployment Cloudflare di `c4d6fff` NON ANCORA confermato**: fino alla verifica evitare nuove prove. KB `15.25.1` e PWA `0.12.1` invariati.  
+**Checkpoint:** 2026-11-12; **M4.2.3 parser AI corretto offline e integrato su `dev/fase14-ai`, inferenza ancora OFF**. L'utente ha verificato Cloudflare rollback `c4d6fff` **Success** e laboratorio `/lab/ai-probe` → **`PROBE_DISABLED`**. Prima prova live con commit `536f19c`: `MODEL_OUTPUT_REJECTED` (nessuna istruzione AI autorizzata, contenuto grezzo non disponibile). [PR #62](https://github.com/Lupus227/tagliando/pull/62) merged su dev commit `e272138`, [CI #43203972887 Success](https://github.com/Lupus227/tagliando/actions/runs/43203972887): parser strict allowlist per `response` Workers AI e `choices` Chat Completions, nuovi test mock positivi/negativi. **Deployment Cloudflare del commit `e272138` NON ancora confermato**; entrambi i Wrangler conservano `AI_PROBE_MODE=disabled`. KB 15.25.1 e PWA 0.12.1 invariati.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **NON implementata**; la console restituisce esclusivamente testi validati dopo controlli deterministici |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **Rollback PR #60 integrato su dev** dopo `MODEL_OUTPUT_REJECTED` della prima prova. Confermare Cloudflare deployment `c4d6fff` Success e test `PROBE_DISABLED`; poi diagnosticare il formato della risposta GPT-OSS 20B con test offline, senza nuove inferenze |
+| Compito immediato di questa conversazione | **Rollback Cloudflare `c4d6fff` confermato Success con `PROBE_DISABLED`; M4.2.3 parser offline integrato e CI Success**. Verificare deployment Cloudflare `e272138` e ancora `PROBE_DISABLED`, quindi pianificare la prossima prova reale solo dopo consenso distinto; la causa esatta del primo rifiuto rimane sconosciuta |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -137,6 +137,15 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - Possibile causa diagnostica: il parser legge solo `raw.response`, ma Cloudflare documenta formati Chat Completions per GPT-OSS quando si invia `messages`; la shape esatta non è osservata. Nessuna correzione del parser e nessun nuovo test live ancora effettuati.
 - PWA pubblica v0.12.1, KB v15.25.1, `aiUseAllowed=false` e flag AI globali invariati.
 
+### M4.2.3 — Rollback verificato; parser aggiornato offline (2026-11-12)
+
+- Utente: Cloudflare `c4d6fff` **Success**, `/lab/ai-probe` → **`PROBE_DISABLED`**. Il rollback del primo test GPT-OSS è confermato anche nello staging.
+- [PR #62](https://github.com/Lupus227/tagliando/pull/62) **merged** su `dev/fase14-ai` commit `e2721381efbd4d60c4cfaab19888722457b9fb3d`. [CI #43203972887](https://github.com/Lupus227/tagliando/actions/runs/43203972887) **Success**, regressioni Node e Wrangler dry-run.
+- Il nuovo `parseM4SelectorEnvelope` supporta SOLO `response` stringa JSON/oggetto del binding oppure un'unica `choices[0].message.content` Chat Completions finale (role assistant, finish_reason stop). Rifiuta prosa, fence, output parziali, tool call, choices multiple, forme ambigue; ogni proposta è ancora riletta e verificata dal contratto M4.1.
+- Sette test offline dedicati con mock; nessuna chiamata reale effettuata in questa fase, PWA e KB invariate. Nei due Wrangler `AI_PROBE_MODE=disabled` (la scadenza aggiuntiva rimane).
+- **Non è confermata la causa originaria** del primo `MODEL_OUTPUT_REJECTED`; la risposta grezza GPT-OSS non era stata registrata. Compatibilità `choices` documentata ma non provata per la risposta concreta del binding.
+- **Cloudflare deploy di `e272138` ancora da verificare**; ultimo deploy verificato dall'utente `c4d6fff`.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -217,7 +226,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** Cloudflare `53a64a4` Success per M4.2.2, JSON KB `15.25.1`, AI OFF e prova browser `PROBE_DISABLED` attestati dall'utente; PR #55 integrata su `dev/fase14-ai`, CI #43195514912 Success. Nessuna inferenza reale GPT-OSS 20B eseguita. KB 15.25.1, 24/53 con condizioni, 29 pendenti. AI off; `/api/assist` resta non generativo. Issue #37/OPEN-07 resta aperta.
+**Stato confermato:** Cloudflare `c4d6fff` Success e prova browser `PROBE_DISABLED` dopo la prima chiamata live rifiutata (`MODEL_OUTPUT_REJECTED`). PR #60 rollback merged con CI verde; PR #62 correzione offline parser merged su `dev/fase14-ai` commit `e272138`, CI #43203972887 Success. Deploy Cloudflare di `e272138` da confermare. Nessuna nuova inferenza autorizzata. KB 15.25.1, 24/53 con condizioni, 29 pendenti. AI off; `/api/assist` resta non generativo. Issue #37/OPEN-07 resta aperta.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -233,4 +242,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (prima terminare rollback Cloudflare; poi diagnostica offline):** confermare deployment `c4d6fff` Success e pagina `/lab/ai-probe` → `PROBE_DISABLED`. Non effettuare nuove chiamate reali. `MODEL_OUTPUT_REJECTED` prova che il contratto ha rifiutato l'output, ma **non** prova quale campo fosse presente nella risposta. Il parser di `worker/src/m4-ai-probe.mjs` accetta solo `raw.response`, mentre Cloudflare supporta Chat Completions con input `messages` per GPT-OSS; possibile incompatibilità del formato. Preparare fixture/test del parser per diversi envelope documentati (`choices`, `response`, ecc.) mantenendo validazione `reviewM4Candidate`, prima di decidere una nuova prova; l'AI globale resta OFF.
+**NEXT (verifica Cloudflare della sola correzione offline):** controllare deployment commit `e272138` Success e laboratorio `/lab/ai-probe` ancora `PROBE_DISABLED`; nessun test live GPT-OSS 20B. Parser ora gestisce due envelope a struttura controllata, ma la causa del primo `MODEL_OUTPUT_REJECTED` non è provata perché non si dispone della risposta raw. Per la prossima prova reale occorrono autorizzazione separata, finestra temporanea e diagnostica per sola categoria di formato (mai testo AI integrale). KB 15.25.1, PWA 0.12.1, `aiUseAllowed=false`, AI globale OFF.
