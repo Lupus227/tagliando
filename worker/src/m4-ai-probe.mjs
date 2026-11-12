@@ -5,6 +5,7 @@
  */
 import {prepareM4Turn,reviewM4Candidate} from './m4-contract.mjs';
 import {WORKERS_AI_MODEL_ID} from './workers-ai-binding.mjs';
+import {inspectM4SelectorEnvelope,classifyM4CandidateReview} from './m4-output-diagnostics.mjs';
 
 const SCENARIOS=Object.freeze({
   'paper-wash':Object.freeze({operationId:3,stepId:'RASA-OP-03-P03',
@@ -20,45 +21,11 @@ function result(decision,message,modelRequests=0,extra={}){
     probeInferenceExecuted:modelRequests===1,references:[],...extra};
 }
 /*
- * M4.2.3 — Reject unknown model output envelopes instead of trying to extract
- * a JSON object from arbitrary text. Supported:
- *   (1) Workers AI binding: {response: jsonStringOrObject}
- *   (2) Chat Completions: {choices:[{message:{role:'assistant',content:jsonString},
- *                                    finish_reason:'stop'}]}
- * The latter is documented for the compatible API; it is a conservative
- * compatibility path, NOT evidence that the first live binding returned it.
- * Never parse markdown fences, multiple choices, reasoning or tool calls.
+ * M4.2.4 — same strict M4.2.3 envelope rules, with a fixed diagnostic code.
+ * This compatibility export remains unchanged for existing M4.2.3 tests.
  */
-function record(value){
-  return value!==null&&typeof value==='object'&&!Array.isArray(value)&&
-    (Object.getPrototypeOf(value)===Object.prototype||
-     Object.getPrototypeOf(value)===null);
-}
 export function parseM4SelectorEnvelope(raw){
-  if(!record(raw))return null;
-  const hasResponse=Object.hasOwn(raw,'response');
-  const hasChoices=Object.hasOwn(raw,'choices');
-  if(hasResponse===hasChoices)return null; // ambiguous or unsupported envelope
-  let candidate;
-  if(hasResponse){
-    candidate=raw.response;
-  }else{
-    if(!Array.isArray(raw.choices)||raw.choices.length!==1)return null;
-    const choice=raw.choices[0];
-    if(!record(choice)||choice.finish_reason!=='stop'||
-      !record(choice.message)||choice.message.role!=='assistant'||
-      Object.hasOwn(choice.message,'tool_calls')||
-      Object.hasOwn(choice.message,'refusal')||
-      Object.hasOwn(choice.message,'function_call'))return null;
-    candidate=choice.message.content;
-  }
-  if(typeof candidate==='string'){
-    if(!candidate.length||candidate.length>512)return null;
-    try{candidate=JSON.parse(candidate);}catch(_){return null;}
-  }
-  if(!record(candidate))return null;
-  // Final source/operation authorization is still performed by M4.1.
-  return candidate;
+  return inspectM4SelectorEnvelope(raw).candidate;
 }
 // Trusted deploy-time expiry. A missing or malformed deadline FAILS CLOSED.
 export function aiProbeWindowValid(env,nowMs=Date.now()){
@@ -104,10 +71,15 @@ export async function runFixedM4Probe(caseId,env){
       stream:false,max_tokens:192,temperature:0
     });
   }catch(_){
-    return result('MODEL_UNAVAILABLE','Modello non disponibile; nessun avanzamento.',1);
+    return result('MODEL_UNAVAILABLE','Modello non disponibile; nessun avanzamento.',1,{diagnosticCode:'PROVIDER_ERROR'});
   }
-  // Model output is UNTRUSTED. Never forward a model-generated instruction.
-  const reviewed=reviewM4Candidate(prepared,parseM4SelectorEnvelope(output),state);
-  return {...reviewed,modelRequests:1,probeInferenceExecuted:true,
+  // No raw response or model-generated instruction is returned or logged.
+  // First inspect its envelope; M4.1 remains the FINAL authorization gate.
+  const inspected=inspectM4SelectorEnvelope(output);
+  const reviewed=reviewM4Candidate(prepared,inspected.candidate,state);
+  const diagnosticCode=inspected.candidate===null?
+    inspected.diagnosticCode:
+    classifyM4CandidateReview(inspected.candidate,reviewed,prepared.source);
+  return {...reviewed,diagnosticCode,modelRequests:1,probeInferenceExecuted:true,
     testCase:caseId,mode:'fixed_read_only_probe',modelId:WORKERS_AI_MODEL_ID};
 }
