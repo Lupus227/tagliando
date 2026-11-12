@@ -7,7 +7,8 @@
   "preview_urls": false,
   "vars": {
     "SERVICE_MODE": "guarded",
-    "AI_PROBE_MODE": "disabled",
+    "AI_PROBE_MODE": "enabled",
+    "AI_PROBE_EXPIRES_AT": "2026-11-13T00:00:00Z",
     "ALLOWED_ORIGIN": "https://lupus227.github.io",
     "ACCESS_TEAM_DOMAIN": "mute-poetry-bc89.cloudflareaccess.com",
     "ACCESS_AUD": "da3e295e300402c580d7282cece8300a1346ac0fcd32e34983dbb0dc2aca57c5",

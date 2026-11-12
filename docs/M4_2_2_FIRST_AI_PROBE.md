@@ -1,3 +1,7 @@
+> **Aggiornamento 2026-11-12 — attivazione reale limitata:** il titolare ha autorizzato la prima inferenza GPT-OSS 20B con i vincoli OP03 già concordati. Le due configurazioni Wrangler sono aggiornate a `AI_PROBE_MODE=enabled` e `AI_PROBE_EXPIRES_AT=2026-11-13T00:00:00Z` (01:00 CET). Il server controlla la scadenza **sia nella route sia nell'adattatore**; richieste successive risultano `PROBE_EXPIRED` e non invocano Workers AI. La prima esecuzione reale non è dimostrata da CI/deployment: sarà confermata soltanto dal risultato browser con `modelRequests=1`. Dopo il test, riportare `AI_PROBE_MODE=disabled` con PR/deploy separato; la scadenza non cambia automaticamente la configurazione Cloudflare.
+>
+> **Contesto storico:** le sezioni seguenti descrivono la prima tranche di predisposizione, quando `AI_PROBE_MODE` era `disabled`. La versione corrente del branch di attivazione è descritta nell'aggiornamento sopra.
+
 # M4.2.2 — Primo test GPT-OSS 20B in laboratorio isolato
 
 **Stato previsto:** codice di prova integrabile sul Worker staging **con inferenza OFF per impostazione predefinita**. Primo modello: `@cf/openai/gpt-oss-20b` (Workers AI). PWA pubblica e operazioni della manutenzione non modificate.

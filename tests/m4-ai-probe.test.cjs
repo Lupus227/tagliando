@@ -10,7 +10,8 @@ const ctx={access:{aud:'a'.repeat(64),getIdentity:async()=>({user_uuid:'m4-test-
 function mockEnv(overrides={}){
   let calls=[];
   const env={
-    SERVICE_MODE:'guarded',AI_PROBE_MODE:'enabled',SELF_TEST_ORIGIN:origin,
+    SERVICE_MODE:'guarded',AI_PROBE_MODE:'enabled',
+    AI_PROBE_EXPIRES_AT:'2099-01-01T00:00:00Z',SELF_TEST_ORIGIN:origin,
     ACCESS_AUD:'a'.repeat(64),ALLOWED_ORIGIN:'https://lupus227.github.io',
     API_LIMITER:{limit:async()=>({success:true})},
     AI_PROBE_LIMITER:{limit:async()=>({success:true})},
@@ -28,11 +29,12 @@ function post(caseId,extra={}){
     headers:{'Origin':origin,'Content-Type':'application/json',...extra.headers},
     body:extra.raw??JSON.stringify({caseId})});
 }
-test('M4.2.2 deployment defaults are disabled and Wrangler configs match',()=>{
+test('M4.2.2 deployment window is enabled only until a fixed UTC expiry',()=>{
   const read=p=>JSON.parse(fs.readFileSync(path.join(__dirname,'..',p),'utf8'));
   const root=read('wrangler.jsonc'),worker=read('worker/wrangler.jsonc');
   assert.deepEqual({...root,main:worker.main},worker);
-  assert.equal(root.vars.AI_PROBE_MODE,'disabled');
+  assert.equal(root.vars.AI_PROBE_MODE,'enabled');
+  assert.equal(root.vars.AI_PROBE_EXPIRES_AT,'2026-11-13T00:00:00Z');
   assert.deepEqual(root.ai,{binding:'AI'});
   const limit=root.ratelimits.find(x=>x.name==='AI_PROBE_LIMITER');
   assert.ok(limit);
@@ -167,4 +169,27 @@ test('M4.2.2 disabled by default never executes with present AI binding',async()
   assert.equal(r.status,503);
   assert.equal((await r.json()).decision,'PROBE_DISABLED');
   assert.equal(getCalls().length,0);
+});
+
+test('M4.2.2 fixed expiry closes both direct and HTTP inference, even with mode enabled',async()=>{
+  const {runFixedM4Probe,aiProbeWindowValid}=await getProbe();
+  const date=Date.parse('2026-11-13T00:00:00Z');
+  assert.equal(aiProbeWindowValid({AI_PROBE_EXPIRES_AT:'2026-11-13T00:00:00Z'},date-1),true);
+  assert.equal(aiProbeWindowValid({AI_PROBE_EXPIRES_AT:'2026-11-13T00:00:00Z'},date),false);
+  assert.equal(aiProbeWindowValid({AI_PROBE_EXPIRES_AT:'invalid'},Date.now()),false);
+  assert.equal(aiProbeWindowValid({},Date.now()),false);
+  const {env,getCalls}=mockEnv({AI_PROBE_EXPIRES_AT:'2020-01-01T00:00:00Z'});
+  const direct=await runFixedM4Probe('paper-wash',env);
+  assert.equal(direct.decision,'PROBE_EXPIRED');
+  assert.equal(direct.modelRequests,0);
+  const w=await getWorker();
+  const response=await w.fetch(post('paper-wash'),env,ctx);
+  assert.equal(response.status,503);
+  const body=await response.json();
+  assert.equal(body.decision,'PROBE_EXPIRED');
+  assert.equal(body.modelRequests,0);
+  assert.equal(getCalls().length,0);
+  const missing=mockEnv({AI_PROBE_EXPIRES_AT:undefined});
+  assert.equal((await runFixedM4Probe('paper-wash',missing.env)).decision,'PROBE_EXPIRED');
+  assert.equal(missing.getCalls().length,0);
 });
