@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-14; **M4.2.5 — seconda inferenza GPT-OSS 20B eseguita e rifiutata in sicurezza, rollback CI/merge completati; Cloudflare rollback ancora DA VERIFICARE.** L'utente conferma deployment attivazione `055d55c` **Success** e un unico scenario fisso OP03 carta con risultato `MODEL_OUTPUT_REJECTED`, messaggio «Risposta non conforme al contratto», `diagnosticCode=ROLE_OR_TOOL_UNSUPPORTED`, `modelRequests=1`. Nessun testo AI generato autorizzato e nessun avanzamento della sessione. [PR #71](https://github.com/Lupus227/tagliando/pull/71) merged su `dev/fase14-ai` commit `02c8708`, [CI #43620861155 Success](https://github.com/Lupus227/tagliando/actions/runs/43620861155); entrambi Wrangler riportati a `AI_PROBE_MODE=disabled`, con expiry UTC ulteriore inalterata. **Cloudflare deploy `02c8708` e nuovo test `PROBE_DISABLED` non ancora attestati.** Causa esatta del `ROLE_OR_TOOL_UNSUPPORTED` NON nota; il parser attuale rifiuta ruolo mancante/improprio o campi `tool_calls`, `refusal`, `function_call` anche se presenti con valore `null` o array vuoto. Una successiva correzione richiede fixture/offline, non nuovi test live automatici. KB `15.25.1`, PWA `0.12.1`, flag globali AI invariati.
+**Checkpoint:** 2026-11-14; **M4.2.5 rollback Cloudflare CONFERMATO; M4.2.6 correzione parser offline integrata, Cloudflare nuovo commit da verificare.** L'utente ha confermato deployment rollback `02c8708` **Success** e laboratorio `/lab/ai-probe` → **`PROBE_DISABLED`** dopo il secondo test GPT-OSS 20B (`MODEL_OUTPUT_REJECTED`, `ROLE_OR_TOOL_UNSUPPORTED`, `modelRequests=1`). [PR #73](https://github.com/Lupus227/tagliando/pull/73) merged su `dev/fase14-ai` commit **`a5b9b1c`**, [CI #43623317403 Success](https://github.com/Lupus227/tagliando/actions/runs/43623317403): parser Chat Completions aggiornato per consentire solo campi opzionali neutri (`tool_calls:null/[]`, `refusal:null`, `function_call:null`), bloccare valori attivi e distinguere codici `MESSAGE_INVALID`, `ROLE_UNSUPPORTED`, `TOOL_CALL_UNSUPPORTED`, `REFUSAL_PRESENT`, `FUNCTION_CALL_UNSUPPORTED`. **Cloudflare deployment di `a5b9b1c` NON ANCORA verificato; nessun nuovo test live autorizzato.** AI_PROBE_MODE=disabled in entrambi i Wrangler; KB `15.25.1`/PWA `0.12.1` invariate.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **NON implementata**; la console restituisce esclusivamente testi validati dopo controlli deterministici |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **Confermare Cloudflare rollback commit `02c8708` Success e laboratorio `PROBE_DISABLED`**; vietate nuove chiamate al modello. Dopo, diagnosticare offline la differenza fra campi vuoti/nulli e vere tool call/refusal, con verifica M4.1 invariata; nessuna conclusione certa senza output raw |
+| Compito immediato di questa conversazione | **M4.2.6 parser e CI completati, merge `a5b9b1c` su dev**. Verificare Cloudflare Success per quel commit e `PROBE_DISABLED` senza interrogare il modello. La causa del secondo `ROLE_OR_TOOL_UNSUPPORTED` non è provata; non riattivare l'AI senza autorizzazione esplicita |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -172,6 +172,16 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - **Diagnosi preliminare:** in `inspectM4SelectorEnvelope`, quel codice deriva da `choice.message` assente/non oggetto, `role` differente da `assistant`, oppure **presenza** dei campi `tool_calls`, `refusal`, `function_call` indipendentemente dal loro valore. L'output raw non è disponibile; non è possibile sapere quale condizione specifica si sia verificata. Risposte Chat Completions possono includere campi opzionali neutri come `refusal:null`; il parser attuale li respinge in modo conservativo. Non cambiare il parser direttamente sul server attivo.
 - **NEXT offline:** testare una classificazione più specifica che differenzi campi neutri da vere chiamate/rifiuti e la forma di `message`, senza log del testo generato né indebolire il controllo deterministico M4.1. Nessuna nuova inferenza autorizzata.
 
+### M4.2.6 — Verifica rollback e compatibilità campi Chat Completions (2026-11-14)
+
+- **Confermato dall'utente:** Cloudflare rollback `02c8708` Success, `/lab/ai-probe` → `PROBE_DISABLED`. Non sono state effettuate altre chiamate reali al modello.
+- [PR #73](https://github.com/Lupus227/tagliando/pull/73) **MERGED** su `dev/fase14-ai`, commit `a5b9b1c631b74c6a5124a11871f7bf8728363489`; [CI #43623317403](https://github.com/Lupus227/tagliando/actions/runs/43623317403) **Success**, Node regression e Wrangler dry-run.
+- Solo parser `worker/src/m4-output-diagnostics.mjs`: per un unico Chat Completion finale con ruolo assistant, `tool_calls=null/[]`, `refusal=null`, `function_call=null` sono metadati neutri. Qualsiasi tool call effettiva, rifiuto non nullo, function call non nulla, ruolo errato, risposta troncata o JSON non conforme rimane bloccato. Codici diagnostici separati e versione `tagliando.m4.output-diagnostic.v2`.
+- Controller deterministico M4.1 invariato: selettore e fonti revisionate soltanto; nessun completamento o avanzamento. Aggiornate e ampliate fixture offline; nessun log raw AI e nessuna nuova chiamata in CI.
+- **Causa del precedente `ROLE_OR_TOOL_UNSUPPORTED` ignota:** non abbiamo il payload grezzo del modello. La correzione è una compatibilità fondata sulla struttura Chat Completions, non una dimostrazione causale.
+- `AI_PROBE_MODE=disabled` nei due Wrangler; expiry 2026-11-14T20:00:00Z invariata, KB 15.25.1 e PWA 0.12.1 invariate.
+- **Cloudflare deployment `a5b9b1c` da confermare**; ultimo deployment verificato dall'utente `02c8708` Success con `PROBE_DISABLED`.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -252,7 +262,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** M4.2.5 attivazione `055d55c` Cloudflare Success e secondo test P03 con `MODEL_OUTPUT_REJECTED`, `ROLE_OR_TOOL_UNSUPPORTED`, `modelRequests=1` secondo l'utente. Rollback PR #71 merged `02c8708` su dev e CI #43620861155 Success, **deployment rollback Cloudflare non confermato**. L'ultimo `PROBE_DISABLED` certificato in precedenza riguarda `f374fdd`/M4.2.4, non il nuovo rollback. Prima risposta M4.2.2 priva di diagnostica, seconda rifiutata per condizione ruolo/tool non ulteriormente distinta; nessuna nuova inferenza autorizzata.
+**Stato confermato:** rollback M4.2.5 `02c8708` Cloudflare Success + `PROBE_DISABLED` confermati dall'utente. M4.2.6 PR #73 merged `a5b9b1c`, CI #43623317403 Success; Cloudflare del commit M4.2.6 da verificare. La risposta originaria GPT-OSS 20B non è disponibile, quindi non è noto quale campo abbia generato `ROLE_OR_TOOL_UNSUPPORTED`. Nessuna nuova inferenza autorizzata.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -268,4 +278,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (rollback M4.2.5, poi classificazione offline):** Cloudflare deploy `02c8708` Success da confermare e un solo controllo pagina `/lab/ai-probe` → `PROBE_DISABLED`. Senza questo collaudo il rollback è verificato soltanto in GitHub/CI. In seguito considerare M4.2.6: classificazione disgiunta dei campi `role`, `tool_calls`, `refusal`, `function_call`, distinguendo valori neutri (`null`, `[]`) da chiamate/rifiuti effettivi, **senza** allargare la fiducia al modello o indebolire M4.1. Test offline prima di qualunque nuova prova reale. KB 15.25.1, PWA 0.12.1 e AI globale OFF.
+**NEXT (collaudo M4.2.6, solo gate OFF):** verificare Cloudflare deployment `a5b9b1c` Success; aprire `/lab/ai-probe` e confermare `PROBE_DISABLED`, senza effettuare inferenze. Solo dopo sarà chiuso il perimetro codice/CI/deploy/gate della correzione. Il parser M4.2.6 gestisce campi null/vuoti e assegna codici specifici ai veri rifiuti o tool call; questo non dimostra retroattivamente quale caso reale si sia verificato. Un nuovo test GPT-OSS richiederebbe consenso esplicito, nuova finestra UTC, limiti Workers Free e rollback. PWA 0.12.1, KB 15.25.1 e AI globale OFF.
