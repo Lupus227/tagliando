@@ -122,11 +122,12 @@ test('M4.2.3 abstention remains no instruction and no completion',async()=>{
   assert.equal(answer.allowCompletion,false);
 });
 
-test('M4.2.3 no new requests from real staging config, even with an available model',async()=>{
+test('M4.2.5 temporary live config still honors explicit disabled mode with an available model',async()=>{
   const fs=require('node:fs'),path=require('node:path');
   for(const filename of ['wrangler.jsonc','worker/wrangler.jsonc']){
     const cfg=JSON.parse(fs.readFileSync(path.join(__dirname,'..',filename),'utf8'));
-    assert.equal(cfg.vars.AI_PROBE_MODE,'disabled');
+    assert.equal(cfg.vars.AI_PROBE_MODE,'enabled');
+    assert.equal(cfg.vars.AI_PROBE_EXPIRES_AT,'2026-11-14T20:00:00Z');
   }
   const {runFixedM4Probe}=await load();
   let calls=0;
