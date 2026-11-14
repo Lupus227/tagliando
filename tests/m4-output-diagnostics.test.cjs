@@ -169,7 +169,7 @@ test('M4.2.4 protected API shows fixed code but never raw model response',async(
   assert.match(await client.text(),/Diagnostica strutturale:/);
 });
 
-test('M4.2.4 off-topic, anomaly and disabled mode still make zero model calls',async()=>{
+test('M4.2.5 off-topic, anomaly and explicitly disabled mode still make zero model calls',async()=>{
   const {runFixedM4Probe}=await getProbe();
   const {env,getCalls}=makeEnv({response:JSON.stringify(selector())});
   assert.equal((await runFixedM4Probe('cover-stuck',env)).decision,'OPERATOR_STOP');
@@ -180,8 +180,9 @@ test('M4.2.4 off-topic, anomaly and disabled mode still make zero model calls',a
   assert.equal(getCalls(),0);
   const root=JSON.parse(fs.readFileSync(path.join(__dirname,'../wrangler.jsonc'),'utf8'));
   const nested=JSON.parse(fs.readFileSync(path.join(__dirname,'../worker/wrangler.jsonc'),'utf8'));
-  assert.equal(root.vars.AI_PROBE_MODE,'disabled');
-  assert.equal(nested.vars.AI_PROBE_MODE,'disabled');
+  assert.equal(root.vars.AI_PROBE_MODE,'enabled');
+  assert.equal(nested.vars.AI_PROBE_MODE,'enabled');
+  assert.equal(root.vars.AI_PROBE_EXPIRES_AT,'2026-11-14T20:00:00Z');
   assert.equal(root.vars.AI_PROBE_EXPIRES_AT,nested.vars.AI_PROBE_EXPIRES_AT);
   const response=await (await getWorker()).fetch(post(),{
     ...env,AI_PROBE_MODE:'disabled'
