@@ -29,11 +29,11 @@ function post(caseId,extra={}){
     headers:{'Origin':origin,'Content-Type':'application/json',...extra.headers},
     body:extra.raw??JSON.stringify({caseId})});
 }
-test('M4.2.5 deployment enables only time-boxed fixed probe with matching Wrangler configs',()=>{
+test('M4.2.5 rollback disables fixed probe with matching Wrangler configs',()=>{
   const read=p=>JSON.parse(fs.readFileSync(path.join(__dirname,'..',p),'utf8'));
   const root=read('wrangler.jsonc'),worker=read('worker/wrangler.jsonc');
   assert.deepEqual({...root,main:worker.main},worker);
-  assert.equal(root.vars.AI_PROBE_MODE,'enabled');
+  assert.equal(root.vars.AI_PROBE_MODE,'disabled');
   assert.equal(root.vars.AI_PROBE_EXPIRES_AT,'2026-11-14T20:00:00Z');
   assert.deepEqual(root.ai,{binding:'AI'});
   const limit=root.ratelimits.find(x=>x.name==='AI_PROBE_LIMITER');
