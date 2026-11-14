@@ -40,7 +40,7 @@ test('M4.2.3 accepts a single completed assistant Chat Completions envelope',asy
     ...raw}),c);
 });
 
-test('M4.2.3 rejects ambiguous, partial, multi-choice and tool-call envelopes',async()=>{
+test('M4.2.6 rejects ambiguous, partial, multi-choice and active tool-call envelopes',async()=>{
   const {parseM4SelectorEnvelope:parse}=await load();
   const content=JSON.stringify(valid());
   const cases=[
@@ -54,15 +54,45 @@ test('M4.2.3 rejects ambiguous, partial, multi-choice and tool-call envelopes',a
     {choices:[{}]},
     {choices:[{message:{role:'assistant',content}}]},
     {choices:[{finish_reason:'stop',message:{role:'user',content}}]},
-    {choices:[{finish_reason:'stop',message:{role:'assistant',content,tool_calls:[]}}]},
-    {choices:[{finish_reason:'stop',message:{role:'assistant',content,refusal:null}}]},
-    {choices:[{finish_reason:'stop',message:{role:'assistant',content,function_call:null}}]},
+    {choices:[{finish_reason:'stop',message:{role:'assistant',content,tool_calls:[{id:'call1',type:'function'}]}}]},
+    {choices:[{finish_reason:'stop',message:{role:'assistant',content,tool_calls:{}}}]},
+    {choices:[{finish_reason:'stop',message:{role:'assistant',content,tool_calls:''}}]},
+    {choices:[{finish_reason:'stop',message:{role:'assistant',content,refusal:'I cannot comply'}}]},
+    {choices:[{finish_reason:'stop',message:{role:'assistant',content,refusal:''}}]},
+    {choices:[{finish_reason:'stop',message:{role:'assistant',content,function_call:{name:'execute',arguments:'{}'}}}]},
+    {choices:[{finish_reason:'stop',message:{role:'assistant',content,function_call:[]}}]},
     {choices:[{finish_reason:'stop',message:{role:'assistant',content:[{type:'text',text:content}]}}]},
     {choices:[{finish_reason:'stop',message:{role:'assistant',content:content+' Extra'}}]},
     {output:[{content:[{type:'output_text',text:content}]}]},
     {response:{foo:1},choices:undefined}
   ];
   for(const raw of cases)assert.equal(parse(raw),null,JSON.stringify(raw));
+});
+
+test('M4.2.6 accepts null or empty optional Chat Completions fields only',async()=>{
+  const {parseM4SelectorEnvelope:parse}=await load();
+  const content=JSON.stringify(valid());
+  const make=(message,reason='stop')=>({choices:[
+    {finish_reason:reason,message:{role:'assistant',content,...message}}
+  ]});
+  for(const fields of [
+    {tool_calls:null},{tool_calls:[]},{refusal:null},{function_call:null},
+    {tool_calls:[],refusal:null,function_call:null},
+    {tool_calls:null,refusal:null,function_call:null}
+  ]){
+    assert.deepEqual(parse(make(fields)),valid(),JSON.stringify(fields));
+  }
+  for(const fields of [
+    {tool_calls:[{id:'x'}]},{tool_calls:{length:0}},{tool_calls:'[]'},
+    {refusal:''},{refusal:false},{refusal:'cannot answer'},
+    {function_call:{}},{function_call:[]},{function_call:false},
+    {tool_calls:[],refusal:'refused'},
+    {tool_calls:[{}],refusal:null}
+  ]){
+    assert.equal(parse(make(fields)),null,JSON.stringify(fields));
+  }
+  assert.equal(parse(make({tool_calls:[]},'tool_calls')),null,
+    'finish_reason tool_calls must be rejected even if list is empty');
 });
 
 test('M4.2.3 Chat Completions valid selector still goes through approved M4.1 gate',async()=>{
