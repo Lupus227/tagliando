@@ -29,12 +29,12 @@ function post(caseId,extra={}){
     headers:{'Origin':origin,'Content-Type':'application/json',...extra.headers},
     body:extra.raw??JSON.stringify({caseId})});
 }
-test('M4.2.2 deploy has inference disabled while expiry remains a safeguard',()=>{
+test('M4.2.5 deployment enables only time-boxed fixed probe with matching Wrangler configs',()=>{
   const read=p=>JSON.parse(fs.readFileSync(path.join(__dirname,'..',p),'utf8'));
   const root=read('wrangler.jsonc'),worker=read('worker/wrangler.jsonc');
   assert.deepEqual({...root,main:worker.main},worker);
-  assert.equal(root.vars.AI_PROBE_MODE,'disabled');
-  assert.equal(root.vars.AI_PROBE_EXPIRES_AT,'2026-11-13T00:00:00Z');
+  assert.equal(root.vars.AI_PROBE_MODE,'enabled');
+  assert.equal(root.vars.AI_PROBE_EXPIRES_AT,'2026-11-14T20:00:00Z');
   assert.deepEqual(root.ai,{binding:'AI'});
   const limit=root.ratelimits.find(x=>x.name==='AI_PROBE_LIMITER');
   assert.ok(limit);
@@ -163,7 +163,7 @@ test('M4.2.2 API executes one fixed model call with reviewed response',async()=>
   assert.equal(data.allowCompletion,false);
   assert.equal(getCalls().length,1);
 });
-test('M4.2.2 disabled by default never executes with present AI binding',async()=>{
+test('M4.2.5 explicitly disabled mode still never executes with AI binding',async()=>{
   const w=await getWorker();const {env,getCalls}=mockEnv({AI_PROBE_MODE:'disabled'});
   const r=await w.fetch(post('paper-wash'),env,ctx);
   assert.equal(r.status,503);
@@ -173,9 +173,9 @@ test('M4.2.2 disabled by default never executes with present AI binding',async()
 
 test('M4.2.2 fixed expiry closes both direct and HTTP inference, even with mode enabled',async()=>{
   const {runFixedM4Probe,aiProbeWindowValid}=await getProbe();
-  const date=Date.parse('2026-11-13T00:00:00Z');
-  assert.equal(aiProbeWindowValid({AI_PROBE_EXPIRES_AT:'2026-11-13T00:00:00Z'},date-1),true);
-  assert.equal(aiProbeWindowValid({AI_PROBE_EXPIRES_AT:'2026-11-13T00:00:00Z'},date),false);
+  const date=Date.parse('2026-11-14T20:00:00Z');
+  assert.equal(aiProbeWindowValid({AI_PROBE_EXPIRES_AT:'2026-11-14T20:00:00Z'},date-1),true);
+  assert.equal(aiProbeWindowValid({AI_PROBE_EXPIRES_AT:'2026-11-14T20:00:00Z'},date),false);
   assert.equal(aiProbeWindowValid({AI_PROBE_EXPIRES_AT:'invalid'},Date.now()),false);
   assert.equal(aiProbeWindowValid({},Date.now()),false);
   const {env,getCalls}=mockEnv({AI_PROBE_EXPIRES_AT:'2020-01-01T00:00:00Z'});
