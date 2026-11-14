@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-12; **M4.2.4 COMPLETATA nel perimetro codice/CI/deployment Cloudflare/gate AI OFF**. [PR #65](https://github.com/Lupus227/tagliando/pull/65) merged su `dev/fase14-ai` commit `56c0243`, [CI #43223021866 Success](https://github.com/Lupus227/tagliando/actions/runs/43223021866). Il push iniziale #65 non compariva su Cloudflare; [PR #67](https://github.com/Lupus227/tagliando/pull/67), commit solo documentale `f374fdd`, [CI #43227403187 Success](https://github.com/Lupus227/tagliando/actions/runs/43227403187), ha generato un nuovo deployment: **l'utente conferma Cloudflare `f374fdd` Success** e successivo collaudo browser `/lab/ai-probe` → **`PROBE_DISABLED`**. Il deploy contiene la diagnostica strutturale M4.2.4. Nessuna inferenza reale aggiuntiva; `AI_PROBE_MODE=disabled` in entrambi i Wrangler, KB 15.25.1 e PWA 0.12.1 invariate. Causa del precedente trigger mancato non determinata; causa originaria del primo `MODEL_OUTPUT_REJECTED` ancora sconosciuta.
+**Checkpoint:** 2026-11-14; **M4.2.5 — seconda prova GPT-OSS 20B autorizzata e abilitata nel ramo staging, deployment Cloudflare ancora da verificare**. [PR #69](https://github.com/Lupus227/tagliando/pull/69) **MERGED** su `dev/fase14-ai` commit `055d55c`, [CI #43620342411 Success](https://github.com/Lupus227/tagliando/actions/runs/43620342411). Entrambi Wrangler aggiornati a `AI_PROBE_MODE=enabled` e `AI_PROBE_EXPIRES_AT=2026-11-14T20:00:00Z` (21:00 CET del 14 novembre). Scenario OP03-P03 `paper-wash` fisso; diagnostica strutturale M4.2.4 e gate M4.1 invariati. **Ultimo deployment Cloudflare verificato dall'utente: `f374fdd` Success con `PROBE_DISABLED`**; `055d55c` e una seconda risposta live NON sono ancora attestati. Nessuna modifica a KB 15.25.1, PWA 0.12.1, AI globale. Dopo un solo test effettuare rollback in due Wrangler e confermarne il deployment.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **NON implementata**; la console restituisce esclusivamente testi validati dopo controlli deterministici |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.2.4 chiusa**: Cloudflare retrigger `f374fdd` Success e `/lab/ai-probe` → `PROBE_DISABLED` verificati. Prossimo gate: progettare e far approvare secondo test live di GPT-OSS 20B per osservare solo un codice diagnostico strutturale; richiede nuova scadenza e autorizzazione esplicita. AI globale OFF, nessuna azione senza approvazione |
+| Compito immediato di questa conversazione | **M4.2.5 PR #69 e CI Success, config di prova enabled fino alle 21:00 CET**. Confermare Cloudflare deployment `055d55c` e svolgere un solo test scenario P03 carta sul laboratorio Access-protetto, riportando `decision`, `diagnosticCode` e `modelRequests`. Poi disabilitare nuovamente entrambi i Wrangler e confermare il rollback; se la scadenza passa prima della prova, `PROBE_EXPIRED` blocca ogni inferenza |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -155,6 +155,16 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - **Cloudflare deploy PR #67 commit `f374fdd` confermato Success dall'utente**; contiene M4.2.4 e prova browser `/lab/ai-probe` → **`PROBE_DISABLED` superata**. Causa del mancato trigger precedente non verificata.
 - **NEXT:** verificare `56c0243` Success e `PROBE_DISABLED`; successiva chiamata al modello richiederà nuova autorizzazione. La causa reale della prima chiamata rifiutata non è stata accertata.
 
+### M4.2.5 — Seconda prova live time-boxed GPT-OSS 20B (2026-11-14)
+
+- L'utente ha dato autorizzazione esplicita: «allora procediamo», riferita alla seconda inferenza reale preannunciata dopo il collaudo M4.2.4.
+- [PR #69](https://github.com/Lupus227/tagliando/pull/69) **merged** su dev commit `055d55ce1993a92f08fcb62d9b13b9895c959e88`; [CI #43620342411](https://github.com/Lupus227/tagliando/actions/runs/43620342411) **Success**, regressioni e Wrangler dry-run.
+- I due Wrangler sono ora `AI_PROBE_MODE=enabled` con `AI_PROBE_EXPIRES_AT=2026-11-14T20:00:00Z` (21:00 ora italiana CET). Expiry fail-closed già verificato in route e adattatore; scadenza NON modifica automaticamente il valore `enabled` nei file.
+- Unico caso consentito P03 carta `paper-wash`; modello `@cf/openai/gpt-oss-20b`; diagnostica M4.2.4 restituisce solo codici statici. No testo tecnico della KB al modello, no istruzioni generate, no completamenti o avanzamenti. Workers Free confermato, limiter approcimativo 1/60.
+- Nessun codice di inferenza, controllore M4.1, KB, PWA o ledger aggiornato, soltanto Wrangler e asserzioni test.
+- **Cloudflare deployment di `055d55c` da confermare**; ultimo deployment `f374fdd` Success con laboratorio `PROBE_DISABLED` secondo l'utente.
+- **NEXT:** verifica Cloudflare; una sola prova utente (o STOP per scadenza); poi rollback a disabled in entrambi i file e conferma Cloudflare.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -251,4 +261,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (secondo test reale soltanto dopo autorizzazione):** M4.2.4 conclusa con `f374fdd` Success e `PROBE_DISABLED` nel laboratorio. Progettare un successivo esperimento GPT-OSS 20B con una sola domanda fissa OP03, diagnosi tramite codice strutturale, limitatore Workers Free e scadenza UTC aggiornata. Nessuna risposta libera né avanzamento della sessione; dopo il test eseguire un rollback a `AI_PROBE_MODE=disabled`. La nuova inferenza richiede autorizzazione esplicita del titolare; il primo `MODEL_OUTPUT_REJECTED` rimane senza causa confermata. KB 15.25.1, PWA 0.12.1 e AI globale invariati.
+**NEXT (M4.2.5 — collaudo live autorizzato e rollback):** PR #69 merged `055d55c` e CI #43620342411 Success. Prima verificare sul Worker Cloudflare il nuovo deployment (non dedurlo da GitHub). Solo se disponibile prima di 2026-11-14T20:00:00Z, una pressione sullo scenario `paper-wash` P03; raccogliere decision, codice diagnostico strutturale e numero chiamate senza log raw. Se `PROBE_EXPIRED`, stop senza nuove chiamate. Dopo la prova, PR di ripristino `AI_PROBE_MODE=disabled` nei due Wrangler e collaudo Cloudflare `PROBE_DISABLED`. La classificazione futura non prova quale fosse il formato nella prima prova rifiutata. KB 15.25.1, PWA 0.12.1 e flag AI globali OFF.
