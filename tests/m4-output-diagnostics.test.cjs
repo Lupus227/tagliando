@@ -40,7 +40,7 @@ const probe=async output=>{
 test('M4.2.4 codes are closed vocabulary, not dynamic model strings',async()=>{
   const {inspectM4SelectorEnvelope, classifyM4CandidateReview,
     M4_DIAGNOSTIC_VERSION}=await getDiagnostics();
-  assert.equal(M4_DIAGNOSTIC_VERSION,'tagliando.m4.output-diagnostic.v1');
+  assert.equal(M4_DIAGNOSTIC_VERSION,'tagliando.m4.output-diagnostic.v2');
   assert.equal(typeof inspectM4SelectorEnvelope,'function');
   assert.equal(typeof classifyM4CandidateReview,'function');
   const src=fs.readFileSync(path.join(__dirname,'../worker/src/m4-output-diagnostics.mjs'),'utf8');
@@ -81,15 +81,80 @@ test('M4.2.4 classifies unsupported assistant role, tools, malformed and long co
   const {inspectM4SelectorEnvelope:inspect}=await getDiagnostics();
   const s=JSON.stringify(selector());
   assert.equal(inspect({choices:[{finish_reason:'stop',
-    message:{role:'system',content:s}}]}).diagnosticCode,'ROLE_OR_TOOL_UNSUPPORTED');
+    message:{role:'system',content:s}}]}).diagnosticCode,'ROLE_UNSUPPORTED');
   assert.equal(inspect({choices:[{finish_reason:'stop',
-    message:{role:'assistant',content:s,tool_calls:[]}}]}).diagnosticCode,'ROLE_OR_TOOL_UNSUPPORTED');
+    message:{role:'assistant',content:s,tool_calls:[]}}]}).diagnosticCode,'SELECTOR_PARSED');
+  assert.equal(inspect({choices:[{finish_reason:'stop',
+    message:{role:'assistant',content:s,tool_calls:[{id:'call1'}]}}]}).diagnosticCode,'TOOL_CALL_UNSUPPORTED');
+  assert.equal(inspect({choices:[{finish_reason:'stop',
+    message:{role:'assistant',content:s,refusal:'cannot answer'}}]}).diagnosticCode,'REFUSAL_PRESENT');
+  assert.equal(inspect({choices:[{finish_reason:'stop',
+    message:{role:'assistant',content:s,function_call:{name:'danger'}}}]}).diagnosticCode,'FUNCTION_CALL_UNSUPPORTED');
   assert.equal(inspect({response:'{invalid'}).diagnosticCode,'JSON_INVALID');
   assert.equal(inspect({response:'x'.repeat(513)}).diagnosticCode,'OUTPUT_TOO_LONG');
   assert.equal(inspect({response:''}).diagnosticCode,'CONTENT_UNSUPPORTED');
   assert.equal(inspect({response:'"literal string"'}).diagnosticCode,'SELECTOR_NOT_OBJECT');
   assert.equal(inspect({response:[]}).diagnosticCode,'SELECTOR_NOT_OBJECT');
   assert.equal(inspect({response:s}).diagnosticCode,'SELECTOR_PARSED');
+});
+
+test('M4.2.6 separates missing message, wrong role and neutral metadata',async()=>{
+  const {inspectM4SelectorEnvelope:inspect}=await getDiagnostics();
+  const s=JSON.stringify(selector());
+  const wrap=msg=>({choices:[{finish_reason:'stop',message:msg}]});
+  const cases=[
+    [wrap(null),'MESSAGE_INVALID'],
+    [wrap([]),'MESSAGE_INVALID'],
+    [wrap({content:s}),'ROLE_UNSUPPORTED'],
+    [wrap({role:'tool',content:s}),'ROLE_UNSUPPORTED'],
+    [wrap({role:'assistant',content:s,tool_calls:[{name:'run'}]}),'TOOL_CALL_UNSUPPORTED'],
+    [wrap({role:'assistant',content:s,tool_calls:{}}),'TOOL_CALL_UNSUPPORTED'],
+    [wrap({role:'assistant',content:s,refusal:'refused'}),'REFUSAL_PRESENT'],
+    [wrap({role:'assistant',content:s,refusal:false}),'REFUSAL_PRESENT'],
+    [wrap({role:'assistant',content:s,function_call:{name:'run'}}),'FUNCTION_CALL_UNSUPPORTED']
+  ];
+  for(const [raw,expected] of cases){
+    const examined=inspect(raw);
+    assert.equal(examined.diagnosticCode,expected);
+    assert.equal(examined.candidate,null);
+  }
+  for(const option of [
+    {tool_calls:null}, {tool_calls:[]}, {refusal:null}, {function_call:null},
+    {tool_calls:[],refusal:null,function_call:null}
+  ]){
+    const ok=inspect(wrap({role:'assistant',content:s,...option}));
+    assert.equal(ok.diagnosticCode,'SELECTOR_PARSED');
+    assert.deepEqual(ok.candidate,selector());
+  }
+});
+test('M4.2.6 contract still rejects injected prose even with neutral optional fields',async()=>{
+  const s=JSON.stringify({...selector(),instruction:'RAW_AI_TEXT_MUST_NOT_APPEAR'});
+  const raw={choices:[{finish_reason:'stop',message:{
+    role:'assistant',content:s,tool_calls:[],refusal:null,function_call:null
+  }}]};
+  const {answer,calls}=await probe(raw);
+  assert.equal(calls,1);
+  assert.equal(answer.decision,'MODEL_OUTPUT_REJECTED');
+  assert.equal(answer.diagnosticCode,'SELECTOR_SHAPE_INVALID');
+  assert.equal(answer.allowCompletion,false);
+  assert.equal(answer.sessionChanged,false);
+  assert.equal(answer.instruction,undefined);
+  assert.equal(JSON.stringify(answer).includes('RAW_AI_TEXT_MUST_NOT_APPEAR'),false);
+});
+test('M4.2.6 valid source with neutral fields still comes from reviewed ledger',async()=>{
+  const s=JSON.stringify(selector());
+  const raw={choices:[{finish_reason:'stop',message:{
+    role:'assistant',content:s,tool_calls:[],refusal:null,function_call:null
+  }}]};
+  const {answer,calls}=await probe(raw);
+  assert.equal(calls,1);
+  assert.equal(answer.decision,'REVIEWED_SOURCE_DRY_RUN');
+  assert.equal(answer.diagnosticCode,'SOURCE_ACCEPTED');
+  assert.equal(answer.modelRequests,1);
+  assert.equal(answer.allowCompletion,false);
+  assert.equal(answer.sessionChanged,false);
+  assert.deepEqual(answer.references,[{stepId:'RASA-OP-03-P03',revision:'F15.18-R2'}]);
+  assert.match(answer.instruction,/Non lavare né oliare i filtri in carta/);
 });
 
 test('M4.2.4 preserves M4.2.3 parser compatibility, both supported envelopes',async()=>{
