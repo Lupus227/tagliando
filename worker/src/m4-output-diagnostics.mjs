@@ -6,7 +6,7 @@
  * Diagnostic codes are a closed vocabulary, NOT an authorization decision.
  * M4.1 reviewM4Candidate remains the mandatory authorization boundary.
  */
-export const M4_DIAGNOSTIC_VERSION='tagliando.m4.output-diagnostic.v1';
+export const M4_DIAGNOSTIC_VERSION='tagliando.m4.output-diagnostic.v2';
 
 const plain=value=>value!==null&&typeof value==='object'&&
   !Array.isArray(value)&&
@@ -40,12 +40,22 @@ export function inspectM4SelectorEnvelope(raw){
     if(!plain(choice))return inspected('CHOICES_INVALID');
     if(choice.finish_reason==='length')return inspected('OUTPUT_TRUNCATED');
     if(choice.finish_reason!=='stop')return inspected('FINISH_REASON_INVALID');
-    if(!plain(choice.message)||choice.message.role!=='assistant'||
-       Object.hasOwn(choice.message,'tool_calls')||
-       Object.hasOwn(choice.message,'refusal')||
-       Object.hasOwn(choice.message,'function_call'))
-      return inspected('ROLE_OR_TOOL_UNSUPPORTED');
-    candidate=choice.message.content;
+    // Chat Completions may include optional neutral fields. Their PRESENCE
+    // is not by itself a tool request or a refusal.
+    // Null and empty tool_calls mean "no tool call". Any populated or
+    // malformed tool_calls, active refusal or function_call FAIL CLOSED.
+    if(!plain(choice.message))return inspected('MESSAGE_INVALID');
+    const message=choice.message;
+    if(message.role!=='assistant')return inspected('ROLE_UNSUPPORTED');
+    if(Object.hasOwn(message,'tool_calls') &&
+       message.tool_calls!==null &&
+       !(Array.isArray(message.tool_calls)&&message.tool_calls.length===0))
+      return inspected('TOOL_CALL_UNSUPPORTED');
+    if(Object.hasOwn(message,'refusal')&&message.refusal!==null)
+      return inspected('REFUSAL_PRESENT');
+    if(Object.hasOwn(message,'function_call')&&message.function_call!==null)
+      return inspected('FUNCTION_CALL_UNSUPPORTED');
+    candidate=message.content;
   }
 
   if(typeof candidate==='string'){
