@@ -160,7 +160,7 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - L'utente ha dato autorizzazione esplicita: «allora procediamo», riferita alla seconda inferenza reale preannunciata dopo il collaudo M4.2.4.
 - [PR #69](https://github.com/Lupus227/tagliando/pull/69) **merged** su dev commit `055d55ce1993a92f08fcb62d9b13b9895c959e88`; [CI #43620342411](https://github.com/Lupus227/tagliando/actions/runs/43620342411) **Success**, regressioni e Wrangler dry-run.
 - I due Wrangler sono ora `AI_PROBE_MODE=enabled` con `AI_PROBE_EXPIRES_AT=2026-11-14T20:00:00Z` (21:00 ora italiana CET). Expiry fail-closed già verificato in route e adattatore; scadenza NON modifica automaticamente il valore `enabled` nei file.
-- Unico caso consentito P03 carta `paper-wash`; modello `@cf/openai/gpt-oss-20b`; diagnostica M4.2.4 restituisce solo codici statici. No testo tecnico della KB al modello, no istruzioni generate, no completamenti o avanzamenti. Workers Free confermato, limiter approcimativo 1/60.
+- Unico caso consentito P03 carta `paper-wash`; modello `@cf/openai/gpt-oss-20b`; diagnostica M4.2.4 restituisce solo codici statici. No testo tecnico della KB al modello, no istruzioni generate, no completamenti o avanzamenti. Workers Free confermato, limiter approssimativo 1/60.
 - Nessun codice di inferenza, controllore M4.1, KB, PWA o ledger aggiornato, soltanto Wrangler e asserzioni test.
 - **Cloudflare deployment di `055d55c` da confermare**; ultimo deployment `f374fdd` Success con laboratorio `PROBE_DISABLED` secondo l'utente.
 - **NEXT:** verifica Cloudflare; una sola prova utente (o STOP per scadenza); poi rollback a disabled in entrambi i file e conferma Cloudflare.
