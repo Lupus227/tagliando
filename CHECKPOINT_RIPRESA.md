@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-14; **M4.2.5 rollback Cloudflare CONFERMATO; M4.2.6 correzione parser offline integrata, Cloudflare nuovo commit da verificare.** L'utente ha confermato deployment rollback `02c8708` **Success** e laboratorio `/lab/ai-probe` → **`PROBE_DISABLED`** dopo il secondo test GPT-OSS 20B (`MODEL_OUTPUT_REJECTED`, `ROLE_OR_TOOL_UNSUPPORTED`, `modelRequests=1`). [PR #73](https://github.com/Lupus227/tagliando/pull/73) merged su `dev/fase14-ai` commit **`a5b9b1c`**, [CI #43623317403 Success](https://github.com/Lupus227/tagliando/actions/runs/43623317403): parser Chat Completions aggiornato per consentire solo campi opzionali neutri (`tool_calls:null/[]`, `refusal:null`, `function_call:null`), bloccare valori attivi e distinguere codici `MESSAGE_INVALID`, `ROLE_UNSUPPORTED`, `TOOL_CALL_UNSUPPORTED`, `REFUSAL_PRESENT`, `FUNCTION_CALL_UNSUPPORTED`. **Cloudflare deployment di `a5b9b1c` NON ANCORA verificato; nessun nuovo test live autorizzato.** AI_PROBE_MODE=disabled in entrambi i Wrangler; KB `15.25.1`/PWA `0.12.1` invariate.
+**Checkpoint:** 2026-11-14; **M4.2.6 CONCLUSA nel perimetro codice/CI/deployment/gate OFF.** [PR #73](https://github.com/Lupus227/tagliando/pull/73) merged su `dev/fase14-ai` commit `a5b9b1c`, [CI #43623317403 Success](https://github.com/Lupus227/tagliando/actions/runs/43623317403): parser M4.2.6 accetta campi opzionali Chat Completions neutri (`tool_calls:null/[]`, `refusal:null`, `function_call:null`) e mantiene rifiuti fail-closed per tool call/rifiuti attivi, ruolo improprio e JSON non conforme. **L'utente conferma deployment Cloudflare `a5b9b1c` Success e prova browser `/lab/ai-probe` → `PROBE_DISABLED`.** Nessuna inferenza reale in M4.2.6. Entrambi Wrangler `AI_PROBE_MODE=disabled`; scadenza 2026-11-14T20:00:00Z invariata. La causa del precedente `ROLE_OR_TOOL_UNSUPPORTED` non è accertata, perché manca il payload originale. KB `15.25.1`, PWA `0.12.1` e flag AI globali invariati.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **NON implementata**; la console restituisce esclusivamente testi validati dopo controlli deterministici |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.2.6 parser e CI completati, merge `a5b9b1c` su dev**. Verificare Cloudflare Success per quel commit e `PROBE_DISABLED` senza interrogare il modello. La causa del secondo `ROLE_OR_TOOL_UNSUPPORTED` non è provata; non riattivare l'AI senza autorizzazione esplicita |
+| Compito immediato di questa conversazione | **M4.2.6 verificata e chiusa:** Cloudflare `a5b9b1c` Success, `/lab/ai-probe` → `PROBE_DISABLED` secondo l'utente. Prima di un eventuale terzo test GPT-OSS valutare se abbia senso misurare ulteriori aspetti offline; servono nuova autorizzazione esplicita, budget Workers Free, attivazione a scadenza e rollback. Non procedere con inferenza automaticamente |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -182,6 +182,14 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - `AI_PROBE_MODE=disabled` nei due Wrangler; expiry 2026-11-14T20:00:00Z invariata, KB 15.25.1 e PWA 0.12.1 invariate.
 - **Cloudflare deployment `a5b9b1c` da confermare**; ultimo deployment verificato dall'utente `02c8708` Success con `PROBE_DISABLED`.
 
+### M4.2.6 — Deployment e gate OFF verificati (2026-11-14)
+
+- **Conferma diretta dell'utente:** deployment Cloudflare commit `a5b9b1c` **Success** e risposta del laboratorio Access-protetto `PROBE_DISABLED`.
+- [PR #73](https://github.com/Lupus227/tagliando/pull/73) merged su `dev/fase14-ai`; [CI #43623317403](https://github.com/Lupus227/tagliando/actions/runs/43623317403) Success. Diagnostica v2 implementata e verificata con fixture offline: campi opzionali neutri ammessi, richieste tool/refusal effettive rifiutate, selettore sempre soggetto a M4.1.
+- Entrambi Wrangler confermati da GitHub `AI_PROBE_MODE=disabled`, scadenza `2026-11-14T20:00:00Z` invariata. Nessuna nuova inferenza autorizzata né eseguita durante M4.2.6.
+- **M4.2.6 chiusa** limitatamente a codice, CI, deployment e gate disabilitato. **Non** è dimostrata la compatibilità del parser v2 con un output reale successivo, né quale campo abbia causato `ROLE_OR_TOOL_UNSUPPORTED` nel secondo test.
+- **NEXT:** nuovo intervento da concordare sulla roadmap; nessuna riattivazione automatica dell'AI.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -262,7 +270,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** rollback M4.2.5 `02c8708` Cloudflare Success + `PROBE_DISABLED` confermati dall'utente. M4.2.6 PR #73 merged `a5b9b1c`, CI #43623317403 Success; Cloudflare del commit M4.2.6 da verificare. La risposta originaria GPT-OSS 20B non è disponibile, quindi non è noto quale campo abbia generato `ROLE_OR_TOOL_UNSUPPORTED`. Nessuna nuova inferenza autorizzata.
+**Stato confermato:** dopo M4.2.5 rollback `02c8708` Success + `PROBE_DISABLED`, M4.2.6 PR #73 è stata distribuita su Cloudflare con commit `a5b9b1c` Success e laboratorio `PROBE_DISABLED`, entrambi confermati dall'utente. CI #43623317403 Success, parser diagnostico v2. Nessun nuovo test GPT-OSS; la ragione specifica del precedente `ROLE_OR_TOOL_UNSUPPORTED` rimane non dimostrata.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -278,4 +286,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (collaudo M4.2.6, solo gate OFF):** verificare Cloudflare deployment `a5b9b1c` Success; aprire `/lab/ai-probe` e confermare `PROBE_DISABLED`, senza effettuare inferenze. Solo dopo sarà chiuso il perimetro codice/CI/deploy/gate della correzione. Il parser M4.2.6 gestisce campi null/vuoti e assegna codici specifici ai veri rifiuti o tool call; questo non dimostra retroattivamente quale caso reale si sia verificato. Un nuovo test GPT-OSS richiederebbe consenso esplicito, nuova finestra UTC, limiti Workers Free e rollback. PWA 0.12.1, KB 15.25.1 e AI globale OFF.
+**NEXT (pianificazione successiva, senza nuova inferenza):** M4.2.6 COMPLETATA per codice/CI/deploy/`PROBE_DISABLED` su Cloudflare. Decidere con l'utente se eseguire un nuovo esperimento strettamente circoscritto oppure lavorare sulla struttura conversazionale/PWA in coerenza con ROADMAP_MASTER. Qualunque futura prova GPT-OSS deve essere esplicitamente autorizzata, avere scadenza aggiornata, limite di costo/rate limit e rollback. Il parser v2 non prova retroattivamente il contenuto della precedente risposta reale. KB 15.25.1, PWA 0.12.1, AI globalmente OFF.
