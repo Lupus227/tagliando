@@ -39,3 +39,14 @@ Il rate limiter non garantisce da solo un tetto assoluto di spesa o di richieste
 - In caso di output incompatibile, leggere solo `diagnosticCode` e interrompere, senza rendere pubblici dati grezzi.
 
 **Non integrare il laboratorio nella PWA pubblica prima di questi collaudi.**
+
+## M4.3.1 — Attivazione reale autorizzata (2026-11-16)
+
+L'utente ha risposto «procedi» alla richiesta di autorizzazione temporanea per GPT-OSS 20B sul piano Cloudflare Workers Free.
+
+- Solo `AI_CHAT_MODE=enabled` per il laboratorio isolato; `AI_PROBE_MODE=disabled` e AI globale della PWA disabilitata.
+- Cutoff in entrambi i Wrangler: `AI_CHAT_EXPIRES_AT=2026-11-16T18:25:00Z` (**19:25 CET**). Scaduto il termine, `CHAT_EXPIRED` impedisce nuove inferenze anche se la configurazione non è ancora stata ripristinata.
+- Piano d'esecuzione: CI Success; merge su `dev/fase14-ai`; deployment Cloudflare Success confermato dall'utente; **prima una sola richiesta** nel laboratorio; se `CHAT_TEXT_READY`, attendere almeno 60 secondi e soltanto allora eseguire il secondo turno di memoria.
+- In presenza di errori `CHAT_OUTPUT_REJECTED`, `MODEL_UNAVAILABLE` o `CHAT_EXPIRED`: fermarsi senza ripetere richieste e riportare il codice; non copiare segreti.
+- Dopo l'unica coppia di test (o dopo stop per errore/scadenza), effettuare rollback con PR di `AI_CHAT_MODE=disabled` nei due Wrangler e test offline aggiornati; confermare CI, deployment e `CHAT_DISABLED` con 0 chiamate.
+- L'auto-expiry non sostituisce il rollback: non dichiarare disabilitata la configurazione prima di un nuovo deploy.
