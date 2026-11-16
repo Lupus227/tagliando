@@ -13,6 +13,7 @@ import {CANONICAL_KNOWLEDGE} from './canonical-knowledge.mjs';
 import {filterLabAnswer,filterLabReady} from './filter-lab.mjs';
 import {filterLabPage,filterLabClient} from './filter-lab-ui.mjs';
 import {serveM4Probe} from './m4-probe-route.mjs';
+import {serveChatLab} from './m4-chat-lab.mjs';
 
 const MAX_BODY_BYTES = 2048;
 const MAX_QUESTION_CHARS = 500;
@@ -165,6 +166,11 @@ const worker = {
     if (url.pathname==='/lab/ai-probe'||url.pathname==='/lab/ai-probe/'||
         url.pathname==='/lab/ai-probe/client.js'||url.pathname==='/api/lab/ai-probe')
       return serveM4Probe(request,env,ctx,verifyWorkerAccess);
+
+    // M4.3 — isolated read-only conversational test; public /api/assist unchanged.
+    if (url.pathname==='/lab/ai-chat'||url.pathname==='/lab/ai-chat/'||
+        url.pathname==='/lab/ai-chat/client.js'||url.pathname==='/api/lab/ai-chat')
+      return serveChatLab(request,env,ctx,verifyWorkerAccess);
 
     // Fase 14.7 — PWA snapshot isolated behind Access on the same origin.
     // No changes to the public PWA, existing API, or voice command handlers.
