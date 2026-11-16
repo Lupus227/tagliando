@@ -3,6 +3,7 @@
  * Anche se distribuito per errore, SERVICE_MODE=disabled blocca /api/assist.
  * Richieste abilitate SOLO dopo Access + rate limit + revisione configurazione.
  */
+// Deployment retrigger 2026-11-16: no runtime changes; all experimental AI gates remain OFF.
 import {verifyWorkerAccess} from './access.mjs';
 import {evaluateSafety} from './policy.mjs';
 import {testPage, testRunner} from './test-page.mjs';
