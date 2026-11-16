@@ -29,13 +29,14 @@ function post(payload,options={}){
    headers:{Origin:options.origin||origin,'Content-Type':'application/json'},
    body:typeof payload==='string'?payload:JSON.stringify(payload)});
 }
-test('M4.3 both Wrangler configurations default to OFF and expired',()=>{
+test('M4.3 both Wrangler configurations enable ONLY a time-limited isolated lab',()=>{
  const read=p=>JSON.parse(fs.readFileSync(path.join(__dirname,'..',p),'utf8'));
  const a=read('wrangler.jsonc'),b=read('worker/wrangler.jsonc');
  assert.deepEqual({...a,main:b.main},b);
- assert.equal(a.vars.AI_CHAT_MODE,'disabled');
- assert.ok(Date.parse(a.vars.AI_CHAT_EXPIRES_AT)<Date.now());
+ assert.equal(a.vars.AI_CHAT_MODE,'enabled');
+ assert.equal(a.vars.AI_CHAT_EXPIRES_AT,'2026-11-16T18:25:00Z');
  assert.equal(a.vars.AI_PROBE_MODE,'disabled');
+ assert.equal(a.vars.SERVICE_MODE,'guarded');
 });
 test('M4.3 native and OpenAI Chat Completions envelopes extract plain text',async()=>{
  const {extractChatText}=await chat();
