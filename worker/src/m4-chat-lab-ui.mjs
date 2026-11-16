@@ -1,0 +1,63 @@
+/*
+ * M4.3 experimental conversation interface.
+ * All untrusted model content is rendered through textContent, never innerHTML.
+ */
+export const chatLabPage=[
+  '<!doctype html><html lang="it"><head><meta charset="utf-8">',
+  '<meta name="viewport" content="width=device-width, initial-scale=1">',
+  '<meta name="robots" content="noindex,nofollow">',
+  '<title>Tagliando — Laboratorio dialogo AI M4.3</title>',
+  '<style>',
+  ':root{font-family:system-ui,-apple-system,sans-serif;background:#f6f8fa;color:#173547}',
+  'body{max-width:720px;margin:22px auto;padding:0 15px;line-height:1.55}',
+  'main{background:#fff;padding:20px;border:1px solid #cfdce0;border-radius:12px}',
+  'button{font:inherit;background:#155d70;color:#fff;border:0;border-radius:7px;padding:10px 14px;margin:4px 8px 4px 0;cursor:pointer}',
+  'button:disabled{opacity:.45;cursor:not-allowed}',
+  '.info{border-left:4px solid #bd7600;background:#fff4df;padding:12px}',
+  'pre{background:#f0f5f8;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;min-height:40px}',
+  '</style></head><body><main>',
+  '<h1>Laboratorio M4.3 — AI conversazionale</h1>',
+  '<p class="info"><strong>Solo prova sperimentale.</strong> Nessuna istruzione di manutenzione, nessun avanzamento di sessione. L’attivazione richiede una configurazione temporanea separata.</p>',
+  '<p><strong>Primo turno:</strong> il modello saluta e sceglie un colore. <strong>Secondo turno:</strong> gli chiediamo di ricordarlo.</p>',
+  '<button type="button" id="first">1. Avvia prima risposta</button>',
+  '<button type="button" id="second" disabled>2. Verifica memoria del dialogo</button>',
+  '<p id="status" role="status">Laboratorio non ancora eseguito.</p>',
+  '<h2>Risposta 1</h2><pre id="answer1">—</pre>',
+  '<h2>Risposta 2</h2><pre id="answer2">—</pre>',
+  '<p><small>Access richiesto. Al massimo una richiesta ogni 60 secondi. AI pubblica disabilitata.</small></p>',
+  '</main><script defer src="/lab/ai-chat/client.js"></script></body></html>'
+].join('\n');
+
+export const chatLabClient=[
+  "'use strict';",
+  '(function(){',
+  'const byId=id=>document.getElementById(id);',
+  'let prior=null;',
+  'let busy=false;',
+  'async function call(turn){',
+  '  if(busy||(turn===2&&!prior))return;',
+  '  busy=true;',
+  '  byId("first").disabled=true;byId("second").disabled=true;',
+  '  byId("status").textContent="Richiesta al laboratorio in corso…";',
+  '  try{',
+  '    const body=turn===1?{turn:1}:{turn:2,previousAnswer:prior};',
+  '    const response=await fetch("/api/lab/ai-chat",{method:"POST",credentials:"same-origin",',
+  '      headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});',
+  '    const data=await response.json();',
+  '    byId("status").textContent=(data.decision||"ERRORE")+" — "+(data.message||"")',
+  '      +(data.diagnosticCode?" · Diagnostica: "+data.diagnosticCode:"")',
+  '      +" · Chiamate modello: "+String(data.modelRequests??0);',
+  '    if(response.ok&&data.decision==="CHAT_TEXT_READY"&&typeof data.text==="string"){',
+  '      if(turn===1){prior=data.text;byId("answer1").textContent=data.text;',
+  '        byId("answer2").textContent="—";}',
+  '      else{byId("answer2").textContent=data.text;}',
+  '    }',
+  '  }catch(_){byId("status").textContent="Connessione non disponibile.";}',
+  '  finally{busy=false;byId("first").disabled=false;',
+  '    byId("second").disabled=!prior;}',
+  '}',
+  'byId("first").addEventListener("click",()=>{prior=null;byId("answer1").textContent="—";',
+  '  byId("answer2").textContent="—";call(1);});',
+  'byId("second").addEventListener("click",()=>call(2));',
+  '})();'
+].join('\n');
