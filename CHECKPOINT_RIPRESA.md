@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-16; **M4.3.1 — GPT-OSS 20B genera testo italiano e mantiene il contesto su due turni, secondo collaudo positivo; rollback GitHub CI/merge confermati, Cloudflare rollback ANCORA DA VERIFICARE.** [PR #76](https://github.com/Lupus227/tagliando/pull/76) ha introdotto il laboratorio testuale Access-only `/lab/ai-chat`, deploy `b072854` Success e `CHAT_DISABLED` con 0 richieste verificati dall'utente. [PR #77](https://github.com/Lupus227/tagliando/pull/77) merged `30ef242`: Cloudflare Success confermato. Utente riporta prima risposta modello «Ciao! Ho scelto il colore blu.» e seconda risposta alla domanda di richiamo «blu». Sono due turni reali a prompt fissi con storico passato esplicitamente: **non** prova dialogo libero, sicurezza tecnica, KB o voce. [PR #78](https://github.com/Lupus227/tagliando/pull/78) rollback merged su dev commit `22b9a28b9adb194e3d977aa3909755170c7527ed`; [CI #43922203057 Success](https://github.com/Lupus227/tagliando/actions/runs/43922203057). Entrambi Wrangler a `AI_CHAT_MODE=disabled` e `AI_PROBE_MODE=disabled` con cutoff chat `2026-11-16T18:25:00Z`. **Cloudflare deployment `22b9a28` e `CHAT_DISABLED` post-rollback non ancora verificati**. KB `15.25.1`, PWA `0.12.1`, AI pubblica immutate.
+**Checkpoint:** 2026-11-16; **M4.3.1 CHIUSA: due turni reali GPT-OSS 20B riusciti e rollback Cloudflare verificato.** [PR #76](https://github.com/Lupus227/tagliando/pull/76) laboratorio `/lab/ai-chat` deploy `b072854` Success, gate `CHAT_DISABLED`/0 chiamate confermato. [PR #77](https://github.com/Lupus227/tagliando/pull/77) attivazione controllata `30ef242`, deploy Success, utente riporta risposta primo turno «Ciao! Ho scelto il colore blu.» e secondo turno di memoria «blu». Si tratta di due prompt innocui predefiniti, non di dialogo tecnico libero. [PR #78](https://github.com/Lupus227/tagliando/pull/78) rollback merged `22b9a28b9adb194e3d977aa3909755170c7527ed`; CI #43922203057 Success. **L'utente ha confermato anche Cloudflare deployment `22b9a28` Success e `/lab/ai-chat` → `CHAT_DISABLED — Laboratorio conversazionale disabilitato`, `modelRequests=0`.** GitHub: entrambi Wrangler `AI_CHAT_MODE=disabled` e `AI_PROBE_MODE=disabled`, cutoff chat 2026-11-16T18:25:00Z. PWA 0.12.1, KB 15.25.1 e AI pubblica non modificate. Prossimo intervento da concordare: M4.4, dialogo con input libero delimitato, contesto e separazione dei controlli tecnici.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **NON implementata**; la console restituisce esclusivamente testi validati dopo controlli deterministici |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.3.1 due turni GPT-OSS 20B riusciti** (prima risposta «Ciao! Ho scelto il colore blu.», seconda «blu»). Rollback PR #78 merged `22b9a28`, CI Success e Wrangler AI_CHAT_MODE=disabled. **Verificare Cloudflare `22b9a28` Success e `/lab/ai-chat` → `CHAT_DISABLED`, modelRequests 0**. Prossima fase da concordare: conversazione libera con guardie, poi integrazione graduale alla KB validata, evitando istruzioni tecniche non autorizzate |
+| Compito immediato di questa conversazione | **M4.3.1 completata:** `b072854` lab OFF e 0 chiamate; `30ef242` due risposte reali («Ciao! Ho scelto il colore blu.» → «blu»); rollback Cloudflare `22b9a28` Success e `CHAT_DISABLED`, 0 chiamate, tutti confermati dall'utente. **NEXT:** concordare requisiti e progettazione di M4.4 (domande libere, memoria breve, filtri sicurezza, controllo KB), mantenendo AI off e nessun test live automatico |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -199,6 +199,13 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - **Perimetro dimostrato:** due turni testuali in italiano su argomento innocuo, con stato conversazionale esplicito, senza contenuti KB. **Non dimostrati:** domande libere, risposte tecniche validate, affidabilità del modello su anomalie, integrazione voce/PWA, memorizzazione persistente e controllo di costi globale.
 - **Prossimo checkpoint:** Cloudflare `22b9a28` Success e `CHAT_DISABLED`, `modelRequests=0`. Poi pianificare conversazione libera controllata (M4.4) mantenendo la separazione tra testo generato e azioni meccaniche.
 
+### M4.3.1 — Conferma Cloudflare rollback dopo due turni reali (2026-11-16)
+
+- **Confermato direttamente dall'utente:** deployment Cloudflare commit `22b9a28` **Success**; premuto il pulsante del laboratorio conversazionale → **`CHAT_DISABLED — Laboratorio conversazionale disabilitato. · Chiamate modello: 0`**.
+- Stato di sicurezza finale M4.3.1 verificato in GitHub e sul Worker: `AI_CHAT_MODE=disabled` in entrambi Wrangler; `AI_PROBE_MODE=disabled`; cutoff 2026-11-16T18:25:00Z invariato; nessuna inferenza eseguibile tramite quel percorso.
+- Chiusura M4.3.1: prova reale su due turni e successivo rollback completati. I risultati dimostrano generazione italiana e uso di contesto esplicito, **non** dialogo libero, istruzioni validate, trattamento anomalie o colloquio vocale.
+- **NEXT da concordare:** M4.4 input conversazionale libero in laboratorio isolato e, successivamente, risposte tecniche basate su KB e controllore M4.1. Nessuna ulteriore attivazione live autorizzata da questa chiusura.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -279,7 +286,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** M4.3: PR #76 lab deploy `b072854` Success e gate `CHAT_DISABLED` con 0 richieste, riferiti dall'utente. M4.3.1: PR #77 attivazione `30ef242` Cloudflare Success, prima risposta testuale reale «Ciao! Ho scelto il colore blu.», secondo turno «blu», riferiti dall'utente. Due turni testuali a prompt fissi e storico passato, non dialogo tecnico libero. Rollback PR #78 integrata `22b9a28`, CI Success, entrambi Wrangler AI_CHAT_MODE=disabled; **Cloudflare del rollback e gate successivo non ancora verificati**. Nessuna nuova inferenza autorizzata.
+**Stato confermato:** M4.3.1 collaudo end-to-end positivo: prima risposta in italiano e richiamo corretto del colore nel secondo turno, da browser Access. Rollback [PR #78](https://github.com/Lupus227/tagliando/pull/78) merged commit `22b9a28` con CI Success, Cloudflare deploy `22b9a28` Success e laboratorio `CHAT_DISABLED` con **0 richieste** attestati dall'utente. Due sole domande predefinite: non equivale a dialogo libero, né prova di correttezza tecnica, voce o integrazione KB. AI_CHAT_MODE e AI_PROBE_MODE disabled nei due Wrangler; nuove inferenze non autorizzate.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -295,4 +302,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (M4.3.1 rollback, poi nuova milestone):** verificare Cloudflare deploy `22b9a28` Success e controllo `CHAT_DISABLED` con zero chiamate. M4.3.1 ha dimostrato generazione testuale e continuità su un secondo turno predefinito; non è un assistente tecnico libero e non dimostra selezione/fonti validate. Dopo il rollback valutare con l'utente M4.4: input libero limitato, cronologia breve, controlli di sicurezza e contenuti autorizzati. Prima di ulteriori inferenze, nuova approvazione e finestra breve con rollback. PWA 0.12.1, KB 15.25.1, AI pubblica OFF.
+**NEXT (M4.4 — progettazione dialogo libero controllato):** M4.3.1 è CHIUSA anche per deployment e rollback. Definire con il titolare un esperimento successivo con domande libere non tecniche, limite input/storico, controlli di costo e privacy e test di fallback, poi collegamento delle sole risposte tecniche alle fonti validate mediante controllore deterministico M4.1. Prima di ogni nuova inferenza serve autorizzazione esplicita e finestra temporanea con rollback pronto. KB 15.25.1, PWA 0.12.1, AI pubblica OFF.
