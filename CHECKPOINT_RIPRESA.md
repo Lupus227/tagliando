@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-16; **M4.4 laboratorio conversazione libera non tecnica PREPARATO E VERIFICATO IN MODALITÀ OFF.** [PR #81](https://github.com/Lupus227/tagliando/pull/81) merged su `dev/fase14-ai` commit `87fa60cbeaad137f759c26eed1d485ae753463e8`, [CI #43940430467 Success](https://github.com/Lupus227/tagliando/actions/runs/43940430467). **L'utente conferma Cloudflare deployment `87fa60c` Success e laboratorio `/lab/ai-free` → `FREE_CHAT_DISABLED — Laboratorio libero disabilitato`, `modelRequests=0`.** Il nuovo laboratorio gestisce domande non predefinite, 4 turni massimi e storico volatile nel browser; filtro lessicale non sufficientemente affidabile per guida tecnica. **Nessuna inferenza reale GPT-OSS M4.4 eseguita o autorizzata con questa conferma.** AI_FREE_MODE, AI_CHAT_MODE e AI_PROBE_MODE disabled nei due Wrangler, expiry AI_FREE_EXPIRES_AT 2026-11-16T18:25:00Z già scaduta. PWA v0.12.1, KB 15.25.1 e AI pubblica invariate. NEXT: autorizzazione esplicita separata per test live non tecnico a finestra limitata, con rollback pronto.
+**Checkpoint:** 2026-11-16; **M4.4.1 — prima conversazione libera reale GPT-OSS 20B su due turni: contesto OK, accuratezza NON SUPERATA.** [PR #84](https://github.com/Lupus227/tagliando/pull/84) merged `71d26cc`, Cloudflare deployment `71d26cc` **Success** confermato dall'utente, primo turno `FREE_CHAT_READY`, `modelRequests=1`. L'utente riporta dialogo testuale reale su astronomia: risposta del modello sulla supernova include il falso «le stelle più grandi del nostro sistema solare ... far esplodere l'intero universo in una sola notte»; al secondo turno la AI ricorda correttamente il tema e sintetizza che una supernova può superare temporaneamente la luminosità di un'intera galassia. **Valutazione:** input libero e contesto inter-turno riusciti, veridicità insufficiente; non usare il modello come fonte autonoma di istruzioni tecniche. [PR #85](https://github.com/Lupus227/tagliando/pull/85) rollback **merged** `4d15bcba76537240db9190ba0e45501777798350`, [CI #43942963709 Success](https://github.com/Lupus227/tagliando/actions/runs/43942963709). Entrambi Wrangler ora `AI_FREE_MODE=disabled`, `AI_CHAT_MODE=disabled`, `AI_PROBE_MODE=disabled`, cutoff `2026-11-16T20:20:00Z`. **Deployment Cloudflare del rollback `4d15bcb` e test `FREE_CHAT_DISABLED` / 0 chiamate ANCORA DA VERIFICARE.** PWA 0.12.1, KB 15.25.1, AI pubblica invariate.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -32,7 +32,7 @@
 | PWA originale pubblica | **v0.12.1**, GitHub Pages; guida a step, voce TTS/ASR, anomalie vocali, recupero sessione |
 | Schema KB | `tagliando.knowledge.v1` |
 | Versione KB distribuita su Cloudflare | **15.25.1** |
-| Commit deployment Cloudflare confermato dall'utente | **`87fa60c` · Success** — M4.4 laboratorio `/lab/ai-free`, test OFF `FREE_CHAT_DISABLED` e 0 chiamate confermati dall'utente. Precedente rollback M4.3.1 `22b9a28` Success |
+| Commit deployment Cloudflare confermato dall'utente | **`71d26cc` · Success** — attivazione controllata M4.4.1 confermata dall'utente; due turni reali riportati. **Rollback GitHub `4d15bcb` merged, ma Cloudflare rollback NON ANCORA confermato** |
 | Operazioni/passaggi | **8 / 53** |
 | Passaggi validati con condizioni | **24** |
 | Passaggi ancora pendenti | **29** |
@@ -43,10 +43,10 @@
 | CI nuova prova M3 | [GitHub Actions #42898433457 — Success](https://github.com/Lupus227/tagliando/actions/runs/42898433457) (test + Wrangler dry-run) |
 | Deployment Cloudflare nuovo codice M3 | **CONFERMATO** dall'utente: commit diagnostico `232e473`, build Success e console accessibile |
 | Console protetta da provare | `https://tagliando-ai-staging.maico-gua.workers.dev/lab/filtro-aria` |
-| Comprensione libera con AI | **Laboratorio M4.4 codificato e testato offline**: domande libere non tecniche e storico limitato; AI_FREE_MODE disabilitato e scaduto. **Non ancora provato con GPT-OSS reale**, non integrato nella PWA/KB |
+| Comprensione libera con AI | **M4.4.1 due turni testuali con input libero riusciti e contesto coerente; accuratezza fattuale NON SUPERATA**: supernova erroneamente descritta come capace di far esplodere l'universo. Solo laboratorio non tecnico Access, mai integrato alla PWA o alle fonti validate |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.4 collaudo OFF completato:** `87fa60c` Cloudflare Success e `FREE_CHAT_DISABLED`, modelRequests 0. **NEXT:** chiedere nuova autorizzazione per prova GPT-OSS 20B con 2–4 messaggi liberi innocui, 1/60s, timer breve e PR di rollback; non attivare automaticamente. La prova non autorizza risposte tecniche e non modifica la PWA |
+| Compito immediato di questa conversazione | **M4.4.1 test live completato (2 turni):** conversazione libera e memoria breve OK, risposta fattualmente errata. **PR rollback #85 merged `4d15bcb`, CI Success: verificare Cloudflare `4d15bcb` Success e laboratorio `/lab/ai-free` → `FREE_CHAT_DISABLED` / 0 chiamate.** Non ripetere richieste al modello. Dopo rollback, pianificare affidabilità delle risposte basate su KB validata + gate deterministico |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -222,6 +222,15 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - **M4.4 preparazione e collaudo OFF conclusi.** Nessuna risposta reale GPT-OSS M4.4 ancora prodotta; filtro tecnico lessicale NON garantisce sicurezza di risposte operative.
 - **NEXT:** autorizzazione esplicita per un breve test live della sola conversazione innocua in italiano, rollback pronto, verifica costi. Nessuna attivazione automatica.
 
+### M4.4.1 — Test GPT-OSS 20B su due turni liberi, accuratezza insufficiente (2026-11-16)
+
+- Attivazione autorizzata [PR #84](https://github.com/Lupus227/tagliando/pull/84) merge `71d26cc`: deploy Cloudflare **Success** confermato dall'utente; primo turno `FREE_CHAT_READY` con **1 chiamata** al modello.
+- **Test utente 1:** «Ciao, mi racconti una curiosità sulle stelle?» → il modello produce testo naturale su supernove ma afferma falsamente che stelle del Sistema Solare potrebbero fare esplodere l'intero universo in una notte. Questo è un errore scientifico grave, non una semplice imprecisione.
+- **Test utente 2:** «Puoi ricordarmi quale curiosità sulle stelle mi hai appena raccontato? Riassumila in una frase.» → il modello risponde: «Le stelle più massicce possono esplodere in supernova, emettendo una luce che per un breve istante supera quella di un’intera galassia.» Coerenza contestuale e sintesi riuscite, ma non correggono retroattivamente l'errore nel primo turno.
+- **Esito:** M4.4.1 ha provato input spontaneo, testo italiano e uso dello storico nel laboratorio Access; **accuratezza fattuale non superata**. La successiva integrazione tecnica richiede KB validata, grounding delle risposte, limiti verificabili e motore deterministico. Il filtro lessicale del laboratorio NON basta.
+- [PR #85](https://github.com/Lupus227/tagliando/pull/85) rollback merged `4d15bcb` con CI Success; entrambi Wrangler ora AI_FREE_MODE disabled, cutoff `2026-11-16T20:20:00Z`, vecchi lab OFF. **Cloudflare rollback e `FREE_CHAT_DISABLED` ANCORA DA VERIFICARE**.
+- Nessuna ulteriore inferenza autorizzata; PWA 0.12.1, KB 15.25.1, AI pubblica immutate.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -302,7 +311,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** M4.3.1 dialogo a due prompt e rollback completati. M4.4 PR #81 merged `87fa60c`, CI #43940430467 Success, **Cloudflare `87fa60c` Success**, `/lab/ai-free` restituisce **`FREE_CHAT_DISABLED` e 0 chiamate**, confermati direttamente dall'utente. AI_FREE_MODE, AI_CHAT_MODE, AI_PROBE_MODE disabled in entrambi Wrangler. M4.4 non ha ancora prodotto risposte reali; nessun test live ora autorizzato. Filtro parole tecniche solo euristico, non un gate operativo.
+**Stato confermato:** M4.4.1 [PR #84](https://github.com/Lupus227/tagliando/pull/84) merged `71d26cc` Cloudflare Success secondo l'utente; primo invio libero `FREE_CHAT_READY`, 1 chiamata; due scambi testuali riportati. Il secondo messaggio usa correttamente lo storico, ma il primo contiene un'allucinazione scientifica grave (supernova che farebbe esplodere l'universo); accuratezza NON superata. [PR #85](https://github.com/Lupus227/tagliando/pull/85) merged `4d15bcb`, [CI #43942963709](https://github.com/Lupus227/tagliando/actions/runs/43942963709) Success e Wrangler OFF. **Cloudflare rollback da confermare**; nessun nuovo test live autorizzato.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -318,4 +327,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (M4.4.1 — prova live soltanto dopo autorizzazione):** il codice M4.4, la CI e il deployment Cloudflare OFF sono verificati. Chiedere autorizzazione separata a una finestra temporanea per GPT-OSS 20B solo su `/lab/ai-free`, con 2–4 domande spontanee innocue, attesa di 60 s tra richieste e rollback `AI_FREE_MODE=disabled` preconfigurato. Nessuna richiesta tecnica su macchina; la progressione PWA e la KB restano separate e la voce non è integrata. PWA 0.12.1, KB 15.25.1, AI pubblica OFF.
+**NEXT (M4.4.1 — verifica rollback e nuova architettura delle risposte):** la prova su 2 turni è terminata, quindi NON eseguire ulteriori domande. Verificare Cloudflare `4d15bcb` Success e `/lab/ai-free` → `FREE_CHAT_DISABLED`, `modelRequests=0`. In seguito proporre prove che discriminino affidabilità fattuale, contenuti verificati della KB e controllo deterministico; il testo generato non può autorizzare operazioni, avanzamenti o parametri tecnici. Necessaria nuova autorizzazione per eventuali inferenze. PWA v0.12.1, KB v15.25.1 e AI pubblica non modificate.
