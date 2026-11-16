@@ -35,3 +35,18 @@ M4.3 ha dimostrato con due prompt fissi che il modello risponde in italiano e ri
 5. Fase seguente **distinta**: progettare risposte tecniche solo su fonti validate, con controllore deterministico e arresti, senza riutilizzare il semplice filtro parole come autorizzazione.
 
 **Non considerare M4.4 pronto alla produzione dopo un unico test conversazionale.**
+
+## M4.4.1 — Prova GPT-OSS 20B di conversazione libera, autorizzazione del 2026-11-16
+
+Il titolare del progetto ha risposto **«procedi»** alla proposta di attivazione temporanea sul piano Cloudflare Workers Free per 2–4 domande libere innocue.
+
+- **Solo laboratorio non tecnico** `/lab/ai-free`, già protetto da Cloudflare Access.
+- Finestra UTC in entrambi Wrangler: `AI_FREE_MODE=enabled` fino a `AI_FREE_EXPIRES_AT=2026-11-16T20:20:00Z` (**21:20 CET**). Il cutoff blocca nuove chiamate anche se il rollback non è stato ancora distribuito.
+- Gli altri laboratori rimangono `AI_CHAT_MODE=disabled` e `AI_PROBE_MODE=disabled`. `/api/assist` e PWA pubblica invariati.
+- **Piano:** CI Success + merge di questa attivazione; conferma distinta di Cloudflare deploy Success; una sola domanda innocua alla volta e attesa di almeno 60 s tra invii; massimo quattro turni, poi stop.
+- In caso di `FREE_CHAT_OUTPUT_REJECTED`, `MODEL_UNAVAILABLE` o `FREE_CHAT_EXPIRED` non ripetere la richiesta: riportare il codice e iniziare il rollback.
+- **Rollback predisposto anticipatamente:** PR separata in staging per riportare `AI_FREE_MODE=disabled` nei due Wrangler e aggiornare la fixture CI. Non unirla prima del test o della scadenza; dopo il merge del rollback confermare Cloudflare Success e `FREE_CHAT_DISABLED`, `modelRequests:0`.
+- Il rate limiter 1/60s è un limite **approssimativo** e non sostituisce una soglia globale di spesa; utilizzare solo le richieste concordate, nel piano gratuito.
+- Le risposte del laboratorio non autorizzano alcuna azione di manutenzione, riparazione o diagnosi su macchine. Il controllo lessicale non è sufficiente per un assistente operativo.
+
+**CI automatica usa esclusivamente AI simulata. Nessuna chiamata reale verrà eseguita da GitHub o dall'assistente in questa preparazione.**
