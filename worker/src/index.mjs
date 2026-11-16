@@ -14,6 +14,7 @@ import {filterLabAnswer,filterLabReady} from './filter-lab.mjs';
 import {filterLabPage,filterLabClient} from './filter-lab-ui.mjs';
 import {serveM4Probe} from './m4-probe-route.mjs';
 import {serveChatLab} from './m4-chat-lab.mjs';
+import {serveFreeLab} from './m4-free-chat.mjs';
 
 const MAX_BODY_BYTES = 2048;
 const MAX_QUESTION_CHARS = 500;
@@ -171,6 +172,12 @@ const worker = {
     if (url.pathname==='/lab/ai-chat'||url.pathname==='/lab/ai-chat/'||
         url.pathname==='/lab/ai-chat/client.js'||url.pathname==='/api/lab/ai-chat')
       return serveChatLab(request,env,ctx,verifyWorkerAccess);
+
+    // M4.4: free-form Italian conversation, Access only and nontechnical;
+    // AI_FREE_MODE stays OFF, without changes to public PWA or /api/assist.
+    if (url.pathname==='/lab/ai-free'||url.pathname==='/lab/ai-free/'||
+        url.pathname==='/lab/ai-free/client.js'||url.pathname==='/api/lab/ai-free')
+      return serveFreeLab(request,env,ctx,verifyWorkerAccess);
 
     // Fase 14.7 — PWA snapshot isolated behind Access on the same origin.
     // No changes to the public PWA, existing API, or voice command handlers.
