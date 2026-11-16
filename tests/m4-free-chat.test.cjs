@@ -35,14 +35,15 @@ const pair=(question='Ciao',answer='Buongiorno')=>[
  {role:'user',content:question},{role:'assistant',content:answer}
 ];
 
-test('M4.4 both Wranglers OFF, already expired, previous labs still OFF',()=>{
+test('M4.4.1 both Wranglers enable ONLY a short-lived free lab; older probes OFF',()=>{
  const read=p=>JSON.parse(fs.readFileSync(path.join(__dirname,'..',p),'utf8'));
  const a=read('wrangler.jsonc'),b=read('worker/wrangler.jsonc');
  assert.deepEqual({...a,main:b.main},b);
- assert.equal(a.vars.AI_FREE_MODE,'disabled');
- assert.ok(Date.parse(a.vars.AI_FREE_EXPIRES_AT)<Date.now());
+ assert.equal(a.vars.AI_FREE_MODE,'enabled');
+ assert.equal(a.vars.AI_FREE_EXPIRES_AT,'2026-11-16T20:20:00Z');
  assert.equal(a.vars.AI_CHAT_MODE,'disabled');
  assert.equal(a.vars.AI_PROBE_MODE,'disabled');
+ assert.equal(a.vars.SERVICE_MODE,'guarded');
 });
 
 test('M4.4 validates free question and alternating short history',async()=>{
