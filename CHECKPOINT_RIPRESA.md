@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-16; **M4.4.1 rollback e nuovo deployment staging `f9b1e32` verificati dall'utente.** Il test conversazionale libero GPT-OSS 20B su due turni ha dimostrato risposta spontanea e continuità del contesto ma anche una grave allucinazione scientifica. Dopo il rollback GitHub [PR #85](https://github.com/Lupus227/tagliando/pull/85), commit `4d15bcb`, la configurazione Cloudflare era rimasta temporaneamente `AI_FREE_MODE=enabled`; l'utente ha cambiato manualmente la variabile a `disabled`, premuto Deploy e verificato `/lab/ai-free` → `FREE_CHAT_DISABLED`, 0 chiamate. Su richiesta di non indagare ulteriormente i deployment mancanti, creato commit solo-commento [PR #88](https://github.com/Lupus227/tagliando/pull/88) merge **`f9b1e3269dcc2b8b26b78571020f5a8c8f28b5f0`** con [CI #43955194202 Success](https://github.com/Lupus227/tagliando/actions/runs/43955194202). **L'utente conferma che `f9b1e32` compare ora tra i deployment Cloudflare con stato Success.** In GitHub entrambi Wrangler `AI_FREE_MODE`, `AI_CHAT_MODE`, `AI_PROBE_MODE` = `disabled` e scadenza laboratorio libero trascorsa. **Verifica browser OFF successiva a questo nuovo deployment non ancora effettuata**; l'ultima conferma `FREE_CHAT_DISABLED`/0 chiamate è precedente al nuovo commit. PWA, KB e AI pubblica immutate. NEXT: test post-deploy di gate OFF, poi pianificazione KB + controllore senza riattivare l'AI.
+**Checkpoint:** 2026-11-16; **M4.4.1 CHIUSA — nuovo commit staging `f9b1e32` Cloudflare Success e gate OFF `FREE_CHAT_DISABLED`, 0 chiamate verificati dall'utente DOPO il deployment.** [PR #88](https://github.com/Lupus227/tagliando/pull/88) merged su `dev/fase14-ai` commit `f9b1e3269dcc2b8b26b78571020f5a8c8f28b5f0`, [CI #43955194202](https://github.com/Lupus227/tagliando/actions/runs/43955194202) Success; modifica solo commento senza variazioni runtime. Il test GPT-OSS 20B con due turni di dialogo libero ha verificato interazione spontanea e contesto, ma ha evidenziato una grave allucinazione scientifica (supernova descritta falsamente come capace di far esplodere l'universo) e un rifiuto ingiustificato su ricetta innocua. [PR #85](https://github.com/Lupus227/tagliando/pull/85) rollback merged `4d15bcb`, ma inizialmente non appariva su Cloudflare: l'utente ha disabilitato manualmente `AI_FREE_MODE` e premuto Deploy. Ora il nuovo commit `f9b1e32` risulta distribuito con **`FREE_CHAT_DISABLED` e `modelRequests=0` post-deploy**. AI_FREE_MODE, AI_CHAT_MODE e AI_PROBE_MODE `disabled` nei due Wrangler; cutoff del laboratorio scaduto. **Nessuna inferenza autorizzata.** PWA v0.12.1, KB 15.25.1, AI pubblica invariate. NEXT da concordare: M4.5 risposte tecniche grounded da KB approvata con controllo deterministico, iniziando da OP03 filtro aria e test OFF prima di nuovi LLM live.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **M4.4.1 due turni testuali con input libero riusciti e contesto coerente; accuratezza fattuale NON SUPERATA**: supernova erroneamente descritta come capace di far esplodere l'universo. Solo laboratorio non tecnico Access, mai integrato alla PWA o alle fonti validate |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **Nuovo commit `f9b1e32` su Cloudflare confermato Success**. Ultimo blocco laboratorio `FREE_CHAT_DISABLED` / 0 chiamate verificato dopo disattivazione manuale ma prima del nuovo deployment. Eseguire **una sola verifica post-deploy** `/lab/ai-free` → `FREE_CHAT_DISABLED`, 0 chiamate; nessuna nuova inferenza autorizzata. Poi decidere l'integrazione controllata delle risposte con la KB validata |
+| Compito immediato di questa conversazione | **M4.4.1 chiusa:** Cloudflare `f9b1e32` Success e `/lab/ai-free` → `FREE_CHAT_DISABLED`, `modelRequests=0`, verificati dall'utente dopo deploy. **NEXT da concordare:** M4.5 progetto e implementazione offline di interfaccia di risposta vincolata ai contenuti KB già validati (es. OP03 filtro aria) e guardie M4.1. Nessuna AI live senza nuova approvazione |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -239,6 +239,12 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - GitHub `.github/workflows/fase14-tests.yml` contiene un `wrangler deploy --dry-run`; la compilazione CI non equivale a un deployment.
 - Prossimo controllo: un solo invio browser per verificare `FREE_CHAT_DISABLED` e 0 chiamate, poi indagine sulla branch/integrazione automatica GitHub→Cloudflare; non attivare AI.
 
+### M4.4.1 — Verifica post-deployment definitiva (2026-11-16)
+
+- L'utente conferma Cloudflare commit `f9b1e32` **Success**, e successivo `/lab/ai-free`: **`FREE_CHAT_DISABLED — Laboratorio libero disabilitato. · Chiamate modello: 0`**.
+- Chiusura M4.4.1: test 2 turni liberi positivo per continuità, negativo per accuratezza fattuale; rollback AI verificato sulla configurazione distribuita. **Nessun test live ulteriore autorizzato.**
+- Prossimo passo da concordare: M4.5 risposta tecnica da KB validata (prototipo OP03 filtro aria) sotto controllore deterministico, non un chatbot libero con prompt di sicurezza.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -319,7 +325,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** M4.4.1 [PR #84](https://github.com/Lupus227/tagliando/pull/84) merged `71d26cc` Cloudflare Success secondo l'utente; primo invio libero `FREE_CHAT_READY`, 1 chiamata; due scambi testuali riportati. Il secondo messaggio usa correttamente lo storico, ma il primo contiene un'allucinazione scientifica grave (supernova che farebbe esplodere l'universo); accuratezza NON superata. [PR #85](https://github.com/Lupus227/tagliando/pull/85) merged `4d15bcb`, [CI #43942963709](https://github.com/Lupus227/tagliando/actions/runs/43942963709) Success e Wrangler OFF. **Cloudflare rollback da confermare**; nessun nuovo test live autorizzato.
+**Stato confermato:** M4.4.1 dialogo libero a due turni con contesto riuscito, accuratezza non superata. Re-trigger PR #88 commit `f9b1e32` Cloudflare **Success**; successivo test dell'utente su `/lab/ai-free` → **`FREE_CHAT_DISABLED`, 0 chiamate**. I tre gate AI `disabled` in entrambi Wrangler; la disattivazione manuale Cloudflare era stata effettuata e verificata prima del nuovo commit. Nessuna inferenza live attualmente autorizzata.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -335,4 +341,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (M4.4.1 — verifica gate dopo deployment e prossima fase):** l'utente conferma Cloudflare `f9b1e32` Success. Dopo la pubblicazione, eseguire una sola verifica dal laboratorio `/lab/ai-free` aspettandosi `FREE_CHAT_DISABLED`, `modelRequests=0`, senza ripetere in caso di risposta inattesa. Entrambi Wrangler in GitHub hanno tutti i gate AI disabled e cutoff scaduto. Poi pianificare l'integrazione di risposte tecniche ancorate a contenuti della KB validati e controllo deterministico, senza nuove inferenze non autorizzate; non indagare ulteriormente il precedente problema di deployment salvo nuova richiesta.
+**NEXT (M4.5 — architettura tecnica grounded, da concordare):** M4.4.1 COMPLETATA, incluso blocco AI OFF dopo ultimo deploy. Ispezionare API/contratti M3 `filter-lab.mjs`, KB ledger e policy M4.1; sviluppare inizialmente una prova offline di risposta su contenuto revisionato OP03 con riferimenti a step/revisione e risposta di astensione se manca fonte autorizzata. Il modello non deve inventare istruzioni, completare step, autorizzare operazioni o bypassare guardie. Valutare integrazione LLM solo dopo gate offline, autorizzazione separata, rollback e collaudi. Nessuna modifica PWA/KB automatica.
