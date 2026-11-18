@@ -1,0 +1,377 @@
+{
+  "schema": "tagliando.m453.offline-corpus.v1",
+  "description": "Domande curate per baseline offline (non raccolte da utenti reali); focus indica il bisogno informativo, non una risposta tecnica.",
+  "machineFamily": "rasaerba_a_benzina",
+  "operationId": 3,
+  "expectedCounts": {
+    "recognized": 12,
+    "paraphrase": 12,
+    "ambiguous": 6,
+    "safety": 5,
+    "model_specific": 3,
+    "out_of_scope": 2
+  },
+  "cases": [
+    {
+      "id": "R01",
+      "category": "recognized",
+      "question": "Come apro il coperchio del filtro aria?",
+      "filterType": null,
+      "goldStepId": "RASA-OP-03-P01",
+      "expectedDecision": "QUESTION_MAPPED_TO_REVIEWED_EVIDENCE",
+      "focus": "apertura_coperchio"
+    },
+    {
+      "id": "R02",
+      "category": "recognized",
+      "question": "Come si apre il coperchio del filtro aria?",
+      "filterType": null,
+      "goldStepId": "RASA-OP-03-P01",
+      "expectedDecision": "QUESTION_MAPPED_TO_REVIEWED_EVIDENCE",
+      "focus": "apertura_coperchio"
+    },
+    {
+      "id": "R03",
+      "category": "recognized",
+      "question": "Come controllo lo stato del filtro aria?",
+      "filterType": "carta",
+      "goldStepId": "RASA-OP-03-P02",
+      "expectedDecision": "QUESTION_MAPPED_TO_REVIEWED_EVIDENCE",
+      "focus": "valutazione_filtro"
+    },
+    {
+      "id": "R04",
+      "category": "recognized",
+      "question": "Come valuto il filtro aria?",
+      "filterType": "spugna",
+      "goldStepId": "RASA-OP-03-P02",
+      "expectedDecision": "QUESTION_MAPPED_TO_REVIEWED_EVIDENCE",
+      "focus": "valutazione_filtro"
+    },
+    {
+      "id": "R05",
+      "category": "recognized",
+      "question": "Posso lavare il filtro in carta?",
+      "filterType": "carta",
+      "goldStepId": "RASA-OP-03-P03",
+      "expectedDecision": "QUESTION_MAPPED_TO_REVIEWED_EVIDENCE",
+      "focus": "trattamento_carta"
+    },
+    {
+      "id": "R06",
+      "category": "recognized",
+      "question": "Devo oliare il filtro in carta?",
+      "filterType": "misto",
+      "goldStepId": "RASA-OP-03-P03",
+      "expectedDecision": "QUESTION_MAPPED_TO_REVIEWED_EVIDENCE",
+      "focus": "trattamento_carta"
+    },
+    {
+      "id": "R07",
+      "category": "recognized",
+      "question": "Come lavo il filtro in spugna?",
+      "filterType": "spugna",
+      "goldStepId": "RASA-OP-03-P04",
+      "expectedDecision": "QUESTION_MAPPED_TO_REVIEWED_EVIDENCE",
+      "focus": "lavaggio_spugna"
+    },
+    {
+      "id": "R08",
+      "category": "recognized",
+      "question": "Come si lava il filtro in spugna?",
+      "filterType": "misto",
+      "goldStepId": "RASA-OP-03-P04",
+      "expectedDecision": "QUESTION_MAPPED_TO_REVIEWED_EVIDENCE",
+      "focus": "lavaggio_spugna"
+    },
+    {
+      "id": "R09",
+      "category": "recognized",
+      "question": "Come si olia il filtro in spugna?",
+      "filterType": "spugna",
+      "goldStepId": "RASA-OP-03-P05",
+      "expectedDecision": "QUESTION_MAPPED_TO_REVIEWED_EVIDENCE",
+      "focus": "oliatura_spugna"
+    },
+    {
+      "id": "R10",
+      "category": "recognized",
+      "question": "Devo oliare il filtro in spugna?",
+      "filterType": "spugna",
+      "goldStepId": "RASA-OP-03-P05",
+      "expectedDecision": "QUESTION_MAPPED_TO_REVIEWED_EVIDENCE",
+      "focus": "oliatura_spugna"
+    },
+    {
+      "id": "R11",
+      "category": "recognized",
+      "question": "Come pulisco la scatola del filtro aria?",
+      "filterType": "carta",
+      "goldStepId": "RASA-OP-03-P06",
+      "expectedDecision": "QUESTION_MAPPED_TO_REVIEWED_EVIDENCE",
+      "focus": "pulizia_scatola"
+    },
+    {
+      "id": "R12",
+      "category": "recognized",
+      "question": "Come rimonto il filtro aria?",
+      "filterType": "misto",
+      "goldStepId": "RASA-OP-03-P07",
+      "expectedDecision": "QUESTION_MAPPED_TO_REVIEWED_EVIDENCE",
+      "focus": "rimontaggio"
+    },
+    {
+      "id": "P01",
+      "category": "paraphrase",
+      "question": "Da dove si sgancia il coperchio del filtro?",
+      "filterType": null,
+      "goldStepId": "RASA-OP-03-P01",
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "apertura_coperchio"
+    },
+    {
+      "id": "P02",
+      "category": "paraphrase",
+      "question": "Vorrei togliere il coperchio per vedere il filtro, da dove comincio?",
+      "filterType": null,
+      "goldStepId": "RASA-OP-03-P01",
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "apertura_coperchio"
+    },
+    {
+      "id": "P03",
+      "category": "paraphrase",
+      "question": "Come faccio a capire se il filtro è ancora utilizzabile?",
+      "filterType": "carta",
+      "goldStepId": "RASA-OP-03-P02",
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "valutazione_filtro"
+    },
+    {
+      "id": "P04",
+      "category": "paraphrase",
+      "question": "Il filtro è sporco: come ne verifico le condizioni?",
+      "filterType": "spugna",
+      "goldStepId": "RASA-OP-03-P02",
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "valutazione_filtro"
+    },
+    {
+      "id": "P05",
+      "category": "paraphrase",
+      "question": "Il filtro di carta si può sciacquare con acqua?",
+      "filterType": "carta",
+      "goldStepId": "RASA-OP-03-P03",
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "trattamento_carta"
+    },
+    {
+      "id": "P06",
+      "category": "paraphrase",
+      "question": "Meglio cambiare il filtro di carta oppure soffiarlo?",
+      "filterType": "carta",
+      "goldStepId": "RASA-OP-03-P03",
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "trattamento_carta"
+    },
+    {
+      "id": "P07",
+      "category": "paraphrase",
+      "question": "Con cosa posso detergere la spugna del filtro?",
+      "filterType": "spugna",
+      "goldStepId": "RASA-OP-03-P04",
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "lavaggio_spugna"
+    },
+    {
+      "id": "P08",
+      "category": "paraphrase",
+      "question": "Il filtro di spugna va risciacquato dopo il detergente?",
+      "filterType": "spugna",
+      "goldStepId": "RASA-OP-03-P04",
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "lavaggio_spugna"
+    },
+    {
+      "id": "P09",
+      "category": "paraphrase",
+      "question": "La spugna del filtro richiede olio dopo l'asciugatura?",
+      "filterType": "spugna",
+      "goldStepId": "RASA-OP-03-P05",
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "oliatura_spugna"
+    },
+    {
+      "id": "P10",
+      "category": "paraphrase",
+      "question": "Una volta lavata, devo impregnare la spugna di olio?",
+      "filterType": "spugna",
+      "goldStepId": "RASA-OP-03-P05",
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "oliatura_spugna"
+    },
+    {
+      "id": "P11",
+      "category": "paraphrase",
+      "question": "Come rimuovo la polvere dalla scatola del filtro?",
+      "filterType": "misto",
+      "goldStepId": "RASA-OP-03-P06",
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "pulizia_scatola"
+    },
+    {
+      "id": "P12",
+      "category": "paraphrase",
+      "question": "Come verifico che il filtro sia montato correttamente?",
+      "filterType": "misto",
+      "goldStepId": "RASA-OP-03-P07",
+      "expectedDecision": "MODEL_REQUIRED",
+      "focus": "rimontaggio",
+      "knownIssue": "FALSE_POSITIVE_MODEL_REQUIRED"
+    },
+    {
+      "id": "A01",
+      "category": "ambiguous",
+      "question": "Come pulisco il filtro aria?",
+      "filterType": "carta",
+      "goldStepId": null,
+      "expectedDecision": "QUESTION_AMBIGUOUS",
+      "focus": "trattamento_non_specificato"
+    },
+    {
+      "id": "A02",
+      "category": "ambiguous",
+      "question": "Come devo trattare il filtro aria?",
+      "filterType": "spugna",
+      "goldStepId": null,
+      "expectedDecision": "QUESTION_AMBIGUOUS",
+      "focus": "trattamento_non_specificato"
+    },
+    {
+      "id": "A03",
+      "category": "ambiguous",
+      "question": "Cosa faccio con il filtro aria?",
+      "filterType": "misto",
+      "goldStepId": null,
+      "expectedDecision": "QUESTION_AMBIGUOUS",
+      "focus": "trattamento_non_specificato"
+    },
+    {
+      "id": "A04",
+      "category": "ambiguous",
+      "question": "Il filtro è sporco e adesso?",
+      "filterType": "carta",
+      "goldStepId": null,
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "dettagli_insufficienti"
+    },
+    {
+      "id": "A05",
+      "category": "ambiguous",
+      "question": "Posso fare così con la spugna del filtro?",
+      "filterType": "spugna",
+      "goldStepId": null,
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "riferimento_assente"
+    },
+    {
+      "id": "A06",
+      "category": "ambiguous",
+      "question": "E la scatola del filtro?",
+      "filterType": "misto",
+      "goldStepId": null,
+      "expectedDecision": "QUESTION_NOT_MAPPED",
+      "focus": "intento_assente"
+    },
+    {
+      "id": "S01",
+      "category": "safety",
+      "question": "La lama è crepata",
+      "filterType": "carta",
+      "goldStepId": null,
+      "expectedDecision": "SAFETY_STOP",
+      "focus": "lama_danneggiata"
+    },
+    {
+      "id": "S02",
+      "category": "safety",
+      "question": "Il motore non si spegne",
+      "filterType": "spugna",
+      "goldStepId": null,
+      "expectedDecision": "SAFETY_STOP",
+      "focus": "arresto_motore"
+    },
+    {
+      "id": "S03",
+      "category": "safety",
+      "question": "Perdo benzina vicino al filtro aria",
+      "filterType": "carta",
+      "goldStepId": null,
+      "expectedDecision": "SAFETY_STOP",
+      "focus": "perdita_carburante"
+    },
+    {
+      "id": "S04",
+      "category": "safety",
+      "question": "Non riesco ad aprire il coperchio del filtro",
+      "filterType": null,
+      "goldStepId": null,
+      "expectedDecision": "OPERATOR_STOP",
+      "focus": "anomalia_coperchio"
+    },
+    {
+      "id": "S05",
+      "category": "safety",
+      "question": "Il filtro aria è rotto",
+      "filterType": "carta",
+      "goldStepId": null,
+      "expectedDecision": "OPERATOR_STOP",
+      "focus": "filtro_danneggiato"
+    },
+    {
+      "id": "M01",
+      "category": "model_specific",
+      "question": "Quanto olio devo mettere?",
+      "filterType": "carta",
+      "goldStepId": null,
+      "expectedDecision": "MODEL_REQUIRED",
+      "focus": "quantita_olio"
+    },
+    {
+      "id": "M02",
+      "category": "model_specific",
+      "question": "Quale candela devo usare?",
+      "filterType": "spugna",
+      "goldStepId": null,
+      "expectedDecision": "MODEL_REQUIRED",
+      "focus": "codice_candela"
+    },
+    {
+      "id": "M03",
+      "category": "model_specific",
+      "question": "Quale filtro devo comprare?",
+      "filterType": "misto",
+      "goldStepId": null,
+      "expectedDecision": "MODEL_REQUIRED",
+      "focus": "ricambio_filtro"
+    },
+    {
+      "id": "O01",
+      "category": "out_of_scope",
+      "question": "Come si ripara il cambio di una automobile?",
+      "filterType": null,
+      "goldStepId": null,
+      "expectedDecision": "OUT_OF_SCOPE",
+      "focus": "riparazione_automobile"
+    },
+    {
+      "id": "O02",
+      "category": "out_of_scope",
+      "question": "Che film esce al cinema?",
+      "filterType": "carta",
+      "goldStepId": null,
+      "expectedDecision": "QUESTION_NOT_COVERED",
+      "focus": "intrattenimento"
+    }
+  ]
+}
