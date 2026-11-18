@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-18; **M4.5.4 IMPLEMENTATA E COLLAUDATA OFFLINE, AI OFF**. [PR #100](https://github.com/Lupus227/tagliando/pull/100) merged su `dev/fase14-ai` commit `b6df639590204d6bb49a9f7903d2b565fab9765d`, [CI #44362995018 Success](https://github.com/Lupus227/tagliando/actions/runs/44362995018), 243/243 test + Wrangler --dry-run. Modulo `worker/src/m454-bounded-paraphrases.mjs`, test e specifica: riconosce 7 intenti tramite grammatica ancorata, senza keyword guessing, solo **dopo preflight originale M4.5.2/M3**; conferma fonte integrale, applicabilità e revisione via M4.5.1. Nel corpus curato M4.5.3 le 12 parafrasi passano da 0/12 a **12/12**; ulteriori 12 varianti curate 12/12; 25 negativi 25/25 senza fonti. **Non è comprensione libera, non è un LLM, non produce estratti brevi, non modifica sessione.** PWA/KB/AI invariati, OP03 `aiUseAllowed=false`. Il titolare ha confermato **Cloudflare commit `775b085` Success**, ma non ha ancora ripetuto il controllo post-deploy `/lab/ai-free` con 0 chiamate (ultimo gate browser così verificato su `f9b1e32`). **Nessun deployment di `b6df639` confermato**, né necessario per prove offline. NEXT da decidere: risposte focalizzate da estratti KB revisionati, con gate tecnico dedicato e mantenendo distinzione AI linguistica/controllore deterministico.
+**Checkpoint:** 2026-11-18; **M4.5.5 AVVIATA COME REVISIONE TESTUALE, PROPOSTA P03 NON ANCORA APPROVATA**. M4.5.4 [PR #100](https://github.com/Lupus227/tagliando/pull/100) integrata su `dev/fase14-ai` commit `b6df639590204d6bb49a9f7903d2b565fab9765d`, [CI #44362995018](https://github.com/Lupus227/tagliando/actions/runs/44362995018) 243/243 test Success. Il titolare **conferma deployment Cloudflare `b6df639` Success** (senza confermare nuovo test browser OFF/0 chiamate). Proposta documentale `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`: per «Posso lavare il filtro in carta?» candidata «No. Il filtro in carta non deve essere lavato né oliato.», derivata da P03 revisione F15.18-R2; **PENDING_EXPERT_APPROVAL**. Nessuna modifica runtime/KB/PWA, nessuna attivazione AI o autorizzazione operativa; OP03 `aiUseAllowed=false`. **NEXT:** verificare e far approvare/correggere dall'esperto questa prima risposta breve, poi procedere incrementale sulle altre. Non promuovere automaticamente l'approvazione del testo a permesso di AI.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -32,7 +32,7 @@
 | PWA originale pubblica | **v0.12.1**, GitHub Pages; guida a step, voce TTS/ASR, anomalie vocali, recupero sessione |
 | Schema KB | `tagliando.knowledge.v1` |
 | Versione KB distribuita su Cloudflare | **15.25.1** |
-| Commit deployment Cloudflare confermato dall'utente | **`775b085` · Success** comunicato 2026-11-18; per questo commit il controllo funzionale `/lab/ai-free` **non ancora confermato**. Ultima verifica esplicita `FREE_CHAT_DISABLED`, 0 chiamate: `f9b1e32` (2026-11-16). Il commit M4.5.4 `b6df639` è **solo su GitHub**, Cloudflare non verificato e non necessario ai test offline |
+| Commit deployment Cloudflare confermato dall'utente | **`b6df639` · Success**, confermato esplicitamente dal titolare il 2026-11-18. Il modulo M4.5.4 è offline, non collegato al router: deployment non significa funzione attiva. Ultimo test browser esplicito `FREE_CHAT_DISABLED`, 0 chiamate: `f9b1e32` (2026-11-16); nessuna nuova prova OFF dopo `b6df639` dichiarata |
 | Operazioni/passaggi | **8 / 53** |
 | Passaggi validati con condizioni | **24** |
 | Passaggi ancora pendenti | **29** |
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **M4.4.1 due turni testuali con input libero riusciti e contesto coerente; accuratezza fattuale NON SUPERATA**: supernova erroneamente descritta come capace di far esplodere l'universo. Solo laboratorio non tecnico Access, mai integrato alla PWA o alle fonti validate |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.5.4 chiusa offline**: PR #100 `b6df639`, CI #44362995018 Success 243/243, 12/12 parafrasi note e 12/12 challenge curate, 25/25 negativi rifiutati. Gate e KB invariati. **NEXT da concordare:** estratti puntuali dalla KB revisionati e minimizzazione delle risposte, senza LLM o deploy automatico |
+| Compito immediato di questa conversazione | **M4.5.5 proposta preliminare P03:** consultata fonte `RASA-OP-03-P03` `F15.18-R2`, candidata risposta negativa a lavaggio/oliatura **in attesa approvazione tecnica**. Documento `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`. Non alterare AI/KB/runtime; dopo risposta esperto passare al prossimo dettaglio |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -287,6 +287,14 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - L'utente ha comunicato **Cloudflare `775b085` Success** per la correzione precedente; il controllo browser post-deploy `FREE_CHAT_DISABLED`/0 chiamate resta da verificare per quel commit. **M4.5.4 `b6df639` non pubblicata su Cloudflare (stato non attestato, non richiesto).**
 - **NEXT:** decidere il metodo per estratti tecnici puntuali formalmente revisionati e risposta dialogica grounded, senza concedere a un modello l'autorizzazione di manutenzione.
 
+### M4.5.5 — Proposta risposta focalizzata P03 (2026-11-18)
+
+- Fonte consultata: `worker/src/review-ledger.mjs`, step `RASA-OP-03-P03`, revisione `F15.18-R2`, `VALIDATO_CONDIZIONATO`, `aiUseAllowed=false`.
+- Prima proposta (solo documento): domanda «Posso lavare il filtro in carta?» → risposta candidata «No. Il filtro in carta non deve essere lavato né oliato.» Documento: `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`.
+- L'esperto **non ha ancora approvato** la risposta breve isolata; la revisione originale del passo non promuove automaticamente frasi isolate all'uso AI. Nessun codice operativo né KB modificata, nessun endpoint o deploy richiesto.
+- Cloudflare `b6df639` **Success confermato dal titolare**; il modulo precedente M4.5.4 resta offline e non collegato al router. Ultimo browser gate OFF/0 chiamate confermato sul commit più vecchio `f9b1e32`.
+- **NEXT:** richiedere approvazione/correzione specifica della candidata 01, quindi procedere una risposta alla volta.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -367,7 +375,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** Cloudflare commit `775b085` Success dichiarato dall'utente (non ancora testato il gate OFF nel browser dopo tale deploy). Ultima verifica browser `FREE_CHAT_DISABLED`, 0 chiamate sul precedente `f9b1e32`. Staging `dev/fase14-ai`: M4.5.1 PR #92 `6cfdaf8`, M4.5.2 PR #94 `57022f0`, M4.5.3 PR #96 `43218225`, M4.5.3.1 PR #98 `775b085`, **M4.5.4 PR #100 `b6df639`** integrate; ultima CI #44362995018 Success. 17 formulazioni esatte più modulo offline di grammatica delimitata per 7 intenti; 12/12 parafrasi note e 12/12 challenge curate, 25/25 negativi; nessuna evidenza di generalizzazione sul parlato reale. AI OFF, `aiUseAllowed=false`, nessuna modifica PWA/KB e nessun deploy Cloudflare verificato di M4.5.4.
+**Stato confermato:** Cloudflare **`b6df639` Success** confermato dal titolare; la prova browser del gate OFF con 0 chiamate resta riferita a `f9b1e32` (nessuna ulteriore prova dichiarata). M4.5.4 PR #100 `b6df639` CI #44362995018 243/243 e grammatica offline OP03; PWA v0.12.1, KB v15.25.1, AI OFF, `aiUseAllowed=false`. M4.5.5 solo documento di **proposta risposta focalizzata P03** con `PENDING_EXPERT_APPROVAL` e nessun codice operativo. Non confondere pubblicazione Worker e impiego dei componenti offline.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -383,4 +391,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (post M4.5.4 — da concordare):** La prova con grammatica deliberatamente ristretta è integrata e supera il corpus curato, ma non equivale al linguaggio naturale libero né permette all'AI di usare fonti non autorizzate. La prossima decisione prioritaria è come costruire risposte focalizzate senza isolare impropriamente precauzioni o condizioni di stop: eventuali estratti devono avere revisione e approvazione esplicita, altrimenti mostrare il passo integrale; mai abilitare AI, cambiare sessione, PWA o pubblicare endpoint senza gate dedicato. Backlog #1, #2, #3, #37 invariato.
+**NEXT (M4.5.5 — in attesa di valutazione esperto):** L'esperto deve approvare o correggere la prima risposta breve candidata per la domanda «Posso lavare il filtro in carta?» (P03, F15.18-R2). La proposta è già registrata in `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`, ma non è tecnicamente approvata come estratto autonomo e in nessun caso abilita LLM o passo. Solo dopo tale decisione si proseguirà con una risposta alla volta, rispettando condizioni, stop e provenienza revisionata.
