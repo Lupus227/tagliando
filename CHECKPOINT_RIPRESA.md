@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-18; **M4.5.3.1 CORRETTA E TESTATA IN CI**, AI OFF. [PR #98](https://github.com/Lupus227/tagliando/pull/98) merged su `dev/fase14-ai` commit `775b0854c35449e8c0ef649f300d3efb9c9a6908`, [CI #44359490707 Success](https://github.com/Lupus227/tagliando/actions/runs/44359490707), **237/237 test** + Wrangler dry-run. Corretto falso positivo della policy: P12 «Come verifico che il filtro sia montato correttamente?» passa da `MODEL_REQUIRED` a `QUESTION_NOT_MAPPED`, **senza** restituire istruzioni o confermare attività. Richieste costruttore «Che filtro devo comprare?», «Che olio devo usare?» e gli STOP rimangono bloccati; 0/12 parafrasi mappate (riconoscimento libero ancora da progettare), 8/8 blocchi critici nel corpus. PWA v0.12.1 e KB v15.25.1 invariate, tutti gli AI gate disabilitati, OP03 `aiUseAllowed=false`. **Cloudflare commit `775b085` non verificato**; ultimo deploy attestato `f9b1e32` Success con `FREE_CHAT_DISABLED` / 0 chiamate. NEXT: ritornare alla progettazione del dialogo naturale e risposte focalizzate, con approvazione specifica prima di nuovi cambiamenti.
+**Checkpoint:** 2026-11-18; **M4.5.4 IMPLEMENTATA E COLLAUDATA OFFLINE, AI OFF**. [PR #100](https://github.com/Lupus227/tagliando/pull/100) merged su `dev/fase14-ai` commit `b6df639590204d6bb49a9f7903d2b565fab9765d`, [CI #44362995018 Success](https://github.com/Lupus227/tagliando/actions/runs/44362995018), 243/243 test + Wrangler --dry-run. Modulo `worker/src/m454-bounded-paraphrases.mjs`, test e specifica: riconosce 7 intenti tramite grammatica ancorata, senza keyword guessing, solo **dopo preflight originale M4.5.2/M3**; conferma fonte integrale, applicabilità e revisione via M4.5.1. Nel corpus curato M4.5.3 le 12 parafrasi passano da 0/12 a **12/12**; ulteriori 12 varianti curate 12/12; 25 negativi 25/25 senza fonti. **Non è comprensione libera, non è un LLM, non produce estratti brevi, non modifica sessione.** PWA/KB/AI invariati, OP03 `aiUseAllowed=false`. Il titolare ha confermato **Cloudflare commit `775b085` Success**, ma non ha ancora ripetuto il controllo post-deploy `/lab/ai-free` con 0 chiamate (ultimo gate browser così verificato su `f9b1e32`). **Nessun deployment di `b6df639` confermato**, né necessario per prove offline. NEXT da decidere: risposte focalizzate da estratti KB revisionati, con gate tecnico dedicato e mantenendo distinzione AI linguistica/controllore deterministico.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -32,7 +32,7 @@
 | PWA originale pubblica | **v0.12.1**, GitHub Pages; guida a step, voce TTS/ASR, anomalie vocali, recupero sessione |
 | Schema KB | `tagliando.knowledge.v1` |
 | Versione KB distribuita su Cloudflare | **15.25.1** |
-| Commit deployment Cloudflare confermato dall'utente | **`f9b1e32` · Success**; `/lab/ai-free` → `FREE_CHAT_DISABLED`, 0 chiamate (conferma dell'utente 2026-11-16). I commit M4.5.x, incluso `43218225`, **non** hanno deployment verificato; non richiesto per i soli test offline |
+| Commit deployment Cloudflare confermato dall'utente | **`775b085` · Success** comunicato 2026-11-18; per questo commit il controllo funzionale `/lab/ai-free` **non ancora confermato**. Ultima verifica esplicita `FREE_CHAT_DISABLED`, 0 chiamate: `f9b1e32` (2026-11-16). Il commit M4.5.4 `b6df639` è **solo su GitHub**, Cloudflare non verificato e non necessario ai test offline |
 | Operazioni/passaggi | **8 / 53** |
 | Passaggi validati con condizioni | **24** |
 | Passaggi ancora pendenti | **29** |
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **M4.4.1 due turni testuali con input libero riusciti e contesto coerente; accuratezza fattuale NON SUPERATA**: supernova erroneamente descritta come capace di far esplodere l'universo. Solo laboratorio non tecnico Access, mai integrato alla PWA o alle fonti validate |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.5.3.1 chiusa in CI:** PR #98 `775b085`, CI #44359490707 Success 237/237; falso positivo P12 corretto senza nuove risposte tecniche; 0/12 parafrasi riconosciute. **NEXT da concordare**: mapping linguaggio naturale controllato e estratti verificati, nessuna attivazione AI live |
+| Compito immediato di questa conversazione | **M4.5.4 chiusa offline**: PR #100 `b6df639`, CI #44362995018 Success 243/243, 12/12 parafrasi note e 12/12 challenge curate, 25/25 negativi rifiutati. Gate e KB invariati. **NEXT da concordare:** estratti puntuali dalla KB revisionati e minimizzazione delle risposte, senza LLM o deploy automatico |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -278,6 +278,15 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - Worker policy aggiornata nel repository; Cloudflare `775b085` **non verificato**, non attribuire un deployment alla CI. PWA/KB/ledger invariati, AI OFF.
 - Prossima attività da definire in base alla roadmap: aumentare copertura linguistica e risposte circoscritte con controller deterministico, senza aprire automaticamente nuove funzioni.
 
+### M4.5.4 — Grammatica delimitata e prove di parafrasi OP03 (2026-11-18)
+
+- Autorizzazione a proseguire verso comprensione naturale con controllo deterministico; [PR #100](https://github.com/Lupus227/tagliando/pull/100) merged su `dev/fase14-ai` commit `b6df639590204d6bb49a9f7903d2b565fab9765d`, [CI #44362995018](https://github.com/Lupus227/tagliando/actions/runs/44362995018) Success, **243/243** test e Wrangler dry-run. Prima CI #44362850390 non superata su una variante al presente; successiva correzione e CI verde.
+- Nuovo modulo **offline non importato dal Worker router** `worker/src/m454-bounded-paraphrases.mjs`: 7 gruppi grammaticali ancorati per OP03; guarda la domanda originale tramite M4.5.2/M3, non usa fuzzy/keyword-only/LLM, rimappa soltanto una corrispondenza certa su una domanda canonica già ammessa, con nuovo controllo di materiale/fonte M4.5.1.
+- Test `tests/m454-bounded-paraphrases.test.cjs`, specifica `docs/M4_5_4_BOUNDED_PARAPHRASES_OFFLINE.md`: 12/12 parafrasi del precedente corpus ora selezionate, 12/12 ulteriori varianti curate, 25/25 negativi rifiutati. Confronto identico del passo al ledger. Non sono test di utenti reali e non dimostrano copertura generale.
+- Nessun estratto sintetico, nessuna inferenza, nessuna autorizzazione o avanzamento. PWA 0.12.1, KB 15.25.1, ledger `aiUseAllowed=false`, config AI e API invariati.
+- L'utente ha comunicato **Cloudflare `775b085` Success** per la correzione precedente; il controllo browser post-deploy `FREE_CHAT_DISABLED`/0 chiamate resta da verificare per quel commit. **M4.5.4 `b6df639` non pubblicata su Cloudflare (stato non attestato, non richiesto).**
+- **NEXT:** decidere il metodo per estratti tecnici puntuali formalmente revisionati e risposta dialogica grounded, senza concedere a un modello l'autorizzazione di manutenzione.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -358,7 +367,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** Cloudflare `f9b1e32` Success e `/lab/ai-free` → `FREE_CHAT_DISABLED`, 0 chiamate (ultimo deploy confermato dal titolare). Staging `dev/fase14-ai`: M4.5.1 #92 `6cfdaf8`, M4.5.2 #94 `57022f0`, M4.5.3 #96 `43218225` e **M4.5.3.1 #98 `775b085`**, integrati; ultima CI #44359490707 Success. OP03 mapping esatto 17 formulazioni; corpus 40 frasi, 12/40 associate, 28 rifiutate, nessuna parafrasi associata. P12 ora correttamente non mappata anziché erroneamente modello-specifica. Gate AI OFF, `aiUseAllowed=false`. Il deploy Cloudflare per M4.5.x non è attestato né richiesto dai test offline.
+**Stato confermato:** Cloudflare commit `775b085` Success dichiarato dall'utente (non ancora testato il gate OFF nel browser dopo tale deploy). Ultima verifica browser `FREE_CHAT_DISABLED`, 0 chiamate sul precedente `f9b1e32`. Staging `dev/fase14-ai`: M4.5.1 PR #92 `6cfdaf8`, M4.5.2 PR #94 `57022f0`, M4.5.3 PR #96 `43218225`, M4.5.3.1 PR #98 `775b085`, **M4.5.4 PR #100 `b6df639`** integrate; ultima CI #44362995018 Success. 17 formulazioni esatte più modulo offline di grammatica delimitata per 7 intenti; 12/12 parafrasi note e 12/12 challenge curate, 25/25 negativi; nessuna evidenza di generalizzazione sul parlato reale. AI OFF, `aiUseAllowed=false`, nessuna modifica PWA/KB e nessun deploy Cloudflare verificato di M4.5.4.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -374,4 +383,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (post M4.5.3.1 — da concordare):** Il falso positivo della classificazione modello-specifica P12 è stato corretto e collaudato offline; non ripetere questa correzione. Concentrare i prossimi interventi sull'obiettivo originale: domande naturali, selezione di fonti revisionate, disambiguazione, risposte puntuali senza aggiunte o autorizzazioni non verificate, separazione netta tra AI linguistica e controllore. M4.5.3 ha misurato 0/12 parafrasi riconosciute; l'AI non può ricevere testi con `aiUseAllowed=false` né sbloccare lo stato della sessione. Cambi successivi da approvare; Issue #1, #2, #3, #37 ancora aperte al checkpoint.
+**NEXT (post M4.5.4 — da concordare):** La prova con grammatica deliberatamente ristretta è integrata e supera il corpus curato, ma non equivale al linguaggio naturale libero né permette all'AI di usare fonti non autorizzate. La prossima decisione prioritaria è come costruire risposte focalizzate senza isolare impropriamente precauzioni o condizioni di stop: eventuali estratti devono avere revisione e approvazione esplicita, altrimenti mostrare il passo integrale; mai abilitare AI, cambiare sessione, PWA o pubblicare endpoint senza gate dedicato. Backlog #1, #2, #3, #37 invariato.
