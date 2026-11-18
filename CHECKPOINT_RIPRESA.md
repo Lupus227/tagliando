@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-18; **M4.5.3 CONCLUSA IN CI, esclusivamente offline, AI OFF.** [PR #96](https://github.com/Lupus227/tagliando/pull/96) merged su `dev/fase14-ai` commit `43218225c4660ab73d826e12ac2d2c6053b01295`, [CI #44357543306 Success](https://github.com/Lupus227/tagliando/actions/runs/44357543306). Aggiunti 40 casi OP03 curati, regressione e specifica; 12/40 match validi, 28 rifiuti, 50% recall nel corpus con fonte gold (12/24), **0/12 parafrasi riconosciute**; 8/8 casi critici bloccati e nessuna chiamata AI. **Difetto individuato, non corretto:** P12 «Come verifico che il filtro sia montato correttamente?» viene classificata `MODEL_REQUIRED` per la regex `che ... filtro`; falso positivo nella ragione del blocco, non un'autorizzazione. Non ci sono nuove route, modifiche PWA/KB/ledger/controller, deployment Cloudflare o inferenza; AI_USE resta OFF. Ultimo Cloudflare verificato `f9b1e32` Success con `FREE_CHAT_DISABLED`, 0 chiamate. **NEXT:** concordare se affrontare prima il falso positivo della policy o progettare disambiguazione e risposte mirate a partire da segmenti revisionati, sempre senza AI live non autorizzata.
+**Checkpoint:** 2026-11-18; **M4.5.3.1 CORRETTA E TESTATA IN CI**, AI OFF. [PR #98](https://github.com/Lupus227/tagliando/pull/98) merged su `dev/fase14-ai` commit `775b0854c35449e8c0ef649f300d3efb9c9a6908`, [CI #44359490707 Success](https://github.com/Lupus227/tagliando/actions/runs/44359490707), **237/237 test** + Wrangler dry-run. Corretto falso positivo della policy: P12 «Come verifico che il filtro sia montato correttamente?» passa da `MODEL_REQUIRED` a `QUESTION_NOT_MAPPED`, **senza** restituire istruzioni o confermare attività. Richieste costruttore «Che filtro devo comprare?», «Che olio devo usare?» e gli STOP rimangono bloccati; 0/12 parafrasi mappate (riconoscimento libero ancora da progettare), 8/8 blocchi critici nel corpus. PWA v0.12.1 e KB v15.25.1 invariate, tutti gli AI gate disabilitati, OP03 `aiUseAllowed=false`. **Cloudflare commit `775b085` non verificato**; ultimo deploy attestato `f9b1e32` Success con `FREE_CHAT_DISABLED` / 0 chiamate. NEXT: ritornare alla progettazione del dialogo naturale e risposte focalizzate, con approvazione specifica prima di nuovi cambiamenti.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **M4.4.1 due turni testuali con input libero riusciti e contesto coerente; accuratezza fattuale NON SUPERATA**: supernova erroneamente descritta come capace di far esplodere l'universo. Solo laboratorio non tecnico Access, mai integrato alla PWA o alle fonti validate |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.5.3 conclusa offline:** [PR #96](https://github.com/Lupus227/tagliando/pull/96) `43218225` e [CI #44357543306](https://github.com/Lupus227/tagliando/actions/runs/44357543306) Success; 40 casi, 12 match, 28 astensioni, 0 parafrasi riconosciute, 1 falso positivo `MODEL_REQUIRED` noto. **NEXT da concordare**: correzione policy / mapping e granularità, con nuova approvazione tecnica; AI OFF |
+| Compito immediato di questa conversazione | **M4.5.3.1 chiusa in CI:** PR #98 `775b085`, CI #44359490707 Success 237/237; falso positivo P12 corretto senza nuove risposte tecniche; 0/12 parafrasi riconosciute. **NEXT da concordare**: mapping linguaggio naturale controllato e estratti verificati, nessuna attivazione AI live |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -269,6 +269,15 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - Nessuna modifica a PWA, Worker, controller, KB/ledger, endpoint, variabili Cloudflare. `aiUseAllowed=false` e tutti i flag di AI OFF. Il deployment Cloudflare del commit nuovo non è stato verificato e non è richiesto per questa fase offline.
 - **NEXT non ancora approvata:** scelta tra correzione del falso positivo e sviluppo del recupero di fonti/estratti delimitati; la fase successiva richiede decisione esplicita.
 
+### M4.5.3.1 — Correzione falso `MODEL_REQUIRED` (2026-11-18)
+
+- Approvazione esplicita per la correzione limitata; [PR #98](https://github.com/Lupus227/tagliando/pull/98) merged `775b0854c35449e8c0ef649f300d3efb9c9a6908` su `dev/fase14-ai`; [CI #44359490707](https://github.com/Lupus227/tagliando/actions/runs/44359490707) Success, **237/237** Node e Wrangler dry-run.
+- `worker/src/policy.mjs`: `che` escluso dal pattern ampio `che ... nome tecnico`; conservata intercettazione di richieste esplicite `che filtro`, `che tipo di filtro`, `che olio`, `che candela`, quantità, codici e serraggi. Stop e priorità invariati.
+- Test nuovi `tests/m4531-model-required-regression.test.cjs`, corpus P12 aggiornato con `resolvedIn=M4.5.3.1`, suite M4.5.3 aggiornata, addendum al documento baseline. P12 da `MODEL_REQUIRED` (falso positivo) a **`QUESTION_NOT_MAPPED`**, ancora nessuna fonte o istruzione fornita.
+- Corpus 40: 12 match e 28 rifiuti, 0/12 parafrasi, **0/12 falsi positivi modello-specifici** (prima 1), 8/8 casi critici bloccati. Risultati validi solo sul corpus curato; non certificano sicurezza del prodotto.
+- Worker policy aggiornata nel repository; Cloudflare `775b085` **non verificato**, non attribuire un deployment alla CI. PWA/KB/ledger invariati, AI OFF.
+- Prossima attività da definire in base alla roadmap: aumentare copertura linguistica e risposte circoscritte con controller deterministico, senza aprire automaticamente nuove funzioni.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -349,7 +358,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** M4.4.1 Cloudflare `f9b1e32` Success e `/lab/ai-free` → `FREE_CHAT_DISABLED`, 0 chiamate. M4.5.1 PR #92 `6cfdaf8`, M4.5.2 PR #94 `57022f0` e M4.5.3 PR #96 `43218225` tutte integrate in `dev/fase14-ai`, CI finale #44357543306 Success. OP03 ha 17 frasi curate, 40 domande di benchmark offline; 12/40 associate, 28 rifiutate, nessuna parafrasi accettata. Tutti i gate AI OFF e `aiUseAllowed=false`. Cloudflare per i commit M4.5.x non verificato né necessario.
+**Stato confermato:** Cloudflare `f9b1e32` Success e `/lab/ai-free` → `FREE_CHAT_DISABLED`, 0 chiamate (ultimo deploy confermato dal titolare). Staging `dev/fase14-ai`: M4.5.1 #92 `6cfdaf8`, M4.5.2 #94 `57022f0`, M4.5.3 #96 `43218225` e **M4.5.3.1 #98 `775b085`**, integrati; ultima CI #44359490707 Success. OP03 mapping esatto 17 formulazioni; corpus 40 frasi, 12/40 associate, 28 rifiutate, nessuna parafrasi associata. P12 ora correttamente non mappata anziché erroneamente modello-specifica. Gate AI OFF, `aiUseAllowed=false`. Il deploy Cloudflare per M4.5.x non è attestato né richiesto dai test offline.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -365,4 +374,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (post M4.5.3 — da concordare):** L'esito dell'esperimento suggerisce due nodi: (a) falso positivo `MODEL_REQUIRED` su P12, causato da classificazione lessicale troppo ampia (`che ... filtro`); (b) riconoscimento insufficiente delle parafrasi (0/12) e anteprime integrali anziché estratti pertinenti. Prima di modificare il runtime, scegliere esplicitamente priorità e contratto di sicurezza, prevedere test negativi e nessun accesso a passi con `aiUseAllowed=false` da parte di un LLM. Restano aperte issue #1, #2, #3, #37; PWA/KB e deploy Cloudflare separati.
+**NEXT (post M4.5.3.1 — da concordare):** Il falso positivo della classificazione modello-specifica P12 è stato corretto e collaudato offline; non ripetere questa correzione. Concentrare i prossimi interventi sull'obiettivo originale: domande naturali, selezione di fonti revisionate, disambiguazione, risposte puntuali senza aggiunte o autorizzazioni non verificate, separazione netta tra AI linguistica e controllore. M4.5.3 ha misurato 0/12 parafrasi riconosciute; l'AI non può ricevere testi con `aiUseAllowed=false` né sbloccare lo stato della sessione. Cambi successivi da approvare; Issue #1, #2, #3, #37 ancora aperte al checkpoint.
