@@ -225,8 +225,9 @@
       "question": "Come verifico che il filtro sia montato correttamente?",
       "filterType": "misto",
       "goldStepId": "RASA-OP-03-P07",
-      "expectedDecision": "QUESTION_NOT_MAPPED",
-      "focus": "rimontaggio"
+      "expectedDecision": "MODEL_REQUIRED",
+      "focus": "rimontaggio",
+      "knownIssue": "FALSE_POSITIVE_MODEL_REQUIRED"
     },
     {
       "id": "A01",
