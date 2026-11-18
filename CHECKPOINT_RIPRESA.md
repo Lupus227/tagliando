@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-17; **M4.5.2 IMPLEMENTATA, CI Success, SOLO offline e senza AI.** Il titolare ha autorizzato M4.5.2 dopo M4.5.1. [PR #94](https://github.com/Lupus227/tagliando/pull/94) merged su `dev/fase14-ai` commit `57022f0ed5d9998697927ed085d1c4bff3dc6b17`, [CI #44187592983 Success](https://github.com/Lupus227/tagliando/actions/runs/44187592983). Introdotti `worker/src/m452-question-mapper.mjs`, `tests/m452-question-mapper.test.cjs`, `docs/M4_5_2_CONTROLLED_QUESTION_MAPPING.md`. Modulo offline non importato dal router: mappa **17 formulazioni esatte** a 7 passaggi revisionati OP03, controllo di sicurezza sull'**originale** domanda, verifica tipo filtro, rifiuto per ambiguità, mismatch, quantità modello-specifiche, anomalie, domande non mappate. In caso positivo restituisce un'anteprima **integrale** del passo esatto, fonte/step/revisione/status/scope, tramite gate M4.5.1; non è una risposta AI e non autorizza manutenzione. **Tutti i record OP03 hanno ancora `aiUseAllowed=false`**, flag `AI_FREE_MODE`, `AI_CHAT_MODE`, `AI_PROBE_MODE` tutti `disabled` nei due Wrangler. Nessuna nuova API, PWA, KB, progressione sessione o chiamata GPT-OSS. **Cloudflare deployment `57022f0` non verificato** e non necessario al test offline; ultimo deploy confermato `f9b1e32` Success con `FREE_CHAT_DISABLED`, 0 chiamate. NEXT da concordare: M4.5.3 corpus realistico di domande, valutazione di precisione/astensione e granularità degli estratti, prima di qualsiasi AI live. Continuità: salvare registro/checkpoint e considerare cambio chat se necessario.
+**Checkpoint:** 2026-11-18; **M4.5.3 CONCLUSA IN CI, esclusivamente offline, AI OFF.** [PR #96](https://github.com/Lupus227/tagliando/pull/96) merged su `dev/fase14-ai` commit `43218225c4660ab73d826e12ac2d2c6053b01295`, [CI #44357543306 Success](https://github.com/Lupus227/tagliando/actions/runs/44357543306). Aggiunti 40 casi OP03 curati, regressione e specifica; 12/40 match validi, 28 rifiuti, 50% recall nel corpus con fonte gold (12/24), **0/12 parafrasi riconosciute**; 8/8 casi critici bloccati e nessuna chiamata AI. **Difetto individuato, non corretto:** P12 «Come verifico che il filtro sia montato correttamente?» viene classificata `MODEL_REQUIRED` per la regex `che ... filtro`; falso positivo nella ragione del blocco, non un'autorizzazione. Non ci sono nuove route, modifiche PWA/KB/ledger/controller, deployment Cloudflare o inferenza; AI_USE resta OFF. Ultimo Cloudflare verificato `f9b1e32` Success con `FREE_CHAT_DISABLED`, 0 chiamate. **NEXT:** concordare se affrontare prima il falso positivo della policy o progettare disambiguazione e risposte mirate a partire da segmenti revisionati, sempre senza AI live non autorizzata.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -32,7 +32,7 @@
 | PWA originale pubblica | **v0.12.1**, GitHub Pages; guida a step, voce TTS/ASR, anomalie vocali, recupero sessione |
 | Schema KB | `tagliando.knowledge.v1` |
 | Versione KB distribuita su Cloudflare | **15.25.1** |
-| Commit deployment Cloudflare confermato dall'utente | **`71d26cc` · Success** — attivazione controllata M4.4.1 confermata dall'utente; due turni reali riportati. **Rollback GitHub `4d15bcb` merged, ma Cloudflare rollback NON ANCORA confermato** |
+| Commit deployment Cloudflare confermato dall'utente | **`f9b1e32` · Success**; `/lab/ai-free` → `FREE_CHAT_DISABLED`, 0 chiamate (conferma dell'utente 2026-11-16). I commit M4.5.x, incluso `43218225`, **non** hanno deployment verificato; non richiesto per i soli test offline |
 | Operazioni/passaggi | **8 / 53** |
 | Passaggi validati con condizioni | **24** |
 | Passaggi ancora pendenti | **29** |
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **M4.4.1 due turni testuali con input libero riusciti e contesto coerente; accuratezza fattuale NON SUPERATA**: supernova erroneamente descritta come capace di far esplodere l'universo. Solo laboratorio non tecnico Access, mai integrato alla PWA o alle fonti validate |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.5.2 conclusa in CI:** PR #94 `57022f0`, CI #44187592983 Success. Associazione deterministica di 17 espressioni a revisioni OP03, preservando integrità e i gate; nessuna AI attiva. **NEXT da concordare M4.5.3**: test offline con domande realistiche, limiti e gestione dell'astensione; non collegare le revisioni al LLM con `aiUseAllowed=false`. Cloudflare del nuovo commit non confermato né necessario |
+| Compito immediato di questa conversazione | **M4.5.3 conclusa offline:** [PR #96](https://github.com/Lupus227/tagliando/pull/96) `43218225` e [CI #44357543306](https://github.com/Lupus227/tagliando/actions/runs/44357543306) Success; 40 casi, 12 match, 28 astensioni, 0 parafrasi riconosciute, 1 falso positivo `MODEL_REQUIRED` noto. **NEXT da concordare**: correzione policy / mapping e granularità, con nuova approvazione tecnica; AI OFF |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -260,6 +260,15 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - M3 `filterLabAnswer` esamina **la domanda originale prima del mapping**; successivo gate M4.5.1 recupera la fonte identica dal ledger, non da testo del client. Risposta prevista per sola revisione umana, non per attività operativa, non per modello AI. Nessun cambio a `aiUseAllowed=false`, KB, PWA, endpoint, progressione o Cloudflare vars.
 - Prossima decisione proposta M4.5.3: corpus realistico con criteri di astensione e precisione e progettazione risposte minimali fondate sulla fonte. È richiesto accordo esplicito prima di ulteriori sviluppi e test live LLM.
 
+### M4.5.3 — Benchmark OP03 offline, classificazione e granularità (2026-11-18)
+
+- Autorizzato dal titolare **solo test e documentazione**; [PR #96](https://github.com/Lupus227/tagliando/pull/96) merged `43218225` su `dev/fase14-ai`; [CI finale #44357543306](https://github.com/Lupus227/tagliando/actions/runs/44357543306) **Success**. CI intermedia #44357471952: 233/233 test, Wrangler dry-run Success.
+- `tests/fixtures/m453-op03-realistic-questions.json`: 40 frasi curate in 6 gruppi, non provenienti da utenti reali. `tests/m453-realistic-corpus.test.cjs` confronta il mapping con le fonti gold e il testo integrale del ledger e misura la baseline. Specifica `docs/M4_5_3_CORPUS_BASELINE.md`.
+- Esito: 12/40 mappate correttamente nel piccolo corpus (precisione 100% **solo sui match accettati**, recall 12/24 = 50% sul corpus con fonte, 0/12 parafrasi); 28 rifiuti, 8/8 stop critici attesi, 16/16 rifiuti sulle richieste senza fonte gold. Nessun estratto breve, zero inferenze.
+- **Rilevazione nuova:** la domanda P12 «Come verifico che il filtro sia montato correttamente?» produce `MODEL_REQUIRED`, sebbene non richieda un parametro modello-specifico: falso positivo della policy lessicale. La prima CI aveva fallito per decisione inattesa; il caso è stato conservato con `knownIssue`, senza cambiare runtime o nascondere l'errore.
+- Nessuna modifica a PWA, Worker, controller, KB/ledger, endpoint, variabili Cloudflare. `aiUseAllowed=false` e tutti i flag di AI OFF. Il deployment Cloudflare del commit nuovo non è stato verificato e non è richiesto per questa fase offline.
+- **NEXT non ancora approvata:** scelta tra correzione del falso positivo e sviluppo del recupero di fonti/estratti delimitati; la fase successiva richiede decisione esplicita.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -340,7 +349,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** M4.4.1 Cloudflare `f9b1e32` Success e `/lab/ai-free` → `FREE_CHAT_DISABLED`, 0 chiamate, verificati dall'utente post-deploy. M4.5.1 PR #92 `6cfdaf8` e M4.5.2 PR #94 `57022f0`, entrambe integrate su `dev/fase14-ai`, rispettive CI #44185341521 e #44187592983 Success. M4.5.2 offline offre mapping controllato di 17 frasi a 7 step OP03; non un sistema generalizzato di comprensione. Tutti i gate AI OFF e `aiUseAllowed=false`. Cloudflare per i commit M4.5.x non verificato.
+**Stato confermato:** M4.4.1 Cloudflare `f9b1e32` Success e `/lab/ai-free` → `FREE_CHAT_DISABLED`, 0 chiamate. M4.5.1 PR #92 `6cfdaf8`, M4.5.2 PR #94 `57022f0` e M4.5.3 PR #96 `43218225` tutte integrate in `dev/fase14-ai`, CI finale #44357543306 Success. OP03 ha 17 frasi curate, 40 domande di benchmark offline; 12/40 associate, 28 rifiutate, nessuna parafrasi accettata. Tutti i gate AI OFF e `aiUseAllowed=false`. Cloudflare per i commit M4.5.x non verificato né necessario.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -356,4 +365,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (M4.5.3 — da concordare):** Per il primo prototipo offline valutare su corpus realistico concordato con l'esperto: formulazioni sconosciute, domande multi-intento, ambiguità, contesto materiale non coerente, anomalie e dati modello-specifici. Misurare proporzione mappata correttamente e astensione, prevenire risposte con passaggi interi quando la domanda richiede solo un dettaglio. Espandere copertura solo con regole revisionate o controllo ulteriore; **non** abilitare GPT-OSS o trasferirgli passi con `aiUseAllowed=false`. PWA/KB e deploy Cloudflare da trattare separatamente.
+**NEXT (post M4.5.3 — da concordare):** L'esito dell'esperimento suggerisce due nodi: (a) falso positivo `MODEL_REQUIRED` su P12, causato da classificazione lessicale troppo ampia (`che ... filtro`); (b) riconoscimento insufficiente delle parafrasi (0/12) e anteprime integrali anziché estratti pertinenti. Prima di modificare il runtime, scegliere esplicitamente priorità e contratto di sicurezza, prevedere test negativi e nessun accesso a passi con `aiUseAllowed=false` da parte di un LLM. Restano aperte issue #1, #2, #3, #37; PWA/KB e deploy Cloudflare separati.
