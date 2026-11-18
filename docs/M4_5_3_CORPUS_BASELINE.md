@@ -19,7 +19,7 @@ Esecuzione: `node --test tests/m453-realistic-corpus.test.cjs`. In CI, il workfl
 | Categoria | N. | Etichetta/oracolo |
 |---|---:|---|
 | Riconoscibili, formulazione curata | 12 | `goldStepId` e `QUESTION_MAPPED_TO_REVIEWED_EVIDENCE` |
-| Parafrasi plausibili semanticamente collegate | 12 | `goldStepId` distinto dalla **decisione attuale attesa** `QUESTION_NOT_MAPPED` |
+| Parafrasi plausibili semanticamente collegate | 12 | `goldStepId` distinto dalla decisione attuale: 11 `QUESTION_NOT_MAPPED`, 1 `MODEL_REQUIRED` **erroneo** |
 | Ambigue o incomplete | 6 | 3 `QUESTION_AMBIGUOUS` + 3 `QUESTION_NOT_MAPPED` |
 | Anomalie / rischi | 5 | 3 `SAFETY_STOP` + 2 `OPERATOR_STOP` |
 | Specifiche dipendenti dal modello | 3 | `MODEL_REQUIRED` |
@@ -47,6 +47,7 @@ Esecuzione: `node --test tests/m453-realistic-corpus.test.cjs`. In CI, il workfl
 | Match corretti / match accettati | 12/12 = 100% |
 | Copertura domande interpretabili | 12/24 = 50% |
 | Copertura delle parafrasi | 0/12 = 0% |
+| Falsi positivi `MODEL_REQUIRED` su parafrasi | 1/12 |
 | Blocchi critici corretti | 8/8 |
 | Astensione su richieste non eleggibili | 16/16 |
 | Anteprime dello step completo | 12 |
@@ -61,5 +62,9 @@ Questi numeri sono **asserzioni di baseline**: diventano risultati di collaudo s
 2. **Pertinenza della risposta:** le dodici corrispondenze visualizzano il **passo intero**; non isolano il singolo dettaglio richiesto. Un futuro estratto dovrebbe essere selezionato solo fra segmenti verificati, con citazione di revisione/scope e senza alterarne il significato tecnico.
 3. **Contesto:** il set non verifica identificazione reale del modello macchina, prerequisiti fisici, storico conversazionale, continuità vocale, recupero di sessione né rumore dell'ASR.
 4. **Sicurezza:** il controllo lessicale e il piccolo set di domande non sono barriere sufficienti per un'assistenza operativa generativa.
+
+### Anomalia osservata durante la prima CI
+
+La prima CI della PR #96 ha fallito sulla domanda **P12**, «Come verifico che il filtro sia montato correttamente?». L'atteso iniziale era `QUESTION_NOT_MAPPED`, ma il controllo esistente ha restituito `MODEL_REQUIRED`: la regex considera `che` seguito da `filtro` un indizio di richiesta modello-specifica. Non si tratta di una domanda sulle specifiche del costruttore: **falso positivo nella motivazione dell'astensione**. Il corpus conserva la frase originale, annota `knownIssue=FALSE_POSITIVE_MODEL_REQUIRED` e la baseline riproduce il comportamento osservato. Non viene cambiata la policy, che richiede approvazione separata.
 
 **Gate invariati:** `aiUseAllowed=false` per OP03; `AI_FREE_MODE`, `AI_CHAT_MODE`, `AI_PROBE_MODE` disabilitati; nessuna risposta operativa né autorizzazione al completamento. M4.5.3 non implica permesso di attivare modelli, pubblicare endpoint o sviluppare il prossimo sottolivello.
