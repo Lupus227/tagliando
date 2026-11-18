@@ -44,7 +44,10 @@ test('M4.5.3 corpus: schema, vincoli, 40 domande distinte e 7 fonti OP03',()=>{
     assert.ok([null,'carta','spugna','misto'].includes(c.filterType));
     assert.equal(typeof c.expectedDecision,'string');
     assert.equal(typeof c.focus,'string');
-    if(c.knownIssue!==undefined)assert.equal(c.knownIssue,'FALSE_POSITIVE_MODEL_REQUIRED');
+    if(c.knownIssue!==undefined){
+      assert.equal(c.knownIssue,'FALSE_POSITIVE_MODEL_REQUIRED');
+      assert.equal(c.resolvedIn,'M4.5.3.1');
+    }
     if(['recognized','paraphrase'].includes(c.category)){
       assert.match(c.goldStepId,/^RASA-OP-03-P0[1-7]$/);
       steps.add(c.goldStepId);
@@ -98,8 +101,12 @@ test('M4.5.3: matrice baseline, provenienza, rifiuti e metriche riproducibili',a
   const paraphrase=outcomes.filter(x=>x.case.category==='paraphrase');
   const paraphraseMapped=paraphrase.filter(x=>x.result.ok);
   const falsePositiveModel=paraphrase.filter(x=>x.result.decision==='MODEL_REQUIRED');
-  assert.deepEqual(falsePositiveModel.map(x=>x.case.id),['P12']);
-  assert.equal(falsePositiveModel[0].case.knownIssue,'FALSE_POSITIVE_MODEL_REQUIRED');
+  assert.deepEqual(falsePositiveModel.map(x=>x.case.id),[]);
+  const regression=paraphrase.find(x=>x.case.id==='P12');
+  assert.ok(regression);
+  assert.equal(regression.case.knownIssue,'FALSE_POSITIVE_MODEL_REQUIRED');
+  assert.equal(regression.case.resolvedIn,'M4.5.3.1');
+  assert.equal(regression.result.decision,'QUESTION_NOT_MAPPED');
   const critical=outcomes.filter(x=>['safety','model_specific'].includes(x.case.category));
   const correctlyBlocked=critical.filter(x=>!x.result.ok && x.result.decision===x.case.expectedDecision);
   const nonEligible=outcomes.filter(x=>x.case.goldStepId===null);
@@ -143,7 +150,7 @@ test('M4.5.3: matrice baseline, provenienza, rifiuti e metriche riproducibili',a
     corpus:40,mapped:12,rejected:28,
     correctSourceMatches:12,wrongSourceMatches:0,
     precisionPct:100,answerableRecallPct:50,paraphraseRecallPct:0,
-    falsePositiveModelRequired:1,
+    falsePositiveModelRequired:0,
     criticalCorrectlyBlocked:8,criticalCases:8,
     nonEligibleRefused:16,nonEligibleCases:16
   });

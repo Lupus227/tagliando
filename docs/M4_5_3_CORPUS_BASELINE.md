@@ -67,4 +67,13 @@ Questi numeri sono **asserzioni di baseline**: diventano risultati di collaudo s
 
 La prima CI della PR #96 ha fallito sulla domanda **P12**, «Come verifico che il filtro sia montato correttamente?». L'atteso iniziale era `QUESTION_NOT_MAPPED`, ma il controllo esistente ha restituito `MODEL_REQUIRED`: la regex considera `che` seguito da `filtro` un indizio di richiesta modello-specifica. Non si tratta di una domanda sulle specifiche del costruttore: **falso positivo nella motivazione dell'astensione**. Il corpus conserva la frase originale, annota `knownIssue=FALSE_POSITIVE_MODEL_REQUIRED` e la baseline riproduce il comportamento osservato. Non viene cambiata la policy, che richiede approvazione separata.
 
+### Addendum M4.5.3.1 — Correzione mirata (2026-11-18)
+
+La **baseline originale M4.5.3** ha rilevato 1 falso positivo `MODEL_REQUIRED` sulla domanda P12. Il risultato precedente resta documentato come evidenza storica. La correzione successiva restringe l'interpretazione della parola `che`: non basta una congiunzione subordinante seguita da `il filtro`, mentre restano bloccate richieste esplicite come «Che filtro devo comprare?» e «Che olio devo usare?».
+
+- Il corpus conserva testo e identificativo P12, con `knownIssue=FALSE_POSITIVE_MODEL_REQUIRED` e `resolvedIn=M4.5.3.1`; il nuovo esito atteso è `QUESTION_NOT_MAPPED`, quindi continua a **non** mostrare contenuti tecnici.
+- I test `tests/m4531-model-required-regression.test.cjs` verificano frasi subordinate, richieste modello-specifiche, priorità stop e assenza di autorizzazioni.
+- Le metriche della baseline comparabili restano 12 match / 28 rifiuti, 0/12 parafrasi riconosciute e 8/8 blocchi critici. **Falsi positivi `MODEL_REQUIRED` nei 12 casi di parafrasi: da 1 a 0**, nel solo corpus curato.
+- Nessun ampliamento del mapping, nessun LLM o stato di sessione; le risposte tecniche restano non autorizzate.
+
 **Gate invariati:** `aiUseAllowed=false` per OP03; `AI_FREE_MODE`, `AI_CHAT_MODE`, `AI_PROBE_MODE` disabilitati; nessuna risposta operativa né autorizzazione al completamento. M4.5.3 non implica permesso di attivare modelli, pubblicare endpoint o sviluppare il prossimo sottolivello.

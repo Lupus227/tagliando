@@ -15,7 +15,10 @@ const hazard = [
   {re:/\b(filetto|filettatura|sede candela)\b.*\b(spanat\w*|danneggiat\w*|rovinat\w*)\b|\b(spanat\w*|danneggiat\w*|rovinat\w*)\b.*\b(filetto|filettatura|sede candela)\b/,
     message:'Filettatura potenzialmente danneggiata: non forzare e richiedi una verifica tecnica.'}
 ];
-const modelParameter = /\b(quanto|quanti|quanta|quale|quali|che)\b.{0,55}\b(olio|benzina|carburante|nm|newton|coppia|serraggio|candela|capacita|ricambio|filtro|gradazione|viscosita|gradi|litri|ml|quantita)\b|\b(coppia di serraggio|quantita olio|codice candela|distanza elettrodi|capacita del motore|torque|specifiche del motore)\b/;
+// M4.5.3.1: 'che' may introduce a subordinate clause ("che il filtro ...").
+// Keep MODEL_REQUIRED for explicit 'che filtro/che tipo di filtro' requests,
+// without interpreting every following technical noun as a requested spec.
+const modelParameter = /\b(quanto|quanti|quanta|quale|quali)\b.{0,55}\b(olio|benzina|carburante|nm|newton|coppia|serraggio|candela|capacita|ricambio|filtro|gradazione|viscosita|gradi|litri|ml|quantita)\b|\bche\s+(?:tipo\s+di\s+)?(?:olio|benzina|carburante|candela|filtro|ricambio|gradazione|viscosita|coppia|serraggio|quantita)\b|\b(coppia di serraggio|quantita olio|codice candela|distanza elettrodi|capacita del motore|torque|specifiche del motore)\b/;
 const command = /^(fatto|avanti|salta|indietro|registra|pausa|stop|riprendiamo|annulla|ho finito|ferma)\b/;
 const unsupported = /\b(automobile|auto|camion|moto|centralina|cambio|frizione)\b|\b(riparare|riparazione|revisionare|rimappare|truccare)\b/;
 
