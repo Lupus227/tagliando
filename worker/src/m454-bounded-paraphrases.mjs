@@ -28,7 +28,7 @@ const BOUNDED_GRAMMAR=Object.freeze([
     id:'P02_ASSESS',
     canonical:'Come controllo lo stato del filtro aria?',
     patterns:[
-      /^come (faccio a )?(capire|controllare|verificare|valutare) (se il filtro (e|sia) (ancora )?(utilizzabile|buono|in buone condizioni)|lo stato del filtro|le condizioni del filtro)$/,
+      /^come (faccio a )?(capire|capisco|controllare|controllo|verificare|verifico|valutare|valuto) (se il filtro (e|sia) (ancora )?(utilizzabile|buono|in buone condizioni)|lo stato del filtro|le condizioni del filtro)$/,
       /^il filtro (e|sembra) (sporco|impolverato) come (ne )?(verifico|controllo|valuto) (le condizioni|lo stato)$/
     ]
   },
