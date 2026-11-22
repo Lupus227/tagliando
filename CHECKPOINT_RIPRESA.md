@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-22; **M4.5.5 RISPOSTE 01–05 APPROVATE TECNICAMENTE** (solo testi, senza AI/runtime). 01–03: filtro carta, documentate in `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`; 04: lavaggio spugna R2 con «e lavabile» eliminato, in `docs/M4_5_5_RISPOSTA_04_LAVAGGIO_SPUGNA.md`; **05**: oliatura filtro in sola spugna sì dopo completa asciugatura, prefiltro misto no nella procedura standard, eccezioni solo con conoscenza dello specifico modello, approvata dall'esperto «si ok», in `docs/M4_5_5_RISPOSTA_05_OLIATURA_SPUGNA.md`. Tutte `EXPERT_APPROVED_TEXT_ONLY`, senza autorizzazione AI, modifica della KB o avanzamento. La KB P04 conserva ancora controlli su lavabilità (non aggiornati). PWA v0.12.1, KB v15.25.1, AI OFF `aiUseAllowed=false`. Ultimo Cloudflare `b6df639` Success confermato dall'utente; ultima CI del precedente M4.5.4 243/243. **NEXT:** candidata 06 su pulizia scatola filtro P06 F15.21-R1, non ancora approvata.
+**Checkpoint:** 2026-11-22; **M4.5.5 SEI RISPOSTE BREVI APPROVATE TECNICAMENTE** (solo testo, AI e runtime ancora non autorizzati). 01–03: filtro carta, file `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`; 04: lavaggio spugna R2 senza «e lavabile», `docs/M4_5_5_RISPOSTA_04_LAVAGGIO_SPUGNA.md`; 05: oliatura spugna solo filtro interamente spugna, no prefiltro misto standard, `docs/M4_5_5_RISPOSTA_05_OLIATURA_SPUGNA.md`; **06: pulizia scatola filtro P06 F15.21-R1, approvata senza correzioni («si, è corretto»), `docs/M4_5_5_RISPOSTA_06_PULIZIA_SCATOLA.md`**. Tutte `EXPERT_APPROVED_TEXT_ONLY`; condizioni/STOP di KB applicabili non modificate. Disallineamento P04 «e lavabile» nel ledger ancora presente, richiede revisione separata. PWA v0.12.1, KB v15.25.1, `aiUseAllowed=false`, modello AI OFF. Ultimo Cloudflare confermato `b6df639` Success, ultimo browser OFF/0 chiamate su `f9b1e32`, CI M4.5.4 243/243. **NEXT:** risposta 07 da proporre e approvare sul rimontaggio filtro aria P07 F15.22-R1.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **M4.4.1 due turni testuali con input libero riusciti e contesto coerente; accuratezza fattuale NON SUPERATA**: supernova erroneamente descritta come capace di far esplodere l'universo. Solo laboratorio non tecnico Access, mai integrato alla PWA o alle fonti validate |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.5.5 cinque risposte approvate tecnicamente (01–05)**, 05 oliatura filtro solo spugna vs prefiltro misto (P05 F15.20-R3), documentazione `docs/M4_5_5_RISPOSTA_05_OLIATURA_SPUGNA.md`, nessun AI/runtime. **NEXT:** sottoporre risposta 06 «Come pulisco la scatola del filtro aria?» P06 F15.21-R1, in attesa di approvazione dell'esperto |
+| Compito immediato di questa conversazione | **M4.5.5 sei risposte 01–06 approvate testualmente**; 06 pulizia scatola filtro P06 F15.21-R1, conservando STOP su parti danneggiate e contaminazione aspirazione; testo `docs/M4_5_5_RISPOSTA_06_PULIZIA_SCATOLA.md`. **NEXT:** proposta risposta 07 su rimontaggio P07 F15.22-R1, da validare |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -328,6 +328,13 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - Nessuna modifica a KB, AI, router, PWA, Worker, sessione o Cloudflare. Rimane il disallineamento P04 («e lavabile») da valutare con revisione separata prima di alterare i gate.
 - Prossima candidata da validare: pulizia scatola filtro P06 F15.21-R1.
 
+### M4.5.5 — Approvazione risposta 06 pulizia scatola filtro (2026-11-22)
+
+- Il titolare conferma «si, è corretto» alla formulazione breve per «Come pulisco la scatola del filtro aria?», fonte P06 F15.21-R1; approvazione senza modifiche documentata in `docs/M4_5_5_RISPOSTA_06_PULIZIA_SCATOLA.md`, stato `EXPERT_APPROVED_TEXT_ONLY`.
+- Preservati divieti su getti di acqua/aria verso il condotto e inserimento di utensili/panni, protezione aspirazione e STOP su parti/guarnizioni danneggiate o contaminazione sospetta.
+- PWA v0.12.1, KB v15.25.1, flag AI OFF, `aiUseAllowed=false`, Worker/Cloudflare invariati. Nessun nuovo deployment o collaudo runtime.
+- Prossima risposta da sottoporre all'esperto: rimontaggio filtro aria P07 F15.22-R1, senza presumere completamento dei passaggi precedenti.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -408,7 +415,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** Cloudflare `b6df639` Success confermato dall'utente, il test browser AI OFF/0 chiamate resta riferito a `f9b1e32`. M4.5.4 offline PR #100 CI #44362995018 Success 243/243. PWA v0.12.1, KB v15.25.1 e `aiUseAllowed=false` invariati. **M4.5.5: cinque testi brevi (01–05) approvati dall'esperto**, risposta 05 sull'oliatura differenziata sola spugna/prefiltro misto da P05 F15.20-R3. Documenti su `main`; nessuna modifica runtime, AI, KB o nuovo deploy. KB P04 mantiene i controlli di lavabilità, non modificati dall'approvazione risposta 04.
+**Stato confermato:** Cloudflare `b6df639` Success riferito dal titolare; ultimo browser gate AI OFF/0 chiamate confermato su `f9b1e32`. M4.5.4 offline PR #100 CI #44362995018 Success 243/243. PWA v0.12.1, KB v15.25.1, `aiUseAllowed=false`, runtime/AI invariati. **M4.5.5 sei risposte 01–06 tecnicamente approvate come testo isolato**, con 06 pulizia scatola filtro P06 F15.21-R1 approvata il 2026-11-22. Non abilita l'erogazione AI, la progressione o il rimontaggio. KB P04 conserva il gate sulla lavabilità, non rimosso dalla revisione della risposta 04.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -424,4 +431,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (M4.5.5 — candidata 06 P06 da approvare):** Approvata testualmente la risposta 05 per «Devo oliare il filtro in spugna dopo averlo lavato?» con distinzione filtro solo spugna e prefiltro misto, fonte P05 F15.20-R3. Proporre ora la risposta 06 «Come pulisco la scatola del filtro aria?» basata su `RASA-OP-03-P06` F15.21-R1, richiamando panno asciutto/leggermente umido, condotto aspirazione protetto, pulizia delle superfici di tenuta, verifiche di asciutto, e STOP se scatola o guarnizioni danneggiate oppure contaminazione sospetta. Una proposta per volta; AI/KB/runtime invariati.
+**NEXT (M4.5.5 — candidata 07 P07 da approvare):** Risposta 06 «Come pulisco la scatola del filtro aria?» approvata senza modifiche dal titolare. Proporre risposta 07 «Come rimonto correttamente il filtro aria?» da `RASA-OP-03-P07` F15.22-R1: scatola pulita e asciutta, elementi già trattati correttamente, orientamento e tenuta carta/spugna/misto, coperchio fissato senza forzare, verifica assenza bypass aria, stop se sede/chiusura/tenuta/fissaggi non idonei, non avviare senza filtro montato correttamente. Richiedere approvazione esplicita della risposta 07; AI/KB/runtime invariati.
