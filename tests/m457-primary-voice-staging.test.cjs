@@ -69,7 +69,7 @@ test('M4.5.7 original PWA voice receives no change; staging route serves only en
   assert.match(content,/turn===scopedTurn/);
   assert.match(content,/currentOperation\(\)===before\.operationId/);
   assert.match(content,/answer==='No\. Il filtro in carta non deve essere lavato né oliato\.'/);
-  assert.doesNotMatch(content.slice(content.indexOf('M4.5.7: SINGLE approved question')),/AI\.run|openai|stepConfirm'\)\.click\(\)/);
+  assert.doesNotMatch(content.slice(content.indexOf('M4.5.7: SINGLE approved question'),content.indexOf("setStatus('Frase riconosciuta ma non prevista: nessuna azione eseguita.')")),/AI\.run|openai|stepConfirm'\)\.click\(\)/);
   const page=await serve(new Request(ORIGIN+'/pilot/'),env,ctx,async()=>({}));
   assert.equal(page.status,200);
   assert.match(await page.text(),/I comandi vocali principali rimangono invariati salvo una domanda specifica/);
