@@ -11,6 +11,8 @@
     "AI_PROBE_EXPIRES_AT": "2026-11-14T20:00:00Z",
     "AI_CHAT_MODE": "disabled",
     "AI_CHAT_EXPIRES_AT": "2026-11-16T18:25:00Z",
+    "AI_SEMANTIC_MODE": "disabled",
+    "AI_SEMANTIC_EXPIRES_AT": "2026-11-30T20:00:00Z",
     "AI_FREE_MODE": "disabled",
     "AI_FREE_EXPIRES_AT": "2026-11-16T20:20:00Z",
     "ALLOWED_ORIGIN": "https://lupus227.github.io",
