@@ -46,7 +46,11 @@ test('pilot static files match source, not replaced script or procedures',async(
     if(name==='index.html')continue;
     const r=await serve(request('/pilot/'+name),env,{},access);
     assert.equal(r.status,200,name);
-    assert.equal(await r.text(),source,name);
+    const delivered=await r.text();
+    if(name==='voice.js'){
+      const {pilotVoiceWithReadOnlyWorkerBridge}=await import('../worker/src/pilot-voice-runtime.mjs');
+      assert.equal(delivered,pilotVoiceWithReadOnlyWorkerBridge(source));
+    }else assert.equal(delivered,source,name);
   }
   const res=await serve(request('/pilot/pilot-connector.js'),env,{},access);
   assert.equal(res.status,200);
