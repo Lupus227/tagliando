@@ -130,7 +130,7 @@ test('voice interface is served in original protected PWA pilot without changing
   assert.match(js,/fetch\('\/api\/lab\/voice-bridge'/);
   assert.match(js,/data\.sessionChanged===false/);
   assert.match(js,/data\.canGenerate===false/);
-  assert.match(html,/Prepara la PWA per questa prova/);
+  assert.match(js,/Prepara la PWA per questa prova/);
   assert.match(js,/id="bridgeContext"/);
   assert.match(js,/destination\.click\(\)/);
   assert.match(js,/\$\('stepNext'\)/);
