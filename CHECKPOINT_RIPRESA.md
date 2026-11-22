@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-22; **M4.5.5 SEI RISPOSTE BREVI APPROVATE TECNICAMENTE** (solo testo, AI e runtime ancora non autorizzati). 01–03: filtro carta, file `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`; 04: lavaggio spugna R2 senza «e lavabile», `docs/M4_5_5_RISPOSTA_04_LAVAGGIO_SPUGNA.md`; 05: oliatura spugna solo filtro interamente spugna, no prefiltro misto standard, `docs/M4_5_5_RISPOSTA_05_OLIATURA_SPUGNA.md`; **06: pulizia scatola filtro P06 F15.21-R1, approvata senza correzioni («si, è corretto»), `docs/M4_5_5_RISPOSTA_06_PULIZIA_SCATOLA.md`**. Tutte `EXPERT_APPROVED_TEXT_ONLY`; condizioni/STOP di KB applicabili non modificate. Disallineamento P04 «e lavabile» nel ledger ancora presente, richiede revisione separata. PWA v0.12.1, KB v15.25.1, `aiUseAllowed=false`, modello AI OFF. Ultimo Cloudflare confermato `b6df639` Success, ultimo browser OFF/0 chiamate su `f9b1e32`, CI M4.5.4 243/243. **NEXT:** risposta 07 da proporre e approvare sul rimontaggio filtro aria P07 F15.22-R1.
+**Checkpoint:** 2026-11-22; **M4.5.5 SET DI 7 RISPOSTE BREVI APPROVATE TECNICAMENTE, SOLO TESTI**, AI/runtime ancora non autorizzati. 01–03 filtro carta: `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`; 04 lavaggio spugna R2, senza «e lavabile»: `docs/M4_5_5_RISPOSTA_04_LAVAGGIO_SPUGNA.md`; 05 oliatura sola spugna vs prefiltro misto: `docs/M4_5_5_RISPOSTA_05_OLIATURA_SPUGNA.md`; 06 pulizia scatola: `docs/M4_5_5_RISPOSTA_06_PULIZIA_SCATOLA.md`; **07 rimontaggio P07 F15.22-R1 approvato dal titolare «si approvo»: `docs/M4_5_5_RISPOSTA_07_RIMONTAGGIO_FILTRO.md`**. Stato `EXPERT_APPROVED_TEXT_ONLY` per tutte. KB OP03 mantiene `aiUseAllowed=false`; nota disallineamento testo breve P04 e frase/gate «lavabile» nel ledger (nessuna modifica KB). Nessuna nuova modifica runtime, AI, PWA v0.12.1, KB v15.25.1 o Cloudflare; ultimo deployment `b6df639` Success segnalato dal titolare, ultimo test browser OFF/0 chiamate su `f9b1e32`; ultima CI M4.5.4 243/243. **NEXT da concordare:** catalogo strutturato *solo offline* con 7 testi, provenienza, revisioni, requisiti, STOP, test negativi e fail-closed; eventuale implementazione runtime/AI richiede autorizzazione separata. Non descrivere il set di 7 testi come copertura completa dell'OP03.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **M4.4.1 due turni testuali con input libero riusciti e contesto coerente; accuratezza fattuale NON SUPERATA**: supernova erroneamente descritta come capace di far esplodere l'universo. Solo laboratorio non tecnico Access, mai integrato alla PWA o alle fonti validate |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.5.5 sei risposte 01–06 approvate testualmente**; 06 pulizia scatola filtro P06 F15.21-R1, conservando STOP su parti danneggiate e contaminazione aspirazione; testo `docs/M4_5_5_RISPOSTA_06_PULIZIA_SCATOLA.md`. **NEXT:** proposta risposta 07 su rimontaggio P07 F15.22-R1, da validare |
+| Compito immediato di questa conversazione | **M4.5.5 risposta 07 P07 F15.22-R1 rimontaggio filtro approvata**; gruppo delle 7 risposte focalizzate ora documentato e tecnicamente approvato come *testo*, nessun AI/runtime. **NEXT:** proporre catalogo offline strutturato con fonti/gate/revisioni e test fail-closed per avvicinare prodotto a risposte conversazionali reali |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -335,6 +335,13 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - PWA v0.12.1, KB v15.25.1, flag AI OFF, `aiUseAllowed=false`, Worker/Cloudflare invariati. Nessun nuovo deployment o collaudo runtime.
 - Prossima risposta da sottoporre all'esperto: rimontaggio filtro aria P07 F15.22-R1, senza presumere completamento dei passaggi precedenti.
 
+### M4.5.5 — Approvazione risposta 07 rimontaggio filtro (2026-11-22)
+
+- L'esperto conferma «si approvo» senza modifiche per «Come rimonto correttamente il filtro aria?», fonte `RASA-OP-03-P07` F15.22-R1, con controlli su orientamento, sede, tenuta, coperchio, fissaggi e stop in presenza di anomalie.
+- Testo integrale approvato: `docs/M4_5_5_RISPOSTA_07_RIMONTAGGIO_FILTRO.md`, `EXPERT_APPROVED_TEXT_ONLY` e `aiUseAllowed=false`. Con questa approvazione sono sette le **singole risposte testuali revisionate**, non l'intero operatore conversazionale.
+- Nessun cambiamento a KB v15.25.1, Worker, PWA v0.12.1, sessione, AI, Cloudflare. P04 conserva il controllo sulla lavabilità nonostante la semplificazione già approvata per il testo breve R2.
+- **NEXT da scegliere:** passare da testi isolati a catalogo offline verificabile di risposte contestualizzate con prerequisiti, provenienza/stop e test negativi, mantenendo il target di assistente AI realmente conversazionale e vocale.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -415,7 +422,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** Cloudflare `b6df639` Success riferito dal titolare; ultimo browser gate AI OFF/0 chiamate confermato su `f9b1e32`. M4.5.4 offline PR #100 CI #44362995018 Success 243/243. PWA v0.12.1, KB v15.25.1, `aiUseAllowed=false`, runtime/AI invariati. **M4.5.5 sei risposte 01–06 tecnicamente approvate come testo isolato**, con 06 pulizia scatola filtro P06 F15.21-R1 approvata il 2026-11-22. Non abilita l'erogazione AI, la progressione o il rimontaggio. KB P04 conserva il gate sulla lavabilità, non rimosso dalla revisione della risposta 04.
+**Stato confermato:** Cloudflare `b6df639` Success comunicato dal titolare; ultimo browser gate AI OFF/0 chiamate su `f9b1e32`. M4.5.4 offline PR #100 e CI #44362995018 243/243; PWA 0.12.1, KB 15.25.1 e `aiUseAllowed=false` invariati. **M4.5.5: 7 testi brevi approvati tecnicamente dall'esperto** e registrati in documenti di `main`; 07 su P07 rimontaggio conforme a F15.22-R1 e STOP per mancata tenuta/chiusura. Non equivalgono ad autorizzazione all'erogazione AI o alla progressione. Mappature P01/P02 e varianti libere ancora da considerare; disallineamento terminologico P04 «lavabile» ancora nel ledger.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -431,4 +438,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (M4.5.5 — candidata 07 P07 da approvare):** Risposta 06 «Come pulisco la scatola del filtro aria?» approvata senza modifiche dal titolare. Proporre risposta 07 «Come rimonto correttamente il filtro aria?» da `RASA-OP-03-P07` F15.22-R1: scatola pulita e asciutta, elementi già trattati correttamente, orientamento e tenuta carta/spugna/misto, coperchio fissato senza forzare, verifica assenza bypass aria, stop se sede/chiusura/tenuta/fissaggi non idonei, non avviare senza filtro montato correttamente. Richiedere approvazione esplicita della risposta 07; AI/KB/runtime invariati.
+**NEXT (post M4.5.5 — catalogo offline da progettare e autorizzare):** L'esperto ha approvato la risposta 07 «Come rimonto correttamente il filtro aria?» da P07 F15.22-R1 senza correzioni. Set iniziale di 7 risposte brevi approvate ma non operativo. Prossima priorità suggerita: catalogo strutturato offline con id risposta/domanda, fonte e revisione, contesto filtro carta/spugna/misto, stop e prerequisiti verificabili, stato `EXPERT_APPROVED_TEXT_ONLY`, mismatch/negative tests, fail-closed. Non scrivere un chatbot a regole fisse come soluzione definitiva né abilitare AI, endpoint o PWA; per qualsiasi uso operativo separata approvazione.
