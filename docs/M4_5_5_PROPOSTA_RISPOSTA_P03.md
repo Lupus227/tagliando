@@ -1,7 +1,7 @@
 # M4.5.5 — Proposta di risposta focalizzata: filtro in carta (P03)
 
-**Stato:** PROPOSTA DA VALIDARE DALL'ESPERTO, non approvata per erogazione.  
-**Data:** 2026-11-18.  
+**Stato:** CANDIDATA 01 APPROVATA TECNICAMENTE DALL'ESPERTO; utilizzo AI/runtime NON autorizzato.  
+**Proposta iniziale:** 2026-11-18. **Approvazione tecnica candidata 01:** 2026-11-22.  
 **Ambito:** progettazione documentale, nessun codice operativo, endpoint, PWA, configurazione AI o modifica Knowledge Base.
 
 ## Fonte revisionata
@@ -19,7 +19,7 @@
 
 **Domanda:** «Posso lavare il filtro in carta?»
 
-**Risposta breve candidata:**
+**Risposta breve approvata tecnicamente:**
 
 > No. Il filtro in carta non deve essere lavato né oliato.
 
@@ -27,7 +27,7 @@
 
 **Intento:** `paper_filter_wash_prohibited`.  
 **Tipo di contenuto:** divieto isolabile, *non* procedura di pulizia né permesso di continuare.  
-**ReviewStatus:** `PENDING_EXPERT_APPROVAL`.  
+**ReviewStatus:** `EXPERT_APPROVED_TEXT_ONLY` (conferma esplicita del titolare: «si approvo, è corretta», 2026-11-22).  
 **AI / runtime use:** **NON AUTORIZZATI**.
 
 ### Vincoli di un futuro selettore
@@ -39,12 +39,12 @@
 5. Se la domanda è generica sul trattamento («Come pulisco il filtro aria?»), contiene un'anomalia o il contesto è incerto, applicare il rifiuto/disambiguazione previsto. Non indovinare il tipo di filtro.
 6. Questa proposta non può essere caricata in un modello AI perché i record OP03 sono tuttora `aiUseAllowed=false`; l'approvazione della frase non cambia tale flag.
 
-## Verifica richiesta all'esperto
+## Esito della revisione esperto
 
-Confermare o correggere **esclusivamente la candidata 01**; la convalida dei futuri estratti dei passaggi OP03 P01–P07 seguirà una risposta alla volta. Una validazione positiva autorizzerebbe la **registrazione del testo come candidato approvato tecnicamente**, non l'abilitazione dell'AI o la pubblicazione nell'app.
+**Candidata 01: APPROVATA TECNICAMENTE senza modifiche il 2026-11-22**. Testo: «No. Il filtro in carta non deve essere lavato né oliato.» La conferma dell'esperto riguarda **solo questa formulazione come risposta breve alla domanda specifica**, non tutti gli estratti di P03 e non la risposta automatica in produzione. Non conferisce alcuna nuova autorizzazione a un modello, alla PWA, alla Knowledge Base o al controllore. L'approvazione di ulteriori candidati seguirà una risposta alla volta.
 
 ## Stato ambiente
 
 Il titolare conferma **Cloudflare deployment commit `b6df639` Success** in data 2026-11-18. Ciò attesta il deployment, non un test live della capacità M4.5.4 (modulo offline, non collegato al router) né la riattivazione dell'AI. Il controllo browser `FREE_CHAT_DISABLED` con 0 chiamate verificato in chat resta riferito al precedente commit `f9b1e32`. GitHub Wrangler prevede modalità AI disabilitate.
 
-**NEXT:** validazione testuale dell'esperto per candidata 01; nessuna modifica di comportamento fino ad approvazione separata.
+**NEXT:** proposta di candidata 02, separatamente da approvare, sull'eventuale uso di aria compressa per la carta; nessuna modifica di comportamento fino ad approvazione separata.
