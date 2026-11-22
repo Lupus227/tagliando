@@ -16,6 +16,7 @@ import {filterLabPage,filterLabClient} from './filter-lab-ui.mjs';
 import {serveM4Probe} from './m4-probe-route.mjs';
 import {serveChatLab} from './m4-chat-lab.mjs';
 import {serveFreeLab} from './m4-free-chat.mjs';
+import {serveApprovedVoiceBridge} from './m456-approved-voice-bridge.mjs';
 
 const MAX_BODY_BYTES = 2048;
 const MAX_QUESTION_CHARS = 500;
@@ -162,6 +163,11 @@ const worker = {
       const {httpStatus,...result}=answer;
       return respond(httpStatus??503,result);
     }
+
+    // M4.5.6 — existing PWA pilot, isolated single approved spoken response.
+    // Always Access-protected, strictly staging, no model or session mutation.
+    if(url.pathname==='/api/lab/voice-bridge')
+      return serveApprovedVoiceBridge(request,env,ctx,verifyWorkerAccess);
 
     // M4.2.2: fixed staged AI experiment, separately gated and read-only.
     // No arbitrary user question; no changes to /api/assist or public PWA.
