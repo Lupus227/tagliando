@@ -6,6 +6,7 @@
 import {pilotAssets,pilotSourceCommit} from './pilot-assets.mjs';
 import {pilotConnector} from './pilot-client.mjs';
 import {pilotVoiceBridge} from './pilot-voice-bridge.mjs';
+import {pilotVoiceWithReadOnlyWorkerBridge} from './pilot-voice-runtime.mjs';
 
 const PILOT_ORIGIN='https://tagliando-ai-staging.maico-gua.workers.dev';
 const mime=Object.freeze({
@@ -38,7 +39,7 @@ function previewHTML(){
     .replace('<link rel="manifest" href="./manifest.webmanifest">','')
     .replace('<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">','')
     .replace('<meta name="apple-mobile-web-app-capable" content="yes">','')
-    .replace('<body><main>', '<body><main><section role="alert" style="padding:14px;background:#fff4d2;border:2px solid #a86400;border-radius:8px;margin:15px 0;color:#332700"><strong>COLLAUDO FASE 14.7 — COPIA ISOLATA</strong><p>Non usare questa copia durante una manutenzione reale. La sessione locale è distinta da quella pubblica. I comandi vocali e le procedure non sono stati modificati; i test backend richiedono un clic esplicito.</p></section>')
+    .replace('<body><main>', '<body><main><section role="alert" style="padding:14px;background:#fff4d2;border:2px solid #a86400;border-radius:8px;margin:15px 0;color:#332700"><strong>COLLAUDO FASE 14.7 — COPIA ISOLATA</strong><p>Non usare questa copia durante una manutenzione reale. La sessione locale è distinta da quella pubblica. I comandi vocali principali rimangono invariati salvo una domanda specifica sul filtro in carta, ora inoltrata in staging al Worker con controlli. Nessun avanzamento automatico; non utilizzare per manutenzione reale.</p></section>')
     .replace('</body>','<script src="./pilot-connector.js" defer></script><script src="./voice-bridge.js" defer></script></body>');
 }
 export async function servePilot(request, env, ctx, verifyAccess){
@@ -62,7 +63,8 @@ export async function servePilot(request, env, ctx, verifyAccess){
 
   const html=name==='index.html';
   const source=html?previewHTML():name==='pilot-connector.js'?pilotConnector:
-    name==='voice-bridge.js'?pilotVoiceBridge:pilotAssets[name];
+    name==='voice-bridge.js'?pilotVoiceBridge:
+    name==='voice.js'?pilotVoiceWithReadOnlyWorkerBridge(pilotAssets[name]):pilotAssets[name];
   if(typeof source!=='string')
     return Response.json({ok:false,code:'ASSET_NOT_FOUND',aiEnabled:false},{status:503,headers:cacheHeaders});
   const headers={...cacheHeaders,'Content-Type':mime[name], 'X-Pilot-Source-Revision':pilotSourceCommit};
