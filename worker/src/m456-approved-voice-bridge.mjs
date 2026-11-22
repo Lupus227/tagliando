@@ -5,6 +5,7 @@
  * This is a narrow end-to-end transport test, NOT general language understanding.
  */
 import {mapBoundedParaphraseToReviewedEvidence} from './m454-bounded-paraphrases.mjs';
+import {filterLabAnswer} from './filter-lab.mjs';
 
 const STAGING='https://tagliando-ai-staging.maico-gua.workers.dev';
 const APPROVED='No. Il filtro in carta non deve essere lavato né oliato.';
@@ -27,7 +28,8 @@ const normalize=s=>s.toLocaleLowerCase('it-IT').normalize('NFD')
   .replace(/\s+/g,' ').trim();
 const allowed=new Set([
   normalize('Posso lavare il filtro in carta?'),
-  normalize('Il filtro in carta si può lavare?')
+  normalize('Il filtro in carta si può lavare?'),
+  normalize('Posso lavare filtro in carta?') // Speech transcription often drops articles.
 ]);
 const plain=v=>v!==null && typeof v==='object' && !Array.isArray(v) &&
  (Object.getPrototypeOf(v)===Object.prototype || Object.getPrototypeOf(v)===null);
@@ -48,11 +50,23 @@ export function previewApprovedVoiceReply(input) {
     /[\u0000-\u001f\u007f]/u.test(input.question))
     return deny('INVALID_CONTEXT','Questa prova è disponibile soltanto su Operazione 3, passaggio Trattamento carta, filtro in carta.');
 
-  // Existing M4.5.2/M4.5.4 preflight inspects the ORIGINAL, unsanitized question;
-  // it enforces the M3 anomaly/stop/model-specific/ambiguous/out-of-scope gates.
+  // Mandatory safety preflight on the ORIGINAL unsanitized voice transcript.
+  // The alias below is an EXACT single-intent exception, not fuzzy matching;
+  // it must never hide a hazard, command or additional request.
+  const originalCheck=filterLabAnswer({
+    stepId:'RASA-OP-03-P01',filterType:null,question:input.question
+  });
+  if(!originalCheck.ok || originalCheck.decision!=='REVIEWED_STEP')
+    return deny(originalCheck.decision||'EVIDENCE_UNAVAILABLE',
+      originalCheck.message||'Domanda non verificabile.');
+  const key=normalize(input.question);
+  // The approved wording is unchanged. Only a missing-article ASR variant
+  // is forwarded to the existing exact, provenance-checked mapper.
+  const mappedQuestion=key===normalize('Posso lavare filtro in carta?')
+    ? 'Posso lavare il filtro in carta?' : input.question;
   const evidence=mapBoundedParaphraseToReviewedEvidence({
     machineFamily:'rasaerba_a_benzina',operationId:3,
-    filterType:input.filterType,question:input.question
+    filterType:input.filterType,question:mappedQuestion
   });
   if(!evidence.ok || evidence.decision!=='QUESTION_MAPPED_TO_REVIEWED_EVIDENCE')
     return deny(evidence.decision||'EVIDENCE_UNAVAILABLE',
@@ -60,7 +74,7 @@ export function previewApprovedVoiceReply(input) {
 
   // Crucial: mapping P03_PAPER is wider than the ONE approved answer intent.
   // Never answer "Come pulisco il filtro in carta?" with the wash prohibition.
-  if(!allowed.has(normalize(input.question)))
+  if(!allowed.has(key))
     return deny('ANSWER_INTENT_NOT_REVIEWED','Non ho una risposta breve approvata per questa formulazione.');
 
   if(evidence.mappingId!=='P03_PAPER' ||

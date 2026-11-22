@@ -19,6 +19,9 @@ export const pilotVoiceBridge = String.raw`(function(){
    'Non modifica il registro né lo stato del passaggio.</p>',
    '<p class="muted small">Apri Operazione 3 · Filtro aria, scegli Carta e il passaggio ',
    'Trattamento carta. Ferma prima il dialogo vocale principale, se attivo.</p>',
+   '<p id="bridgeContext" role="status" aria-live="polite"></p>',
+   '<button type="button" id="bridgePrepare">Prepara la PWA per questa prova (senza confermare passaggi)</button>',
+   '<p class="muted small">Questo pulsante cambia solo operazione, modalità e passaggio visualizzati nel prototipo; la PWA salva normalmente la navigazione. Non conferma lavorazioni e non elimina anomalie.</p>',
    '<label for="bridgeQuestion">Domanda (anche dettata)</label>',
    '<textarea id="bridgeQuestion" maxlength="450" placeholder="Posso lavare il filtro in carta?"></textarea>',
    '<div class="actions">',
@@ -37,11 +40,23 @@ export const pilotVoiceBridge = String.raw`(function(){
  else main.append(panel);
  const question=$('bridgeQuestion'),reply=$('bridgeReply'),status=$('bridgeStatus');
  const source=$('bridgeSource'),mic=$('bridgeMic'),send=$('bridgeSend'),read=$('bridgeRead');
+ const prepare=$('bridgePrepare'),contextStatus=$('bridgeContext');
  let busy=false,rec=null,approved=null,utterance=null;
  function context(){
    const match=/Operazione\s+(\d+)/i.exec($('counter')?.textContent||'');
    return {operationId:match?Number(match[1]):null,filterType:$('method')?.value||'',
      currentStep:$('stepTitle')?.textContent?.trim()||''};
+ }
+ function showContext(){
+   const c=context();
+   contextStatus.textContent='Contesto PWA rilevato: operazione '+
+     (c.operationId??'non rilevata')+', filtro '+(c.filterType||'non selezionato')+
+     ', passaggio '+(c.currentStep||'non rilevato')+'.';
+   return c;
+ }
+ function readyContext(c){
+   return c.operationId===3&&c.filterType==='carta'&&
+     c.currentStep==='Trattamento carta';
  }
  function existingDialogActive(){
    return ($('voiceDialog')?.textContent||'').includes('Dialogo attivo');
@@ -50,6 +65,7 @@ export const pilotVoiceBridge = String.raw`(function(){
    mic.disabled=busy||!Engine;
    send.disabled=busy;
    read.disabled=busy||!approved||!synth;
+   prepare.disabled=busy;
  }
  function speak(value){
    if(!synth||!window.SpeechSynthesisUtterance){
@@ -78,10 +94,9 @@ export const pilotVoiceBridge = String.raw`(function(){
      status.textContent='Ferma il dialogo vocale principale prima di usare questa prova.';
      return;
    }
-   const before=context();
-   if(before.operationId!==3||before.filterType!=='carta'||
-      before.currentStep!=='Trattamento carta'){
-     status.textContent='Scegli Operazione 3, filtro Carta, passaggio Trattamento carta.';
+   const before=showContext();
+   if(!readyContext(before)){
+     status.textContent='Richiesta bloccata prima del Worker: contesto PWA diverso. Premi «Prepara la PWA per questa prova» oppure seleziona manualmente Operazione 3 / Carta / Trattamento carta.';
      return;
    }
    if(typeof text!=='string'||!text.trim()||text.length>450){
@@ -126,6 +141,36 @@ export const pilotVoiceBridge = String.raw`(function(){
      clearTimeout(watchdog);busy=false;updateButtons();
    }
  }
+ prepare.addEventListener('click',()=>{
+   if(busy)return;
+   if(existingDialogActive()){
+     status.textContent='Ferma prima il dialogo vocale principale.';return;
+   }
+   clearAnswer();
+   // Navigate using the PWA's EXISTING controls: no confirmation, completion,
+   // anomaly report or reset is triggered. The app saves its normal navigation.
+   const destination=$('operations')?.querySelectorAll('li')?.[2];
+   if(!destination){status.textContent='Elenco operazioni non disponibile.';return;}
+   destination.click();
+   const method=$('method');
+   if(!method||!Array.from(method.options).some(o=>o.value==='carta')){
+     status.textContent='Modalità Carta non disponibile nella PWA.';return;
+   }
+   if(method.value!=='carta'){
+     method.value='carta';
+     method.dispatchEvent(new Event('change',{bubbles:true}));
+   }
+   // PWA contains seven OP03 steps; the third is Trattamento carta.
+   for(let i=0;i<2;i++){
+     const next=$('stepNext');
+     if(!next||next.disabled)break;
+     next.click();
+   }
+   const c=showContext();
+   status.textContent=readyContext(c)
+     ? 'Contesto pronto. Ora premi «Dettala» oppure «Chiedi al Worker». Nessun passaggio confermato.'
+     : 'Navigazione non completata. Controlla il contesto mostrato sopra.';
+ });
  send.addEventListener('click',()=>ask(question.value));
  read.addEventListener('click',()=>{if(approved)speak(approved);});
  mic.addEventListener('click',()=>{
@@ -133,9 +178,8 @@ export const pilotVoiceBridge = String.raw`(function(){
    if(existingDialogActive()){
      status.textContent='Ferma prima il dialogo vocale principale.';return;
    }
-   if(context().operationId!==3||context().filterType!=='carta'||
-     context().currentStep!=='Trattamento carta'){
-     status.textContent='Scegli Operazione 3, filtro Carta, passaggio Trattamento carta.';
+   if(!readyContext(showContext())){
+     status.textContent='Ascolto bloccato: contesto PWA diverso. Premi «Prepara la PWA per questa prova».';
      return;
    }
    clearAnswer();busy=true;updateButtons();
@@ -165,5 +209,6 @@ export const pilotVoiceBridge = String.raw`(function(){
      busy=false;status.textContent='App in background: ascolto interrotto.';updateButtons();
    }
  });
+ showContext();
  updateButtons();
 })();`;
