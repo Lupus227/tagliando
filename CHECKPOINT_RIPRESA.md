@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-22; **M4.5.5 TRE RISPOSTE BREVI APPROVATE TECNICAMENTE**, solo testo, AI/runtime non autorizzati. Candidata 01: divieto lavaggio/oliatura carta; 02: solo soffiaggio delicato con aria compressa se necessario senza getti aggressivi; **03 approvata oggi:** «Normalmente il filtro in carta viene sostituito durante il tagliando. Se però è stato montato recentemente ed è ancora pulito e integro, puoi valutare di mantenerlo, rispettando le indicazioni del costruttore.» Fonti P02 `F15.17-R1` e P03 `F15.18-R2`. Documento `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`, stato per tutte `EXPERT_APPROVED_TEXT_ONLY`. M4.5.4 test GitHub 243/243 e Cloudflare `b6df639` Success riportato dal titolare; nessun nuovo test browser OFF/0 chiamate oltre a `f9b1e32`. PWA 0.12.1, KB 15.25.1 e `aiUseAllowed=false` invariati. **NEXT:** proporre prima risposta focalizzata sulla pulizia della spugna P04 F15.19-R2, da validare.
+**Checkpoint:** 2026-11-22; **M4.5.5 RISPOSTE 01–04 APPROVATE TECNICAMENTE**, solo testo, nessuna erogazione AI/runtime. Le prime tre riguardano filtro carta (01 lavaggio/oliatura vietati; 02 soffiaggio delicato; 03 sostituzione ordinaria o riuso condizionato P02/P03). **Risposta 04 su P04 F15.19-R2:** lavaggio filtro spugna, versione R2 approvata con «perfetto, approvato» dopo rimozione di «e lavabile» richiesta dall'esperto. Testo completo `docs/M4_5_5_RISPOSTA_04_LAVAGGIO_SPUGNA.md` e prime 3 in `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`. **Attenzione:** KB P04 conserva `foamMustBeReusableAndWashable` e `stopIfFoamDamagedOrWashabilityUnknown`; non modificarle senza revisione separata. PWA v0.12.1, KB v15.25.1, `aiUseAllowed=false` e AI OFF invariati. Ultimo deployment Cloudflare confermato `b6df639` Success; CI precedente M4.5.4 243/243 test. **NEXT:** proporre risposta 05 su oliatura sola spugna/prefiltro misto da P05 F15.20-R3, ancora non approvata.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **M4.4.1 due turni testuali con input libero riusciti e contesto coerente; accuratezza fattuale NON SUPERATA**: supernova erroneamente descritta come capace di far esplodere l'universo. Solo laboratorio non tecnico Access, mai integrato alla PWA o alle fonti validate |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.5.5 tre risposte 01/02/03 approvate dall'esperto 2026-11-22**, tutte `EXPERT_APPROVED_TEXT_ONLY` senza erogazione AI. 03 su sostituzione e possibile conservazione dopo verifica (P02+P03). **NEXT:** proporre risposta 04 sull'operazione spugna P04 F15.19-R2, previa conferma testuale dell'esperto |
+| Compito immediato di questa conversazione | **M4.5.5 4 risposte tecniche focalizzate approvate** (01–03 filtro carta, 04 lavaggio spugna R2). Risposta 04 revisionata eliminando «e lavabile», approvata il 2026-11-22, documentata in `docs/M4_5_5_RISPOSTA_04_LAVAGGIO_SPUGNA.md`; AI/KB invariati. **NEXT da approvare:** risposta 05 sull'oliatura sola spugna rispetto al prefiltro misto (P05 F15.20-R3) |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -313,6 +313,14 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - Documento `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md` aggiorna la candidata 03 a `EXPERT_APPROVED_TEXT_ONLY`, come 01 e 02. Nessun permesso AI, nessuna modifica runtime o KB, nessun deploy. 
 - Prossima candidata da approvare: lavaggio della spugna P04 F15.19-R2 con condizioni di applicabilità, risciacquo, asciugatura e divieto solventi.
 
+### M4.5.5 — Approvazione risposta 04, lavaggio spugna R2 (2026-11-22)
+
+- L'esperto richiede di eliminare «e lavabile» dalla premessa della risposta alla domanda «Come posso lavare il filtro in spugna?». Approva espressamente la versione R2 con «perfetto, approvato».
+- Testo integrale e ambito: `docs/M4_5_5_RISPOSTA_04_LAVAGGIO_SPUGNA.md`, fonte OP03 P04 F15.19-R2, status `EXPERT_APPROVED_TEXT_ONLY`. Invariati STOP per danni e filtro non idoneo, protezione dell'elemento carta nel misto e assenza di solventi.
+- **Disallineamento da non nascondere:** la KB approvata precedentemente contiene tuttora `foamMustBeReusableAndWashable=true` e `stopIfFoamDamagedOrWashabilityUnknown=true`; l'approvazione del testo breve non li cancella. Eventuale revisione KB separata con nuova approvazione e test.
+- Nessuna modifica runtime, KB, PWA, AI, deployment o CI per l'approvazione documentale.
+- Prossima risposta da sottoporre all'esperto: oliatura sola spugna vs prefiltro misto (P05 F15.20-R3).
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -393,7 +401,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** Cloudflare `b6df639` Success confermato dal titolare; ultimo test browser `FREE_CHAT_DISABLED` e 0 chiamate resta riferito a `f9b1e32`. M4.5.4 offline PR #100 CI #44362995018 Success 243/243. PWA 0.12.1, KB 15.25.1 e `aiUseAllowed=false` invariati. **M4.5.5 tre estratti di risposta breve 01, 02, 03 approvati testualmente** il 2026-11-22 (carta: divieto lavaggio/olio, soffiaggio delicato, conservazione dopo valutazione P02/P03), senza modifica runtime o AI. Documento `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`.
+**Stato confermato:** Cloudflare `b6df639` Success confermato dall'utente; ultimo test browser AI OFF/0 chiamate resta riferito a `f9b1e32`. M4.5.4 offline PR #100 CI #44362995018 Success 243/243. PWA 0.12.1, KB 15.25.1, AI OFF e `aiUseAllowed=false` invariati. **M4.5.5 risposte 01, 02, 03 e 04** approvate come **testo isolato** il 2026-11-22; 04 lavaggio spugna R2 senza la frase «e lavabile» ma **KB P04 e gate `stopIfFoamDamagedOrWashabilityUnknown` non modificati**. Non trattare le risposte come output automatici autorizzati o come completamento del passaggio.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -409,4 +417,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (M4.5.5 — prima candidata P04 da approvare):** La risposta 03 sulla sostituzione ordinaria o conservazione condizionata del filtro carta è stata approvata dall'esperto. Ora estendere con criterio una risposta alla volta alla spugna: proporre «Come posso lavare il filtro in spugna?» basandosi su `RASA-OP-03-P04`, F15.19-R2, solo per spugna riutilizzabile e lavabile, senza solventi, con asciugatura completa e condizioni di stop conservate. Nessuna AI/Worker/PWA o avanzamento automatico autorizzato.
+**NEXT (M4.5.5 — candidata 05 P05 da approvare):** L'esperto ha approvato la risposta 04 R2 su lavaggio spugna. Proporre la risposta 05 «Devo oliare il filtro in spugna dopo averlo lavato?» distinguendo **filtro in sola spugna** (sì, una volta completamente asciutto) e **prefiltro in spugna su filtro misto** (non oliare nella procedura standard); per configurazioni particolari richiedere conoscenza verificata dello specifico modello senza supposizioni. Fonte P05 F15.20-R3. Una risposta alla volta; non attivare AI, modificare PWA, KB o gate senza approvazione separata.
