@@ -4,7 +4,7 @@
  * The existing M4.5.2 evidence mapper verifies the original question and KB.
  * This is a narrow end-to-end transport test, NOT general language understanding.
  */
-import {mapQuestionToReviewedEvidence} from './m452-question-mapper.mjs';
+import {mapBoundedParaphraseToReviewedEvidence} from './m454-bounded-paraphrases.mjs';
 
 const STAGING='https://tagliando-ai-staging.maico-gua.workers.dev';
 const APPROVED='No. Il filtro in carta non deve essere lavato né oliato.';
@@ -48,9 +48,9 @@ export function previewApprovedVoiceReply(input) {
     /[\u0000-\u001f\u007f]/u.test(input.question))
     return deny('INVALID_CONTEXT','Questa prova è disponibile soltanto su Operazione 3, passaggio Trattamento carta, filtro in carta.');
 
-  // Existing M4.5.2 preflight inspects the ORIGINAL, unsanitized question;
+  // Existing M4.5.2/M4.5.4 preflight inspects the ORIGINAL, unsanitized question;
   // it enforces the M3 anomaly/stop/model-specific/ambiguous/out-of-scope gates.
-  const evidence=mapQuestionToReviewedEvidence({
+  const evidence=mapBoundedParaphraseToReviewedEvidence({
     machineFamily:'rasaerba_a_benzina',operationId:3,
     filterType:input.filterType,question:input.question
   });
