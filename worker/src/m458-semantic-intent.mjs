@@ -79,7 +79,7 @@ function checkOriginal(question){
     !/\b(filtro|cartuccia|elemento filtrante)\b/.test(q))
     return {ok:false,decision:'FILTER_CONTEXT_NOT_EXPLICIT'};
   if(/\b(ignora|disattiva|bypassa|aggira|prompt|istruzioni|system|fatto|finito|avanti|olio|solvente|benzina|carburante|motore|lama|riparare|sostituire|cambiare|rimontare|smontare)\b/.test(q) ||
-    (q.match(/\?/g)||[]).length>1 ||
+    (question.match(/\?/g)||[]).length>1 ||
     /\b(e anche|e poi|oppure|in aggiunta|insieme a)\b/.test(q))
     return {ok:false,decision:'MULTI_OR_UNSAFE_INTENT'};
   return {ok:true};
