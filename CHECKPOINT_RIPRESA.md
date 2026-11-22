@@ -1,6 +1,6 @@
 # APP TAGLIANDO — CHECKPOINT DI RIPRESA FRA CHAT
 
-**Checkpoint:** 2026-11-22; **M4.5.5 CANDIDATE 01 E 02 APPROVATE TECNICAMENTE**, senza permesso AI/runtime. L'esperto ha approvato P03 F15.18-R2 risposta 01 «No. Il filtro in carta non deve essere lavato né oliato.» e risposta 02 alla domanda «Posso pulire il filtro in carta con aria compressa?»: «Sì, se necessario puoi effettuare un soffiaggio delicato con aria compressa, evitando getti aggressivi che potrebbero danneggiare il materiale filtrante. Il filtro in carta non deve essere lavato né oliato.». Entrambe `EXPERT_APPROVED_TEXT_ONLY`, documento `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`. Condizioni P02 e STOP invariati; il soffiaggio non certifica il riutilizzo. PWA v0.12.1, KB v15.25.1 e `aiUseAllowed=false` immutati. Ultimo Cloudflare `b6df639` Success confermato dall'utente; CI M4.5.4 #44362995018 243/243 test. **NEXT:** candidata 03 per valutazione sostituzione/conservazione filtro in carta, riferimento P02 F15.17-R1 e P03 F15.18-R2, da sottoporre all'esperto.
+**Checkpoint:** 2026-11-22; **M4.5.5 TRE RISPOSTE BREVI APPROVATE TECNICAMENTE**, solo testo, AI/runtime non autorizzati. Candidata 01: divieto lavaggio/oliatura carta; 02: solo soffiaggio delicato con aria compressa se necessario senza getti aggressivi; **03 approvata oggi:** «Normalmente il filtro in carta viene sostituito durante il tagliando. Se però è stato montato recentemente ed è ancora pulito e integro, puoi valutare di mantenerlo, rispettando le indicazioni del costruttore.» Fonti P02 `F15.17-R1` e P03 `F15.18-R2`. Documento `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`, stato per tutte `EXPERT_APPROVED_TEXT_ONLY`. M4.5.4 test GitHub 243/243 e Cloudflare `b6df639` Success riportato dal titolare; nessun nuovo test browser OFF/0 chiamate oltre a `f9b1e32`. PWA 0.12.1, KB 15.25.1 e `aiUseAllowed=false` invariati. **NEXT:** proporre prima risposta focalizzata sulla pulizia della spugna P04 F15.19-R2, da validare.
 **Uso:** aprire per primo all'inizio **di ogni chat** sul progetto e aggiornare a fine sessione; non sostituisce i file tecnici dettagliati.  
 **Riferimenti obbligatori:** [ROADMAP_MASTER.md](ROADMAP_MASTER.md) · [REGISTRO_PROGETTO.md](REGISTRO_PROGETTO.md) · [GitHub Issues aperte](https://github.com/Lupus227/tagliando/issues?q=is%3Aissue+is%3Aopen).
 
@@ -46,7 +46,7 @@
 | Comprensione libera con AI | **M4.4.1 due turni testuali con input libero riusciti e contesto coerente; accuratezza fattuale NON SUPERATA**: supernova erroneamente descritta come capace di far esplodere l'universo. Solo laboratorio non tecnico Access, mai integrato alla PWA o alle fonti validate |
 | Ultima PR tecnica KB | [#41](https://github.com/Lupus227/tagliando/pull/41), merge nel branch di staging |
 | Stato di issue OP04 | [#37 — APERTA, BLOCCANTE](https://github.com/Lupus227/tagliando/issues/37) |
-| Compito immediato di questa conversazione | **M4.5.5 due risposte tecniche brevi approvate 2026-11-22:** P03 F15.18-R2 (01 no lavaggio/oliatura, 02 soffiaggio delicato se necessario, no getti aggressivi); `EXPERT_APPROVED_TEXT_ONLY`, senza AI/runtime. **NEXT da approvare:** candidata 03 su sostituzione/conservazione del filtro in carta, in base a P02+P03 |
+| Compito immediato di questa conversazione | **M4.5.5 tre risposte 01/02/03 approvate dall'esperto 2026-11-22**, tutte `EXPERT_APPROVED_TEXT_ONLY` senza erogazione AI. 03 su sostituzione e possibile conservazione dopo verifica (P02+P03). **NEXT:** proporre risposta 04 sull'operazione spugna P04 F15.19-R2, previa conferma testuale dell'esperto |
 
 L'ultimo JSON Cloudflare fornito dall'utente:
 
@@ -307,6 +307,12 @@ L'ultimo JSON Cloudflare fornito dall'utente:
 - Le candidate 01 e 02 sono `EXPERT_APPROVED_TEXT_ONLY` nel documento `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`. L'approvazione non comporta uso AI, conferma del riutilizzo o avanzamento automatico. **Nessun codice, KB, PWA, deployment o test nuovo**.
 - Prossima risposta da valutare: conservazione o sostituzione del filtro in carta, secondo P02 e P03 e condizioni del costruttore.
 
+### M4.5.5 — Approvazione candidata 03 (2026-11-22)
+
+- L'esperto conferma senza modifiche la risposta alla domanda «Devo sempre sostituire il filtro in carta durante il tagliando?», con possibilità di conservazione **solo** per filtro montato recentemente, pulito e integro nel rispetto del costruttore. Fonte P02 F15.17-R1 + P03 F15.18-R2.
+- Documento `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md` aggiorna la candidata 03 a `EXPERT_APPROVED_TEXT_ONLY`, come 01 e 02. Nessun permesso AI, nessuna modifica runtime o KB, nessun deploy. 
+- Prossima candidata da approvare: lavaggio della spugna P04 F15.19-R2 con condizioni di applicabilità, risciacquo, asciugatura e divieto solventi.
+
 ## D. PRECISE DECISIONI SULL'OPERAZIONE 04
 
 La versione KB `15.25.1` contiene:
@@ -387,7 +393,7 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Progetto e priorità:** assistente AI tecnico conversazionale + Knowledge Base validata + motore deterministico. Primo caso OP03 filtro aria; Emergent in standby, nessuna migrazione, PWA pubblica 0.12.1 invariata.
 
-**Stato confermato:** Cloudflare `b6df639` Success confermato dall'utente; test browser AI OFF/0 chiamate resta riferito a `f9b1e32`, nessun nuovo collaudo riferito. M4.5.4 offline PR #100 CI #44362995018 Success 243/243, modulo non collegato al Worker. PWA 0.12.1 e KB 15.25.1 invariati; OP03 `aiUseAllowed=false`. **M4.5.5 P03 due testi di risposta breve (01 e 02) approvati dall'esperto** il 2026-11-22, senza alcuna modifica al runtime o al livello di autorizzazione. Documento `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`; non considerare i testi disponibili per risposte AI.
+**Stato confermato:** Cloudflare `b6df639` Success confermato dal titolare; ultimo test browser `FREE_CHAT_DISABLED` e 0 chiamate resta riferito a `f9b1e32`. M4.5.4 offline PR #100 CI #44362995018 Success 243/243. PWA 0.12.1, KB 15.25.1 e `aiUseAllowed=false` invariati. **M4.5.5 tre estratti di risposta breve 01, 02, 03 approvati testualmente** il 2026-11-22 (carta: divieto lavaggio/olio, soffiaggio delicato, conservazione dopo valutazione P02/P03), senza modifica runtime o AI. Documento `docs/M4_5_5_PROPOSTA_RISPOSTA_P03.md`.
 
 **Set di prove browser M3, tutte positive secondo l'utente (2026-11-10):**
 - [x] Apertura laboratorio protetto.
@@ -403,4 +409,4 @@ Questo testo si può copiare nelle istruzioni persistenti del Progetto ChatGPT q
 
 **Diagnosi:** completata la prima prova di integrazione KB→console e guardie selezionate; non è collaudato un controller di esecuzione universale né una lavorazione reale. L'AI non deve mai decidere il progresso sulla base della sola formulazione di una risposta.
 
-**NEXT (M4.5.5 — nuova candidata 03 da approvare):** I testi delle risposte 01 e 02 di P03 sono stati approvati dall'esperto come risposte focalizzate, ma non autorizzati come output automatico. Proporre la risposta 03 «Devo sempre sostituire il filtro in carta durante il tagliando?» distinguendo la sostituzione normalmente prevista dalla possibilità di conservazione solo se il filtro è recente, pulito e integro e nel rispetto delle istruzioni del costruttore. Fonte P02 F15.17-R1 e P03 F15.18-R2. Se emergono danni o anomalie, il controller deve conservare i blocchi. Ogni ulteriore estratto deve ottenere una distinta approvazione. Non abilitare l'AI.
+**NEXT (M4.5.5 — prima candidata P04 da approvare):** La risposta 03 sulla sostituzione ordinaria o conservazione condizionata del filtro carta è stata approvata dall'esperto. Ora estendere con criterio una risposta alla volta alla spugna: proporre «Come posso lavare il filtro in spugna?» basandosi su `RASA-OP-03-P04`, F15.19-R2, solo per spugna riutilizzabile e lavabile, senza solventi, con asciugatura completa e condizioni di stop conservate. Nessuna AI/Worker/PWA o avanzamento automatico autorizzato.
